@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIDEC — Certificados</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Navbar con logo SIDEC */
+    .navbar-brand svg { display:block; }
+
+    /* Panel de búsqueda avanzada */
+    .search-panel {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+    .search-panel-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .search-panel-title {
+      font-size: 14px; font-weight: 600; color: var(--gray-800);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .search-grid {
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .search-grid-wide {
+      grid-column: span 2;
+    }
+    .search-actions {
+      padding: 12px 20px;
+      border-top: 1px solid var(--gray-100);
+      display: flex; gap: 8px; align-items: center; justify-content: flex-end;
+    }
+
+    /* Badge magnitud por área */
+    .mag-DIMENSIONAL    { background:#eff4ff; color:#1a56db; }
+    .mag-ELÉCTRICA      { background:#fef3c7; color:#92400e; }
+    .mag-TEMPERATURA    { background:#fce7f3; color:#9d174d; }
+    .mag-HUMEDAD        { background:#e0f2fe; color:#0369a1; }
+    .mag-PRESIÓN        { background:#f0fdf4; color:#166534; }
+    .mag-MASA           { background:#f5f3ff; color:#5b21b6; }
+    .mag-VOLUMEN        { background:#fff7ed; color:#9a3412; }
+    .mag-FUERZA         { background:#fef2f2; color:#991b1b; }
+    .mag-PAR-TORSIONAL  { background:#f0f9ff; color:#0c4a6e; }
+    .mag-TIEMPO         { background:#f7fee7; color:#3f6212; }
+    .mag-FLUJO          { background:#fdf4ff; color:#6b21a8; }
+    .mag-ACELERACIÓN    { background:#fff1f2; color:#881337; }
+    .mag-DENSIDAD       { background:#f0fdfa; color:#134e4a; }
+    .mag-QUÍMICA        { background:#fefce8; color:#713f12; }
+
+    /* Resultados rápidos del total */
+    .result-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 13px; color: var(--gray-500);
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="page">
+
+  <!-- Stats -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total certificados</div>
+      <div class="stat-value" id="stat-total">—</div>
+      <div class="stat-sub">en todos los años</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Año actual</div>
+      <div class="stat-value" id="stat-anio">—</div>
+      <div class="stat-sub" id="stat-anio-label">2025</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Años disponibles</div>
+      <div class="stat-value" id="stat-anios">—</div>
+      <div class="stat-sub" id="stat-rango">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Última emisión</div>
+      <div class="stat-value" style="font-size:16px" id="stat-ultimo">—</div>
+      <div class="stat-sub" id="stat-ultimo-cliente">—</div>
+    </div>
+  </div>
+
+  <!-- Panel de búsqueda avanzada -->
+  <div class="search-panel">
+    <div class="search-panel-header">
+      <div class="search-panel-title">
+        🔍 Búsqueda de certificados
+      </div>
+      <span id="busqueda-activa" style="font-size:12px;color:var(--primary);display:none">
+        Filtros activos
+      </span>
+    </div>
+
+    <div class="search-grid">
+      <!-- Búsqueda general -->
+      <div class="search-grid-wide" style="grid-column: 1 / -1">
+        <label class="form-label">Búsqueda general</label>
+        <div style="position:relative">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400)">🔍</span>
+          <input class="form-control" type="text" id="q" style="padding-left:36px"
+                 placeholder="No. informe, cliente, No. serie, identificación, modelo, marca...">
+        </div>
+      </div>
+
+      <!-- Cliente específico -->
+      <div>
+        <label class="form-label">Cliente</label>
+        <input class="form-control" type="text" id="filtro-cliente"
+               placeholder="Nombre del cliente">
+      </div>
+
+      <!-- No. de serie -->
+      <div>
+        <label class="form-label">No. de serie</label>
+        <input class="form-control" type="text" id="filtro-serie"
+               placeholder="Número de serie">
+      </div>
+
+      <!-- Identificación -->
+      <div>
+        <label class="form-label">Identificación</label>
+        <input class="form-control" type="text" id="filtro-id"
+               placeholder="ID del instrumento">
+      </div>
+
+      <!-- Marca -->
+      <div>
+        <label class="form-label">Marca</label>
+        <input class="form-control" type="text" id="filtro-marca"
+               placeholder="Marca del instrumento">
+      </div>
+
+      <!-- Magnitud evaluada (TODAS las áreas SIDEC) -->
+      <div>
+        <label class="form-label">Magnitud / Área</label>
+        <select class="form-control" id="filtro-magnitud">
+          <option value="">Todas las áreas</option>
+          <optgroup label="✅ En operación">
+            <option value="DIMENSIONAL">Dimensional</option>
+            <option value="ELÉCTRICA">Eléctrica</option>
+            <option value="PRESIÓN">Presión</option>
+            <option value="MASA">Masa</option>
+            <option value="VOLUMEN">Volumen</option>
+            <option value="FUERZA">Fuerza</option>
+          </optgroup>
+          <optgroup label="— En desarrollo">
+            <option value="TEMPERATURA">Temperatura y Humedad</option>
+            <option value="PAR TORSIONAL">Par Torsional</option>
+            <option value="TIEMPO Y FRECUENCIA">Tiempo y Frecuencia</option>
+            <option value="QUÍMICA">Química</option>
+            <option value="FLUJO">Flujo</option>
+            <option value="ACELERACIÓN">Aceleración</option>
+            <option value="DENSIDAD">Densidad</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- Año -->
+      <div>
+        <label class="form-label">Año de emisión</label>
+        <select class="form-control" id="filtro-anio">
+          <option value="">Todos los años</option>
+        </select>
+      </div>
+
+      <!-- Rango de fechas -->
+      <div>
+        <label class="form-label">Emisión desde</label>
+        <input class="form-control" type="date" id="filtro-desde">
+      </div>
+      <div>
+        <label class="form-label">Emisión hasta</label>
+        <input class="form-control" type="date" id="filtro-hasta">
+      </div>
+
+      <!-- Ordenar por -->
+      <div>
+        <label class="form-label">Ordenar por</label>
+        <select class="form-control" id="filtro-orden">
+          <option value="fecha_emision DESC">Emisión (más reciente)</option>
+          <option value="fecha_emision ASC">Emisión (más antigua)</option>
+          <option value="nombre_cliente ASC">Cliente (A-Z)</option>
+          <option value="numero_informe ASC">No. Informe</option>
+          <option value="marca ASC">Marca</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="search-actions">
+      <button class="btn btn-outline" onclick="limpiarFiltros()">Limpiar filtros</button>
+      <button class="btn btn-primary" onclick="buscar(1)" id="btn-buscar"
+              style="padding:8px 24px">
+        Buscar
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla de resultados -->
+  <div class="card">
+    <div class="result-bar" id="result-bar" style="display:none">
+      <span id="resultado-info"></span>
+      <span id="resultado-tiempo" style="font-size:12px;color:var(--gray-400)"></span>
+    </div>
+
+    <div id="tabla-container">
+      <div class="empty-state" style="padding:60px 24px">
+        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
+        <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Puedes buscar por informe, cliente, serie o dejar todo vacío para ver todos.</p>
+      </div>
+    </div>
+
+    <div class="pagination" id="paginacion" style="display:none">
+      <span class="pagination-info" id="pag-info"></span>
+      <div class="pagination-btns" id="pag-btns"></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+<script>
+  if (!Auth.requireLogin()) throw new Error('not logged');
+  renderNavbar('inicio');
+
+  let paginaActual = 1;
+  const LIMITE = 50;
+
+  // ── Stats ───────────────────────────────────────────────
+  async function cargarStats() {
+    try {
+      const data = await api('/certificados/stats/resumen');
+      document.getElementById('stat-total').textContent =
+        data.total_global.toLocaleString('es-MX');
+
+      const anioActual = new Date().getFullYear();
+      document.getElementById('stat-anio-label').textContent = anioActual;
+      const reg = data.por_anio.find(r => r.anio_emision == anioActual);
+      document.getElementById('stat-anio').textContent =
+        reg ? parseInt(reg.total_certificados).toLocaleString('es-MX') : '0';
+
+      document.getElementById('stat-anios').textContent = data.por_anio.length;
+      if (data.por_anio.length > 1) {
+        const years = data.por_anio.map(r => r.anio_emision);
+        document.getElementById('stat-rango').textContent =
+          `${Math.min(...years)} – ${Math.max(...years)}`;
+      }
+      if (data.por_anio.length > 0) {
+        document.getElementById('stat-ultimo').textContent =
+          formatFecha(data.por_anio[0].ultima_emision);
+      }
+
+      // Llenar select de años
+      const sel = document.getElementById('filtro-anio');
+      data.por_anio.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.anio_emision;
+        opt.textContent = `${r.anio_emision}  (${parseInt(r.total_certificados).toLocaleString()})`;
+        sel.appendChild(opt);
+      });
+    } catch (e) { console.error('Stats:', e); }
+  }
+
+  // ── Buscar ──────────────────────────────────────────────
+  async function buscar(pagina = 1) {
+    paginaActual = pagina;
+    const btn = document.getElementById('btn-buscar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>';
+    const t0 = Date.now();
+
+    const params = new URLSearchParams();
+    const add = (k, id) => {
+      const v = document.getElementById(id)?.value?.trim();
+      if (v) params.set(k, v);
+    };
+    add('q',        'q');
+    add('cliente',  'filtro-cliente');
+    add('serie',    'filtro-serie');
+    add('identificacion', 'filtro-id');
+    add('marca',    'filtro-marca');
+    add('magnitud', 'filtro-magnitud');
+    add('anio',     'filtro-anio');
+    add('desde',    'filtro-desde');
+    add('hasta',    'filtro-hasta');
+    add('orden',    'filtro-orden');
+    params.set('pagina', pagina);
+    params.set('limite', LIMITE);
+
+    // Indicar filtros activos
+    const tieneFiltos = [...params.keys()].some(k => !['pagina','limite','orden'].includes(k));
+    document.getElementById('busqueda-activa').style.display = tieneFiltos ? 'inline' : 'none';
+
+    try {
+      const data = await api('/certificados?' + params.toString());
+      const ms = Date.now() - t0;
+      renderTabla(data, ms);
+    } catch (e) {
+      document.getElementById('tabla-container').innerHTML =
+        `<div class="alert alert-error" style="margin:20px">${e.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Buscar';
+    }
+  }
+
+  // ── Render tabla ────────────────────────────────────────
+  function renderTabla(data, ms) {
+    const bar = document.getElementById('result-bar');
+    bar.style.display = 'flex';
+    document.getElementById('resultado-info').textContent =
+      `${data.total.toLocaleString('es-MX')} certificado${data.total !== 1 ? 's' : ''} encontrado${data.total !== 1 ? 's' : ''}`;
+    document.getElementById('resultado-tiempo').textContent = `${ms}ms`;
+
+    if (data.datos.length === 0) {
+      document.getElementById('tabla-container').innerHTML = `
+        <div class="empty-state" style="padding:48px">
+          <div style="font-size:36px;margin-bottom:12px">🔍</div>
+          <p>No se encontraron certificados con esos criterios.</p>
+          <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Intenta con términos más generales.</p>
+        </div>`;
+      document.getElementById('paginacion').style.display = 'none';
+      return;
+    }
+
+    const magClass = (m) => {
+      if (!m) return '';
+      const key = m.toUpperCase().split(' ')[0];
+      return `mag-${key}`;
+    };
+
+    const filas = data.datos.map(c => `
+      <tr onclick="verDetalle(${c.id})" title="Ver certificado ${c.numero_informe || ''}">
+        <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--primary);font-weight:500">${c.numero_informe || '—'}</span></td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.nombre_cliente || ''}">${c.nombre_cliente || '—'}</td>
+        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.descripcion_instrumento || ''}">${c.descripcion_instrumento || '—'}</td>
+        <td>${c.marca || '—'}</td>
+        <td><span style="font-family:var(--font-mono);font-size:12px">${c.numero_serie || '—'}</span></td>
+        <td><span style="font-family:var(--font-mono);font-size:12px">${c.identificacion || '—'}</span></td>
+        <td><span class="badge ${magClass(c.magnitud_evaluada)}">${c.magnitud_evaluada || '—'}</span></td>
+        <td>${formatFecha(c.fecha_emision)}</td>
+        <td><span class="badge badge-gray">${c.anio_emision}</span></td>
+      </tr>
+    `).join('');
+
+    document.getElementById('tabla-container').innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No. Informe</th>
+              <th>Cliente</th>
+              <th>Instrumento</th>
+              <th>Marca</th>
+              <th>No. Serie</th>
+              <th>Identificación</th>
+              <th>Magnitud</th>
+              <th>Emisión</th>
+              <th>Año</th>
+            </tr>
+          </thead>
+          <tbody>${filas}</tbody>
+        </table>
+      </div>`;
+
+    renderPaginacion(data);
+  }
+
+  function renderPaginacion(data) {
+    const pag = document.getElementById('paginacion');
+    if (data.paginas <= 1) { pag.style.display = 'none'; return; }
+    pag.style.display = 'flex';
+    document.getElementById('pag-info').textContent =
+      `Página ${data.pagina} de ${data.paginas}`;
+    const btns = document.getElementById('pag-btns');
+    btns.innerHTML = '';
+    const addBtn = (label, p, disabled = false, active = false) => {
+      const b = document.createElement('button');
+      b.className = 'page-btn' + (active ? ' active' : '');
+      b.textContent = label; b.disabled = disabled;
+      b.onclick = () => buscar(p);
+      btns.appendChild(b);
+    };
+    addBtn('‹', data.pagina - 1, data.pagina === 1);
+    let ini = Math.max(1, data.pagina - 2);
+    let fin = Math.min(data.paginas, data.pagina + 2);
+    if (ini > 1) addBtn('1', 1);
+    if (ini > 2) { const s = document.createElement('span'); s.textContent = '…'; s.className = 'page-btn'; s.style.cursor='default'; btns.appendChild(s); }
+    for (let i = ini; i <= fin; i++) addBtn(i, i, false, i === data.pagina);
+    if (fin < data.paginas - 1) { const s = document.createElement('span'); s.textContent = '…'; s.className = 'page-btn'; s.style.cursor='default'; btns.appendChild(s); }
+    if (fin < data.paginas) addBtn(data.paginas, data.paginas);
+    addBtn('›', data.pagina + 1, data.pagina === data.paginas);
+  }
+
+  function limpiarFiltros() {
+    ['q','filtro-cliente','filtro-serie','filtro-id','filtro-marca','filtro-desde','filtro-hasta'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('filtro-magnitud').value = '';
+    document.getElementById('filtro-anio').value = '';
+    document.getElementById('filtro-orden').value = 'fecha_emision DESC';
+    document.getElementById('tabla-container').innerHTML = `
+      <div class="empty-state" style="padding:60px 24px">
+        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
+      </div>`;
+    document.getElementById('result-bar').style.display = 'none';
+    document.getElementById('paginacion').style.display = 'none';
+    document.getElementById('busqueda-activa').style.display = 'none';
+  }
+
+  function verDetalle(id) {
+    window.location.href = `/detalle.html?id=${id}`;
+  }
+
+  // Enter en cualquier campo de texto activa la búsqueda
+  document.querySelectorAll('input[type=text], input[type=date]').forEach(el => {
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') buscar(1); });
+  });
+
+  cargarStats();
+</script>
+</body>
+</html>

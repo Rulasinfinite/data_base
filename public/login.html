@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIDEC — Iniciar Sesión</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { margin:0; }
+    .login-wrapper { display:flex; min-height:100vh; width:100%; }
+    .login-left {
+      flex:1; display:flex; flex-direction:column;
+      justify-content:center; align-items:center; padding:40px;
+      background: linear-gradient(150deg, #0d2d6b 0%, #051f57 60%, #1a4fa0 100%);
+      color:#fff; position:relative; overflow:hidden;
+    }
+    /* Cuadrícula decorativa */
+    .login-left::before {
+      content:''; position:absolute; inset:0;
+      background-image: repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.04) 40px),
+                        repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.04) 40px);
+    }
+    .login-left-content { position:relative; z-index:1; text-align:center; }
+    .login-left img { width:110px; height:110px; object-fit:contain; background:rgba(255,255,255,.1); padding:12px; border-radius:20px; margin-bottom:24px; }
+    .login-left h1  { font-size:2.2rem; font-weight:700; margin:0 0 10px; }
+    .login-left p   { font-size:.92rem; opacity:.82; max-width:340px; line-height:1.6; }
+    .login-left-footer { position:relative; z-index:1; margin-top:40px; font-size:11px; opacity:.5; }
+    /* Badges de acreditación */
+    .acred-badges { display:flex; gap:10px; margin-top:28px; flex-wrap:wrap; justify-content:center; }
+    .acred-badge { background:rgba(255,255,255,.12); border:1px solid rgba(255, 8, 8, 0.2); border-radius:8px; padding:8px 14px; font-size:12px; font-weight:500; }
+
+    .login-right {
+      flex:1; display:flex; flex-direction:column;
+      justify-content:center; align-items:center;
+      background:var(--bg); padding:40px;
+    }
+    .login-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:14px; padding:40px; width:100%; max-width:400px;
+      box-shadow:var(--shadow-md);
+    }
+    .login-card h2 { font-size:1.4rem; color:var(--text); margin-top:0; margin-bottom:6px; }
+    .login-card .sub { color:var(--text3); font-size:.88rem; margin-bottom:26px; }
+    .login-footer { margin-top:22px; text-align:center; font-size:.75rem; color:var(--text4); }
+    .login-footer a { color:var(--primary); }
+    .theme-float { position:absolute; top:16px; right:20px; }
+
+    @media (max-width:768px) {
+      .login-wrapper { flex-direction:column; }
+      .login-left { padding:48px 20px; flex:0 0 auto; }
+      .login-right { padding:36px 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="login-wrapper">
+
+  <!-- Panel izquierdo -->
+  <div class="login-left">
+    <div class="login-left-content">
+      <img src="/assets/images/logo.jpg" alt="SIDEC"
+          onerror="this.outerHTML='<div style=\'width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;margin-bottom:24px;\'>S</div>'">
+      <h1>SIDEC</h1>
+      <p>Sistema Integral de Certificados de Calibración. Trazabilidad y gestión de magnitudes físicas.</p>
+      <div class="acred-badges">
+      </div>
+    </div>
+    <div class="login-left-footer">Saltillo, Coahuila · para mas informacion:  <a href="https://sidecmx.com/">Sitio web oficial</a></div>
+  </div>
+
+  <!-- Panel derecho -->
+  <div class="login-right" style="position:relative;">
+    <button class="theme-btn theme-float" onclick="Theme.toggle();location.reload()" title="Cambiar tema" style="position:absolute;top:16px;right:20px"></button>
+
+    <div class="login-card">
+      <h2>Iniciar Sesión</h2>
+      <p class="sub">Ingresa tus credenciales de acceso al sistema.</p>
+
+      <div id="alert-container" style="display:none;padding:10px;margin-bottom:16px;border-radius:6px;background:var(--danger-bg);color:var(--danger);font-size:.8rem;border:1px solid rgba(200,30,30,.3)"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="usuario" name="email" class="form-control" placeholder="admin@sidec.com" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <div style="position:relative;">
+            <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" onclick="togglePass()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0;">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-full" id="btn-login" style="width:100%;justify-content:center;margin-top:4px;">
+          Ingresar al sistema
+        </button>
+      </form>
+
+      <div class="login-footer">
+        &copy; 2026 SIDEC · <a href="index.html">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  // Actualizar ícono tema
+  document.querySelector('.theme-float').textContent = Theme.get() === 'dark' ? '☀️' : '🌙';
+
+  if (Auth.isLoggedIn()) window.location.href = '/dashboard.html';
+
+  function togglePass() {
+    const i = document.getElementById('password');
+    i.type = i.type === 'password' ? 'text' : 'password';
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    const alertBox = document.getElementById('alert-container');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Verificando...';
+    alertBox.style.display = 'none';
+    try {
+      const data = await api('/usuarios/login', {
+        method: 'POST',
+        body: {
+          email: document.getElementById('usuario').value.trim().toLowerCase(),
+          password: document.getElementById('password').value,
+        },
+      });
+      Auth.setSession(data.token, data.usuario);
+      window.location.href = '/dashboard.html';
+    } catch(err) {
+      alertBox.style.display = 'block';
+      alertBox.textContent = err.message || 'Credenciales incorrectas.';
+      btn.disabled = false;
+      btn.innerHTML = 'Ingresar al sistema';
+    }
+  });
+</script>
+</body>
+</html>

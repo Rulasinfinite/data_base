@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIDEC — Detalle de certificado</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="page" style="max-width:960px">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:13px;color:var(--gray-500)">
+    <a href="/index.html" style="color:var(--gray-500)">Certificados</a>
+    <span>›</span>
+    <span id="breadcrumb-num" style="color:var(--gray-700)">Cargando...</span>
+  </div>
+
+  <div id="alert-container"></div>
+  <div id="loading" style="text-align:center;padding:60px">
+    <span class="spinner" style="width:28px;height:28px;border-width:3px"></span>
+    <p style="margin-top:12px;color:var(--gray-400)">Cargando certificado...</p>
+  </div>
+
+  <div id="contenido" style="display:none">
+
+    <!-- Header del certificado -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-body" style="padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-size:12px;color:var(--gray-400);font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px">
+              Certificado de Calibración
+            </div>
+            <h1 style="font-size:22px;font-weight:700;color:var(--gray-900);font-family:var(--font-mono)" id="h-numero">—</h1>
+            <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap" id="h-badges"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="btn-acciones">
+            <button class="btn btn-outline" onclick="window.history.back()">← Volver</button>
+            <!-- Botón editar: solo para calidad/admin, se agrega por JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos del cliente -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <span class="card-title">Datos del cliente</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Nombre del cliente</label>
+            <span id="f-nombre_cliente"></span>
+          </div>
+          <div class="detail-field">
+            <label>Atención a</label>
+            <span id="f-atencion_a"></span>
+          </div>
+          <div class="detail-field" style="grid-column: span 2">
+            <label>Dirección</label>
+            <span id="f-direccion"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datos del instrumento -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <span class="card-title">Instrumento</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Descripción</label>
+            <span id="f-descripcion_instrumento"></span>
+          </div>
+          <div class="detail-field">
+            <label>Magnitud evaluada</label>
+            <span id="f-magnitud_evaluada"></span>
+          </div>
+          <div class="detail-field">
+            <label>Marca</label>
+            <span id="f-marca"></span>
+          </div>
+          <div class="detail-field">
+            <label>Modelo</label>
+            <span id="f-modelo"></span>
+          </div>
+          <div class="detail-field">
+            <label>No. de serie</label>
+            <span id="f-numero_serie" class="mono"></span>
+          </div>
+          <div class="detail-field">
+            <label>Identificación</label>
+            <span id="f-identificacion" class="mono"></span>
+          </div>
+          <div class="detail-field" style="grid-column: span 2">
+            <label>Alcance de medición</label>
+            <span id="f-alcance"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultados y condiciones -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" class="two-col">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Resultados</span></div>
+        <div class="card-body">
+          <div class="detail-field" style="margin-bottom:14px">
+            <label>Resultado de calibración</label>
+            <span id="f-resultado_calibracion"></span>
+          </div>
+          <div class="detail-field">
+            <label>Incertidumbre</label>
+            <span id="f-incertidumbre"></span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Condiciones ambientales</span></div>
+        <div class="card-body">
+          <div class="detail-field" style="margin-bottom:14px">
+            <label>Temperatura</label>
+            <span id="f-temperatura"></span>
+          </div>
+          <div class="detail-field">
+            <label>Humedad relativa</label>
+            <span id="f-humedad_relativa"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fechas y método -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header"><span class="card-title">Fechas y procedimiento</span></div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Fecha de recepción</label>
+            <span id="f-fecha_recepcion"></span>
+          </div>
+          <div class="detail-field">
+            <label>Fecha de calibración</label>
+            <span id="f-fecha_calibracion"></span>
+          </div>
+          <div class="detail-field">
+            <label>Fecha de emisión</label>
+            <span id="f-fecha_emision"></span>
+          </div>
+          <div class="detail-field">
+            <label>Lugar de calibración</label>
+            <span id="f-lugar_calibracion"></span>
+          </div>
+          <div class="detail-field" style="grid-column: span 2">
+            <label>Método utilizado</label>
+            <span id="f-metodo_utilizado"></span>
+          </div>
+          <div class="detail-field">
+            <label>Calibrado por</label>
+            <span id="f-calibrado_por"></span>
+          </div>
+          <div class="detail-field">
+            <label>Aprobado por</label>
+            <span id="f-aprobado_por"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadatos del sistema -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-header"><span class="card-title">Metadatos del sistema</span></div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Archivo origen</label>
+            <span id="f-ruta_archivo_origen" class="mono" style="font-size:11px;word-break:break-all"></span>
+          </div>
+          <div class="detail-field">
+            <label>Fecha de importación</label>
+            <span id="f-fecha_importacion"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /contenido -->
+</div><!-- /page -->
+
+<style>
+@media (max-width: 640px) {
+  .two-col { grid-template-columns: 1fr !important; }
+}
+</style>
+
+<script src="app.js"></script>
+<script>
+  if (!Auth.requireLogin()) throw new Error('not logged');
+  renderNavbar('inicio');
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+
+  if (!id) {
+    window.location.href = '/index.html';
+  }
+
+  function setField(fieldId, valor) {
+    const el = document.getElementById('f-' + fieldId);
+    if (!el) return;
+    if (!valor || valor === 'null') {
+      el.textContent = '—';
+      el.classList.add('empty');
+    } else {
+      el.textContent = valor;
+      el.classList.remove('empty');
+    }
+  }
+
+  async function cargarCertificado() {
+    try {
+      const cert = await api('/certificados/' + id);
+
+      // Header
+      document.title = `SIDEC — ${cert.numero_informe || 'Certificado'}`;
+      document.getElementById('breadcrumb-num').textContent = cert.numero_informe || `#${id}`;
+      document.getElementById('h-numero').textContent = cert.numero_informe || `#${id}`;
+
+      const badges = document.getElementById('h-badges');
+      if (cert.magnitud_evaluada) {
+        badges.innerHTML += `<span class="badge badge-blue">${cert.magnitud_evaluada}</span>`;
+      }
+      if (cert.anio_emision) {
+        badges.innerHTML += `<span class="badge badge-gray">${cert.anio_emision}</span>`;
+      }
+      if (cert.marca) {
+        badges.innerHTML += `<span class="badge badge-green">${cert.marca}</span>`;
+      }
+
+      // Botón editar si tiene permiso
+      if (Auth.hasRole('calidad')) {
+        document.getElementById('btn-acciones').innerHTML += `
+          <a href="/editar.html?id=${id}" class="btn btn-outline">✏️ Editar</a>`;
+      }
+
+      // Rellenar campos
+      const campos = [
+        'nombre_cliente', 'atencion_a', 'direccion',
+        'descripcion_instrumento', 'magnitud_evaluada', 'marca', 'modelo',
+        'numero_serie', 'identificacion', 'alcance',
+        'resultado_calibracion', 'incertidumbre',
+        'temperatura', 'humedad_relativa',
+        'metodo_utilizado', 'lugar_calibracion',
+        'calibrado_por', 'aprobado_por',
+        'ruta_archivo_origen',
+      ];
+      campos.forEach(c => setField(c, cert[c]));
+
+      // Fechas formateadas
+      setField('fecha_recepcion',   formatFecha(cert.fecha_recepcion));
+      setField('fecha_calibracion', formatFecha(cert.fecha_calibracion));
+      setField('fecha_emision',     formatFecha(cert.fecha_emision));
+      setField('fecha_importacion', cert.fecha_importacion
+        ? new Date(cert.fecha_importacion).toLocaleString('es-MX') : null);
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('contenido').style.display = 'block';
+
+    } catch (e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('alert-container').innerHTML =
+        `<div class="alert alert-error">${e.message}</div>`;
+    }
+  }
+
+  cargarCertificado();
+</script>
+</body>
+</html>
