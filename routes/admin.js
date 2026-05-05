@@ -85,7 +85,7 @@ router.post('/importar', async (req, res) => {
   try {
     const result = await pool.query(
       `INSERT INTO importaciones (usuario_id, carpeta_origen, estado)
-       VALUES ($1, $2, 'en_proceso') RETURNING id`,
+      VALUES ($1, $2, 'en_proceso') RETURNING id`,
       [req.usuario.id, carpetas.map(c => c.ruta).join(', ')]
     );
     importacion_id = result.rows[0].id;

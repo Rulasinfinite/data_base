@@ -43,8 +43,14 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-import psycopg2
-from psycopg2.extras import execute_values
+try:
+    import psycopg2
+    from psycopg2.extras import execute_values
+    TIENE_DB = True
+except ImportError:
+    TIENE_DB = False
+    print("⚠ psycopg2 no encontrado. Ejecuta desde el venv: venv/Scripts/python.exe")
+    print("  Continuando en modo solo-escaneo...")
 
 # Módulo de extracción específico SIDEC
 try:
@@ -592,6 +598,10 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # Conectar a la base de datos
+    if not TIENE_DB:
+        log.error(f"{ERR} psycopg2 no disponible. El script debe ejecutarse desde el venv:")
+        log.error("     venv\Scripts\python.exe scripts/importar_masivo.py")
+        sys.exit(1)
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         log.info(f"{OK} Conectado a PostgreSQL — {DB_CONFIG['dbname']}")

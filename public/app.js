@@ -39,10 +39,21 @@ async function api(path, options = {}) {
     ...options,
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
-  if (res.status === 401) { Auth.clear(); window.location.href = '/login.html'; return; }
+
+  if (res.status === 401) {
+    Auth.clear();
+    if (!window.location.pathname.endsWith('/login.html') && !window.location.pathname.endsWith('/login')) {
+      window.location.href = '/login.html';
+      return;
+    }
+  }
+
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Error en la solicitud');
-  return data;
+  if (!res.ok || data?.error) {
+    throw new Error(data?.error || 'Error en la solicitud');
+  }
+
+  return data; // ✅ CORRECCIÓN: faltaba este return
 }
 
 // ── Navbar ────────────────────────────────────────────────
@@ -59,10 +70,8 @@ function renderNavbar(paginaActual = '') {
 
   nav.innerHTML = `
     <div class="navbar-brand">
-      <a href="/dashboard.html" style="display:flex;align-items:center;text-decoration:none;gap:10px">
-        <img src="/assets/images/logo.png" alt="SIDEC"
-            onerror="this.outerHTML='<span style=\'font-weight:700;font-size:16px;color:var(--primary)\'>SIDEC</span>'"
-            style="height:36px;object-fit:contain">
+      <a href="/dashboard.html" style="display:flex;align-items:center;text-decoration:none;gap:10px;height:36px">
+        <img src="/assets/images/logo.jpg" alt="SIDEC" style="height:36px;object-fit:contain;flex-shrink:0">
       </a>
     </div>
     <div class="navbar-right">

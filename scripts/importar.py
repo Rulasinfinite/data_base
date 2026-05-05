@@ -27,11 +27,11 @@ import logging
 # Configuración
 # ============================================================
 DB_CONFIG = {
-    'host':     os.getenv('DB_HOST',     'sidecmexico'),
+    'host':     os.getenv('DB_HOST',     'localhost'),
     'port':     int(os.getenv('DB_PORT', 5432)),
     'dbname':   os.getenv('DB_NAME',     'sidec_db'),
     'user':     os.getenv('DB_USER',     'postgres'),
-    'password': os.getenv('DB_PASSWORD', ''),
+    'password': os.getenv('DB_PASSWORD', 'sidecmexico'),  # Cambia según tu configuración
 }
 
 # Carpetas a procesar (igual que el script original)

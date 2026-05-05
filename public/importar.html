@@ -6,143 +6,322 @@
   <title>SIDEC — Importar archivos</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
+    /* ── Layout principal ──────────────────────────────── */
     .import-grid {
       display: grid;
       grid-template-columns: 340px 1fr;
       gap: 16px;
       align-items: start;
     }
-    /* Panel izquierdo: configuración */
     .config-panel { display: flex; flex-direction: column; gap: 12px; }
 
-    /* Árbol de carpetas */
-    .tree-container {
-      background: var(--gray-900);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--gray-700);
-      overflow: hidden;
-    }
-    .tree-header {
-      background: var(--gray-800);
-      padding: 10px 14px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--gray-700);
-    }
-    .tree-header span { color: #e2e8f0; font-size: 13px; font-weight: 500; font-family: var(--font-mono); }
-    .tree-body { padding: 12px; min-height: 200px; max-height: 380px; overflow-y: auto; }
-    .tree-empty { color: #64748b; font-size: 13px; font-family: var(--font-mono); padding: 20px 0; text-align: center; }
-
-    /* Nodos del árbol */
-    .tree-node { user-select: none; }
-    .tree-node-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 3px 4px; border-radius: 4px;
-      cursor: pointer; transition: background .1s;
-      font-family: var(--font-mono); font-size: 12px;
-    }
-    .tree-node-row:hover { background: rgba(255,255,255,.06); }
-    .tree-node-row.selected { background: rgba(26,86,219,.3); }
-    .tree-node-row .icon { font-size: 13px; flex-shrink: 0; }
-    .tree-node-row .name { color: #e2e8f0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tree-node-row .tag {
-      font-size: 10px; padding: 1px 6px; border-radius: 99px;
-      background: rgba(255,255,255,.1); color: #94a3b8;
-    }
-    .tree-node-row .tag.empleado { background: rgba(26,86,219,.3); color: #93c5fd; }
-    .tree-node-row .tag.anio     { background: rgba(5,122,85,.3);  color: #6ee7b7; }
-    .tree-node-row .tag.mes      { background: rgba(146,64,14,.3); color: #fcd34d; }
-    .tree-children { margin-left: 18px; border-left: 1px solid rgba(255,255,255,.06); padding-left: 8px; }
-    .tree-toggle { color: #64748b; font-size: 10px; width: 12px; text-align: center; flex-shrink: 0; }
-
-    /* Panel derecho: log y estado */
-    .log-container {
-      background: var(--gray-900);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--gray-700);
-      overflow: hidden;
-    }
-    .log-header {
-      background: var(--gray-800);
-      padding: 10px 14px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--gray-700);
-    }
-    .log-header span { color: #e2e8f0; font-size: 13px; font-weight: 500; }
-    .log-body {
-      padding: 12px; min-height: 420px; max-height: 420px;
-      overflow-y: auto; font-family: var(--font-mono); font-size: 12px;
-    }
-    .log-line { padding: 2px 0; line-height: 1.6; }
-    .log-ok   { color: #4ade80; }
-    .log-warn { color: #fbbf24; }
-    .log-err  { color: #f87171; }
-    .log-info { color: #60a5fa; }
-    .log-dim  { color: #64748b; }
-    .log-sep  { color: #334155; padding: 4px 0; }
-
-    /* Progress bar */
-    .progress-wrap {
-      background: var(--gray-800);
-      border-radius: 4px;
-      overflow: hidden;
-      height: 6px;
-      margin: 8px 0;
-    }
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #1a56db, #3b82f6);
-      transition: width .3s ease;
-      border-radius: 4px;
-    }
-
-    /* Stats de importación */
-    .import-stats {
-      display: grid; grid-template-columns: repeat(4,1fr); gap: 8px;
-      margin-bottom: 12px;
-    }
-    .import-stat {
-      background: var(--gray-800);
-      border-radius: 6px; padding: 10px;
-      text-align: center;
-    }
-    .import-stat .val { font-size: 20px; font-weight: 700; color: #e2e8f0; }
-    .import-stat .lbl { font-size: 11px; color: #64748b; margin-top: 2px; }
-    .import-stat.ok  .val { color: #4ade80; }
-    .import-stat.warn .val { color: #fbbf24; }
-    .import-stat.err .val { color: #f87171; }
-
-    /* Formulario de nueva carpeta */
+    /* ── Tarjeta de agregar carpeta ────────────────────── */
     .add-carpeta-form {
-      background: var(--white);
-      border: 1px solid var(--gray-200);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: 16px;
+      box-shadow: var(--shadow-sm);
     }
     .add-carpeta-form h3 {
-      font-size: 14px; font-weight: 600;
-      color: var(--gray-800); margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    /* Historial */
+    /* ── Árbol de carpetas ─────────────────────────────── */
+    .tree-container {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .tree-header {
+      background: var(--surface2);
+      padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .tree-header span {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-mono);
+    }
+    .tree-clear-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text3);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .tree-clear-btn:hover { background: var(--surface2); color: var(--text); }
+    .tree-body {
+      padding: 12px;
+      min-height: 200px;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    .tree-empty {
+      color: var(--text4);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      padding: 24px 0;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ── Nodos del árbol ───────────────────────────────── */
+    .tree-node { user-select: none; }
+    .tree-node-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 6px; border-radius: 6px;
+      cursor: pointer; transition: background .1s;
+      font-family: var(--font-mono); font-size: 12px;
+    }
+    .tree-node-row:hover { background: var(--surface2); }
+    .tree-node-row.selected { background: rgba(var(--primary-rgb), .15); }
+    .tree-node-row .icon { font-size: 13px; flex-shrink: 0; }
+    .tree-node-row .name {
+      color: var(--text2);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .tree-node-row .tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: var(--surface2);
+      color: var(--text3);
+      border: 1px solid var(--border);
+    }
+    .tree-node-row .tag.empleado {
+      background: rgba(var(--primary-rgb), .15);
+      color: var(--primary);
+      border-color: rgba(var(--primary-rgb), .2);
+    }
+    .tree-node-row .tag.anio {
+      background: rgba(5,122,85,.15);
+      color: #059669;
+      border-color: rgba(5,122,85,.2);
+    }
+    [data-theme="dark"] .tree-node-row .tag.anio { color: #6ee7b7; }
+    .tree-node-row .tag.mes {
+      background: rgba(146,64,14,.15);
+      color: #92400e;
+      border-color: rgba(146,64,14,.2);
+    }
+    [data-theme="dark"] .tree-node-row .tag.mes { color: #fcd34d; }
+    .tree-children {
+      margin-left: 18px;
+      border-left: 1px solid var(--border);
+      padding-left: 8px;
+    }
+    .tree-toggle { color: var(--text4); font-size: 10px; width: 12px; text-align: center; flex-shrink: 0; }
+
+    /* ── Panel de log / terminal ───────────────────────── */
+    .log-container {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .log-header {
+      background: var(--surface2);
+      padding: 10px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .log-header span { color: var(--text); font-size: 13px; font-weight: 500; }
+    .log-body {
+      padding: 14px;
+      min-height: 420px;
+      max-height: 420px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--surface);
+      line-height: 1.65;
+    }
+    /* Colores del log que funcionan en ambos temas */
+    .log-line { padding: 1px 0; }
+    .log-ok   { color: #22c55e; }
+    .log-warn { color: #f59e0b; }
+    .log-err  { color: #ef4444; }
+    .log-info { color: var(--primary); }
+    .log-dim  { color: var(--text3); }
+    .log-sep  { color: var(--border2); padding: 4px 0; letter-spacing: .05em; }
+
+    /* ── Tabs ──────────────────────────────────────────── */
+    .tab-btn {
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      background: var(--surface2);
+      color: var(--text3);
+      cursor: pointer;
+      border-radius: var(--radius) var(--radius) 0 0;
+      margin-right: 2px;
+      transition: all .15s;
+    }
+    .tab-btn:hover { background: var(--surface); color: var(--text); }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--border);
+      border-bottom-color: var(--surface);
+      position: relative;
+      bottom: -1px;
+    }
+
+    /* ── Progress bar ──────────────────────────────────── */
+    .progress-wrap {
+      background: var(--surface2);
+      border-radius: 4px;
+      overflow: hidden;
+      height: 7px;
+      margin: 6px 0;
+      border: 1px solid var(--border);
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #60a5fa);
+      transition: width .4s ease;
+      border-radius: 4px;
+    }
+
+    /* ── Stats de importación ──────────────────────────── */
+    .import-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .import-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .import-stat .val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: var(--font-mono);
+    }
+    .import-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 3px; font-weight: 500; }
+    .import-stat.ok   .val { color: #22c55e; }
+    .import-stat.warn .val { color: #f59e0b; }
+    .import-stat.err  .val { color: #ef4444; }
+
+    /* ── Opciones ──────────────────────────────────────── */
+    .opciones-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .opciones-header {
+      background: var(--surface2);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .opciones-body { padding: 14px; }
+    .opcion-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 12px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: var(--radius);
+      transition: background .1s;
+    }
+    .opcion-label:last-child { margin-bottom: 0; }
+    .opcion-label:hover { background: var(--surface2); }
+    .opcion-label input[type="checkbox"] { accent-color: var(--primary); width: 15px; height: 15px; }
+
+    /* ── Historial ─────────────────────────────────────── */
     .historial-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
       font-size: 13px;
     }
     .historial-row:last-child { border-bottom: none; }
     .hist-estado {
-      font-size: 11px; font-weight: 500;
-      padding: 2px 8px; border-radius: 99px; min-width: 90px; text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      min-width: 96px;
+      text-align: center;
+      white-space: nowrap;
     }
-    .hist-completado { background: var(--success-bg); color: var(--success); }
-    .hist-errores    { background: var(--warning-bg); color: var(--warning); }
-    .hist-proceso    { background: var(--primary-light); color: var(--primary); }
+    .hist-completado { background: rgba(5,150,105,.15); color: #059669; border: 1px solid rgba(5,150,105,.25); }
+    .hist-errores    { background: rgba(245,158,11,.15); color: #d97706; border: 1px solid rgba(245,158,11,.25); }
+    .hist-proceso    { background: rgba(var(--primary-rgb),.12); color: var(--primary); border: 1px solid rgba(var(--primary-rgb),.2); }
+    [data-theme="dark"] .hist-completado { color: #6ee7b7; }
+    [data-theme="dark"] .hist-errores    { color: #fcd34d; }
+
+    /* ── Botón limpiar log ─────────────────────────────── */
+    .log-clear-btn {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text3);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .log-clear-btn:hover { background: var(--surface2); color: var(--text); }
+
+    /* ── Header de página ──────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .page-title { font-size: 20px; font-weight: 700; color: var(--text); margin: 0 0 4px 0; }
+    .page-subtitle { font-size: 13px; color: var(--text3); margin: 0; }
+
+    /* ── Scrollbar personalizado para log ──────────────── */
+    .log-body::-webkit-scrollbar,
+    .tree-body::-webkit-scrollbar { width: 5px; }
+    .log-body::-webkit-scrollbar-track,
+    .tree-body::-webkit-scrollbar-track { background: var(--surface2); }
+    .log-body::-webkit-scrollbar-thumb,
+    .tree-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
     @media (max-width: 900px) {
-      .import-grid { grid-template-columns: 1fr; }
-      .import-stats { grid-template-columns: repeat(2,1fr); }
+      .import-grid    { grid-template-columns: 1fr; }
+      .import-stats   { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -152,23 +331,21 @@
 
 <div class="page">
 
-  <!-- Header de página -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+  <!-- Header -->
+  <div class="page-header">
     <div>
-      <h1 style="font-size:20px;font-weight:700;color:var(--gray-900)">📂 Importar archivos</h1>
-      <p style="font-size:13px;color:var(--gray-500);margin-top:2px">
-        Organiza y carga certificados por empleado, año y mes
-      </p>
+      <h1 class="page-title">📂 Importar archivos</h1>
+      <p class="page-subtitle">Organiza y carga certificados por empleado, año y mes</p>
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-outline" onclick="cargarHistorial()">🕐 Historial</button>
-      <button class="btn btn-primary" id="btn-iniciar" onclick="iniciarImportacion()" disabled>
+      <button class="btn btn-outline btn-sm" onclick="cargarHistorial()">🕐 Historial</button>
+      <button class="btn btn-primary btn-sm" id="btn-iniciar" onclick="iniciarImportacion()" disabled>
         ▶ Iniciar importación
       </button>
     </div>
   </div>
 
-  <!-- Stats generales -->
+  <!-- Stats (ocultas hasta que se inicie) -->
   <div class="import-stats" id="import-stats" style="display:none">
     <div class="import-stat">
       <div class="val" id="st-total">0</div>
@@ -188,11 +365,11 @@
     </div>
   </div>
 
-  <!-- Progress bar (oculta por defecto) -->
-  <div id="progress-container" style="display:none;margin-bottom:12px">
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px">
+  <!-- Barra de progreso -->
+  <div id="progress-container" style="display:none;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px">
       <span id="progress-label">Preparando...</span>
-      <span id="progress-pct">0%</span>
+      <span id="progress-pct" style="font-family:var(--font-mono);font-weight:600;color:var(--text)">0%</span>
     </div>
     <div class="progress-wrap">
       <div class="progress-bar" id="progress-bar" style="width:0%"></div>
@@ -231,10 +408,10 @@
           </div>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-outline" style="flex:1" onclick="escanearCarpeta()">
+          <button class="btn btn-outline btn-sm" style="flex:1" onclick="escanearCarpeta()">
             🔍 Escanear
           </button>
-          <button class="btn btn-primary" style="flex:1" onclick="agregarCarpeta()">
+          <button class="btn btn-primary btn-sm" style="flex:1" onclick="agregarCarpeta()">
             ➕ Agregar
           </button>
         </div>
@@ -244,11 +421,7 @@
       <div class="tree-container">
         <div class="tree-header">
           <span>📁 Carpetas configuradas</span>
-          <button onclick="limpiarCarpetas()"
-                  style="background:rgba(255,255,255,.08);border:none;color:#94a3b8;
-                         font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer">
-            Limpiar
-          </button>
+          <button class="tree-clear-btn" onclick="limpiarCarpetas()">Limpiar</button>
         </div>
         <div class="tree-body" id="tree-body">
           <div class="tree-empty">
@@ -257,18 +430,21 @@
         </div>
       </div>
 
-      <!-- Opciones de importación -->
-      <div class="card">
-        <div class="card-header"><span class="card-title">⚙️ Opciones</span></div>
-        <div class="card-body" style="padding:14px">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;cursor:pointer">
-            <input type="checkbox" id="opt-soloescanear"> Solo escanear (sin importar)
+      <!-- Opciones -->
+      <div class="opciones-card">
+        <div class="opciones-header">⚙️ Opciones de importación</div>
+        <div class="opciones-body">
+          <label class="opcion-label">
+            <input type="checkbox" id="opt-soloescanear">
+            Solo escanear (sin importar a la BD)
           </label>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;cursor:pointer">
-            <input type="checkbox" id="opt-skip-dup" checked> Omitir duplicados
+          <label class="opcion-label">
+            <input type="checkbox" id="opt-skip-dup" checked>
+            Omitir duplicados automáticamente
           </label>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
-            <input type="checkbox" id="opt-pdf" checked> Procesar PDFs
+          <label class="opcion-label">
+            <input type="checkbox" id="opt-pdf" checked>
+            Procesar archivos PDF
           </label>
         </div>
       </div>
@@ -278,32 +454,35 @@
     <!-- ═══ Panel derecho: log ═══ -->
     <div>
       <!-- Tabs -->
-      <div style="display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--gray-200)">
+      <div style="display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--border)">
         <button class="tab-btn active" onclick="cambiarTab('log')"    id="tab-log">Terminal</button>
         <button class="tab-btn"        onclick="cambiarTab('hist')"   id="tab-hist">Historial</button>
-        <button class="tab-btn"        onclick="cambiarTab('errors')" id="tab-errors">Errores</button>
+        <button class="tab-btn"        onclick="cambiarTab('errors')" id="tab-errors">
+          Errores <span id="errors-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;
+            padding:1px 5px;border-radius:99px;margin-left:4px;font-weight:700" id="errors-count-badge">0</span>
+        </button>
       </div>
 
-      <!-- Tab: Log terminal -->
-      <div id="panel-log" class="log-container" style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
+      <!-- Tab: Terminal -->
+      <div id="panel-log" class="log-container"
+           style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
         <div class="log-header">
           <span>🖥 Terminal de importación</span>
-          <button onclick="limpiarLog()"
-                  style="background:rgba(255,255,255,.08);border:none;color:#94a3b8;
-                         font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer">
-            Limpiar
-          </button>
+          <button class="log-clear-btn" onclick="limpiarLog()">Limpiar</button>
         </div>
         <div class="log-body" id="log-body">
           <div class="log-line log-dim">SIDEC Sistema de Importación v1.0</div>
           <div class="log-line log-dim">─────────────────────────────────</div>
           <div class="log-line log-info">Listo. Configura una carpeta y presiona Escanear.</div>
+          <div class="log-line log-dim"></div>
+          <div class="log-line log-warn">⚠ IMPORTANTE: El servidor Node debe llamar al Python del venv,</div>
+          <div class="log-line log-warn">  no al Python del sistema. Ver instrucciones en README.</div>
         </div>
       </div>
 
       <!-- Tab: Historial -->
       <div id="panel-hist" style="display:none">
-        <div class="card" style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
+        <div class="card" style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg);border-top:none">
           <div class="card-body" id="historial-body">
             <div class="empty-state">
               <div style="font-size:32px;margin-bottom:8px">🕐</div>
@@ -315,10 +494,11 @@
 
       <!-- Tab: Errores -->
       <div id="panel-errors" style="display:none">
-        <div class="log-container" style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
+        <div class="log-container"
+             style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
           <div class="log-header">
             <span>❌ Archivos con errores</span>
-            <span id="errors-count" style="font-size:12px;color:#64748b">0 errores</span>
+            <span id="errors-count" style="font-size:12px;color:var(--text3);font-family:var(--font-mono)">0 errores</span>
           </div>
           <div class="log-body" id="errors-body">
             <div class="log-line log-dim">Sin errores registrados.</div>
@@ -329,8 +509,8 @@
     </div><!-- /panel derecho -->
   </div><!-- /import-grid -->
 
-  <!-- Historial de importaciones -->
-  <div class="card" style="margin-top:20px" id="card-historial" style="display:none">
+  <!-- Historial de importaciones (tarjeta inferior) -->
+  <div class="card" style="margin-top:20px;display:none" id="card-historial">
     <div class="card-header">
       <span class="card-title">🕐 Historial de importaciones</span>
     </div>
@@ -341,28 +521,14 @@
 
 </div><!-- /page -->
 
-<style>
-.tab-btn {
-  padding: 8px 16px; font-size: 13px; font-weight: 500;
-  border: 1px solid var(--gray-200); border-bottom: none;
-  background: var(--gray-50); color: var(--gray-500);
-  cursor: pointer; border-radius: var(--radius) var(--radius) 0 0;
-  margin-right: 2px; transition: all .1s;
-}
-.tab-btn.active {
-  background: var(--gray-900); color: #e2e8f0;
-  border-color: var(--gray-700);
-}
-</style>
-
 <script src="app.js"></script>
 <script>
 if (!Auth.requireLogin()) throw new Error('not logged');
 renderNavbar('importar');
 
 // ── Estado ────────────────────────────────────────────────
-let carpetas = [];      // [{ruta, empleado, anio}]
-let errores  = [];      // archivos con error
+let carpetas  = [];
+let errores   = [];
 let importando = false;
 
 // ── Tabs ──────────────────────────────────────────────────
@@ -416,10 +582,10 @@ function renderTree() {
         <span class="icon">📁</span>
         <span class="name" title="${c.ruta}">${c.ruta.split('\\').pop() || c.ruta.split('/').pop() || c.ruta}</span>
         ${c.empleado ? `<span class="tag empleado">${c.empleado}</span>` : ''}
-        ${c.anio ? `<span class="tag anio">${c.anio}</span>` : ''}
+        ${c.anio     ? `<span class="tag anio">${c.anio}</span>` : ''}
         <button onclick="eliminarCarpeta(event,${idx})"
-                style="margin-left:auto;background:rgba(248,113,113,.15);border:none;
-                       color:#f87171;font-size:11px;padding:1px 6px;border-radius:3px;cursor:pointer">✕</button>
+                style="margin-left:auto;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);
+                       color:#ef4444;font-size:11px;padding:1px 7px;border-radius:4px;cursor:pointer">✕</button>
       </div>
       ${c.subarbol ? renderSubarbol(c.subarbol) : ''}
     `;
@@ -439,7 +605,7 @@ function renderSubarbol(items) {
           <span class="icon">${icon}</span>
           <span class="name">${item.nombre}</span>
           ${tag ? `<span class="tag ${tag}">${item.tipo}</span>` : ''}
-          ${item.count ? `<span class="tag">${item.count} archivos</span>` : ''}
+          ${item.count ? `<span class="tag">${item.count} arch.</span>` : ''}
         </div>
         ${item.hijos ? renderSubarbol(item.hijos) : ''}
       </div>`;
@@ -455,7 +621,7 @@ function eliminarCarpeta(e, idx) {
   e.stopPropagation();
   carpetas.splice(idx, 1);
   renderTree();
-  log(`Carpeta eliminada de la lista.`, 'warn');
+  log('Carpeta eliminada de la lista.', 'warn');
 }
 function limpiarCarpetas() {
   carpetas = [];
@@ -470,8 +636,6 @@ function agregarCarpeta() {
   const anio     = document.getElementById('input-anio').value;
 
   if (!ruta) { showAlert('Ingresa la ruta de la carpeta.'); return; }
-
-  // Verificar duplicados
   if (carpetas.find(c => c.ruta === ruta)) {
     showAlert('Esa carpeta ya está en la lista.', 'error');
     return;
@@ -484,12 +648,12 @@ function agregarCarpeta() {
   if (empleado) log(`   Empleado: ${empleado}`, 'info');
   if (anio)     log(`   Año:      ${anio}`, 'info');
 
-  document.getElementById('input-ruta').value = '';
+  document.getElementById('input-ruta').value    = '';
   document.getElementById('input-empleado').value = '';
-  document.getElementById('input-anio').value = '';
+  document.getElementById('input-anio').value     = '';
 }
 
-// ── Escanear carpeta (llama al backend) ───────────────────
+// ── Escanear carpeta ──────────────────────────────────────
 async function escanearCarpeta() {
   const ruta     = document.getElementById('input-ruta').value.trim();
   const empleado = document.getElementById('input-empleado').value.trim();
@@ -507,25 +671,28 @@ async function escanearCarpeta() {
     });
 
     log(`📊 Resultados del escaneo:`, 'info');
-    log(`   Total archivos: ${data.total}`, 'ok');
-    log(`   Excel (.xlsx):  ${data.por_tipo?.excel || 0}`, 'ok');
-    log(`   PDF (.pdf):     ${data.por_tipo?.pdf   || 0}`, 'ok');
-    log(`   Omitidos:       ${data.por_tipo?.skip  || 0}`, 'warn');
+    log(`   Total archivos: ${data.total}`,         data.total > 0 ? 'ok' : 'warn');
+    log(`   Excel (.xlsx):  ${data.por_tipo?.excel  || 0}`, 'dim');
+    log(`   PDF (.pdf):     ${data.por_tipo?.pdf    || 0}`, 'dim');
+    log(`   Omitidos:       ${data.por_tipo?.skip   || 0}`, 'warn');
 
-    if (data.por_anio) {
+    if (data.por_anio && Object.keys(data.por_anio).length > 0) {
       log(`   Por año:`, 'info');
       Object.entries(data.por_anio).sort().forEach(([a, n]) => {
         log(`     ${a}: ${n} archivos`, 'dim');
       });
     }
-    if (data.por_empleado) {
+    if (data.por_empleado && Object.keys(data.por_empleado).length > 0) {
       log(`   Por empleado:`, 'info');
       Object.entries(data.por_empleado).forEach(([e, n]) => {
         log(`     ${e}: ${n} archivos`, 'dim');
       });
     }
 
-    // Actualizar árbol con subarbol
+    if (data.total === 0) {
+      log(`⚠ Sin archivos encontrados. Verifica que el servidor use el Python del venv.`, 'warn');
+    }
+
     const idx = carpetas.findIndex(c => c.ruta === ruta);
     if (idx >= 0 && data.subarbol) {
       carpetas[idx].subarbol = data.subarbol;
@@ -536,7 +703,7 @@ async function escanearCarpeta() {
     }
 
     logSep();
-    log(`✅ Escaneo completado. ${data.total} archivos encontrados.`, 'ok');
+    log(`✅ Escaneo completado. ${data.total} archivos encontrados.`, data.total > 0 ? 'ok' : 'warn');
 
   } catch (e) {
     log(`❌ Error al escanear: ${e.message}`, 'err');
@@ -558,7 +725,6 @@ async function iniciarImportacion() {
   document.getElementById('btn-iniciar').disabled = true;
   document.getElementById('btn-iniciar').innerHTML = '<span class="spinner"></span> Importando...';
 
-  // Mostrar stats y progress
   document.getElementById('import-stats').style.display = 'grid';
   document.getElementById('progress-container').style.display = 'block';
   actualizarStats(0, 0, 0, 0);
@@ -581,21 +747,22 @@ async function iniciarImportacion() {
       }
     });
 
-    // Mostrar resultados en log
     log(`📊 Resultados finales:`, 'info');
-    log(`   Total archivos:    ${data.total}`,     'dim');
-    log(`   ✅ Importados:     ${data.exitosos}`,  'ok');
-    log(`   ⚠ No certificados: ${data.no_certs}`, 'warn');
-    log(`   ❌ Errores:        ${data.fallidos}`,  'err');
-    log(`   ⏱ Tiempo:         ${data.duracion}`,  'dim');
+    log(`   Total archivos:     ${data.total}`,        'dim');
+    log(`   ✅ Importados:      ${data.exitosos}`,     'ok');
+    log(`   ⚠ No certificados:  ${data.no_certs}`,    'warn');
+    log(`   ❌ Errores:         ${data.fallidos}`,     'err');
+    log(`   ⏱ Tiempo:          ${data.duracion}`,     'dim');
 
     actualizarStats(data.total, data.exitosos, data.no_certs, data.fallidos);
     setProgress(100, 'Completado');
 
-    // Errores en tab
     if (data.errores && data.errores.length > 0) {
       errores = data.errores;
       renderErrores();
+      // Mostrar badge en tab de errores
+      const badge = document.getElementById('errors-badge');
+      if (badge) { badge.textContent = data.errores.length; badge.style.display = 'inline'; }
     }
 
     logSep();
@@ -622,9 +789,9 @@ function actualizarStats(total, ok, skip, err) {
 }
 
 function setProgress(pct, label) {
-  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-bar').style.width   = pct + '%';
   document.getElementById('progress-label').textContent = label;
-  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-pct').textContent   = pct + '%';
 }
 
 function renderErrores() {
@@ -661,30 +828,27 @@ async function cargarHistorial() {
           ${imp.estado}
         </span>
         <div style="flex:1;min-width:0">
-          <div style="font-weight:500;color:var(--gray-800);font-size:13px;
+          <div style="font-weight:500;color:var(--text);font-size:13px;
                white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
             ${imp.carpeta_origen || '—'}
           </div>
-          <div style="font-size:12px;color:var(--gray-400)">
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">
             ${new Date(imp.iniciado_en).toLocaleString('es-MX')}
           </div>
         </div>
-        <div style="text-align:right;font-size:12px;white-space:nowrap">
-          <span style="color:var(--success)">✅ ${imp.exitosos}</span>
-          <span style="color:var(--gray-400);margin:0 4px">/</span>
-          <span style="color:var(--danger)">❌ ${imp.fallidos}</span>
-          <span style="color:var(--gray-400);margin:0 4px">/</span>
-          <span style="color:var(--gray-500)">${imp.total_archivos} total</span>
+        <div style="text-align:right;font-size:12px;white-space:nowrap;font-family:var(--font-mono)">
+          <span style="color:#22c55e">✅ ${imp.exitosos}</span>
+          <span style="color:var(--text4);margin:0 4px">/</span>
+          <span style="color:#ef4444">❌ ${imp.fallidos}</span>
+          <span style="color:var(--text4);margin:0 4px">/</span>
+          <span style="color:var(--text3)">${imp.total_archivos} total</span>
         </div>
       </div>
     `).join('');
-  } catch(e) {
-    body.innerHTML = `<div class="alert alert-error">${e.message}</div>`;
+  } catch (e) {
+    body.innerHTML = `<div class="empty-state"><p style="color:var(--danger)">Error al cargar historial: ${e.message}</p></div>`;
   }
 }
-
-// Inicializar
-renderTree();
 </script>
 </body>
 </html>

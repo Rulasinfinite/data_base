@@ -20,31 +20,67 @@
       --blue2: #60a5fa;
     }
 
-    /* ── Barra pública ── */
+    /* ── Barra pública mejorada con scroll effect ── */
     .topbar {
       position: sticky; top: 0; z-index: 200;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, rgba(26,79,160,.98) 0%, rgba(26,79,160,.95) 50%, rgba(184,146,42,.15) 100%);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--gold2);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 7%; height: 60px;
-      box-shadow: var(--shadow-sm);
+      padding: 12px 7%; height: auto;
+      box-shadow: 0 4px 12px rgba(26,79,160,.15);
+      transition: all .3s ease;
+    }
+    .topbar.scrolled {
+      padding: 8px 7%;
+      background: linear-gradient(90deg, rgba(26,79,160,.99) 0%, rgba(26,79,160,.96) 50%, rgba(184,146,42,.2) 100%);
+      box-shadow: 0 2px 8px rgba(26,79,160,.2);
     }
     .topbar-brand {
       display: flex; align-items: center; gap: 14px;
       text-decoration: none;
+      transition: all .3s ease;
     }
-    .topbar-brand img { height: 44px; object-fit: contain; }
-    .topbar-brand-txt { display: flex; flex-direction: column; line-height: 1.1; }
-    .topbar-brand-txt strong { font-size: 18px; font-weight: 700; color: var(--gold); letter-spacing: .03em; }
-    .topbar-brand-txt span   { font-size: 10px; font-weight: 500; color: var(--text3); letter-spacing: .09em; text-transform: uppercase; }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-brand img {
+      height: 56px; object-fit: contain;
+      transition: height .3s ease;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+    }
+    .topbar.scrolled .topbar-brand img {
+      height: 40px;
+    }
+    .topbar-brand-txt {
+      display: flex; flex-direction: column; line-height: 1.1;
+      transition: all .3s ease;
+    }
+    .topbar-brand-txt strong {
+      font-size: 20px; font-weight: 800; color: var(--gold2);
+      letter-spacing: .03em;
+      text-shadow: 0 2px 4px rgba(0,0,0,.2);
+    }
+    .topbar-brand-txt span {
+      font-size: 10px; font-weight: 500; color: rgba(255,255,255,.8);
+      letter-spacing: .09em; text-transform: uppercase;
+    }
+    .topbar.scrolled .topbar-brand-txt strong {
+      font-size: 18px;
+    }
+    .topbar-right {
+      display: flex; align-items: center; gap: 16px;
+    }
     .btn-acceder {
-      background: var(--blue); color: #fff;
-      padding: 9px 22px; border-radius: 8px;
-      font-weight: 600; font-size: 13px;
-      text-decoration: none; transition: background .2s;
+      background: var(--gold2); color: var(--blue);
+      padding: 10px 24px; border-radius: 6px;
+      font-weight: 700; font-size: 13px;
+      text-decoration: none; transition: all .2s;
+      box-shadow: 0 4px 12px rgba(212,169,58,.3);
     }
-    .btn-acceder:hover { background: var(--blue2); text-decoration: none; }
+    .btn-acceder:hover {
+      background: #f0c454;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(212,169,58,.4);
+      text-decoration: none;
+    }
 
     /* ── Hero ── */
     .hero {
@@ -242,15 +278,14 @@
 <!-- ══ Barra superior ══ -->
 <header class="topbar">
   <a href="/" class="topbar-brand">
-    <img src="/assets/images/logo.jpg" alt="SIDEC"
-        onerror="this.style.display='none'">
+    <img src="/assets/images/logo.jpg" alt="SIDEC" style="object-fit:contain;flex-shrink:0">
     <div class="topbar-brand-txt">
       <strong>SIDEC</strong>
       <span>Servicio Industrial de Calibración</span>
     </div>
   </a>
   <div class="topbar-right">
-    <button class="theme-btn" onclick="Theme.toggle();location.reload()" title="Cambiar tema" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text3);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center"></button>
+    <button class="theme-btn" onclick="Theme.toggle();location.reload()" title="Cambiar tema" style="width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center"></button>
     <a href="login.html" class="btn-acceder">Acceder al sistema →</a>
   </div>
 </header>
@@ -276,8 +311,7 @@
   <div class="hero-img">
     <div class="hero-cert">
       <div class="hero-cert-logo">
-        <img src="/assets/images/logo.jpg" alt="SIDEC" onerror="this.style.display='none'">
-        <strong>SIDEC</strong>
+        <img src="/assets/images/logo.jpg" alt="SIDEC" style="height:32px;object-fit:contain">
       </div>
       <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text4);margin-bottom:14px">
         Certificado de Calibración
@@ -295,10 +329,10 @@
         <span></span>
       </div>
       <div class="cert-grid">
-        <div class="cert-badge">Seguridad</div>
+        <div class="cert-badge">Seguro</div>
         <div class="cert-badge">Rapidez</div>
-        <div class="cert-badge"></div>
-        <div class="cert-badge"></div>
+        <div class="cert-badge">Precisión</div>
+        <div class="cert-badge">Confianza</div>
       </div>
     </div>
   </div>
@@ -373,6 +407,16 @@
 
 <script src="app.js"></script>
 <script>
+  // Efecto scroll en navbar
+  const topbar = document.querySelector('.topbar');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      topbar.classList.add('scrolled');
+    } else {
+      topbar.classList.remove('scrolled');
+    }
+  });
+
   // Actualizar ícono del tema al cargar
   document.querySelector('.theme-btn').textContent = Theme.get() === 'dark' ? '☀️' : '🌙';
 </script>

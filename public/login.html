@@ -50,6 +50,32 @@
       .login-left { padding:48px 20px; flex:0 0 auto; }
       .login-right { padding:36px 20px; }
     }
+
+    /* Animaciones personalizadas */
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #alert-container {
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
@@ -57,15 +83,13 @@
 
   <!-- Panel izquierdo -->
   <div class="login-left">
-    <div class="login-left-content">
-      <img src="/assets/images/logo.jpg" alt="SIDEC"
-          onerror="this.outerHTML='<div style=\'width:80px;height:80px;background:rgba(255,255,255,.15);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;margin-bottom:24px;\'>S</div>'">
-      <h1>SIDEC</h1>
+    <div class="login-left-content" style="z-index: 2; position: relative;">
+      <h1 style="font-size:3.5rem;font-weight:800;color:#d4a93a;margin:0;margin-bottom:28px;letter-spacing:-.02em;text-shadow:0 2px 8px rgba(0,0,0,.3)">SIDEC</h1>
       <p>Sistema Integral de Certificados de Calibración. Trazabilidad y gestión de magnitudes físicas.</p>
       <div class="acred-badges">
       </div>
     </div>
-    <div class="login-left-footer">Saltillo, Coahuila · para mas informacion:  <a href="https://sidecmx.com/">Sitio web oficial</a></div>
+    <div class="login-left-footer" style="z-index: 2; position: relative;">Saltillo, Coahuila · para mas informacion:  <a href="https://sidecmx.com/" style="color:#d4a93a">Sitio web oficial</a></div>
   </div>
 
   <!-- Panel derecho -->
@@ -80,8 +104,8 @@
 
       <form id="login-form">
         <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input type="email" id="usuario" name="email" class="form-control" placeholder="admin@sidec.com" required autocomplete="username">
+          <label class="form-label">Usuario</label>
+          <input type="text" id="usuario" name="usuario" class="form-control" placeholder="Administrador_Sidec" required autocomplete="username">
         </div>
         <div class="form-group">
           <label class="form-label">Contraseña</label>
@@ -104,10 +128,15 @@
 
 <script src="app.js"></script>
 <script>
-  // Actualizar ícono tema
   document.querySelector('.theme-float').textContent = Theme.get() === 'dark' ? '☀️' : '🌙';
 
-  if (Auth.isLoggedIn()) window.location.href = '/dashboard.html';
+  // Corrección: Redirección si ya está logueado
+  if (Auth.isLoggedIn()) {
+  // validar token real intentando una llamada ligera
+  api('/usuarios/me')
+    .then(() => window.location.href = '/dashboard.html')
+    .catch(() => Auth.clear());
+}
 
   function togglePass() {
     const i = document.getElementById('password');
@@ -118,26 +147,74 @@
     e.preventDefault();
     const btn = document.getElementById('btn-login');
     const alertBox = document.getElementById('alert-container');
+    const usuario = document.getElementById('usuario').value.trim();
+    const password = document.getElementById('password').value;
+
+    // Validaciones personalizadas
+    if (!usuario) {
+      showAlert(alertBox, '⚠️ El usuario es requerido.');
+      return;
+    }
+    if (!password) {
+      showAlert(alertBox, '⚠️ La contraseña es requerida.');
+      return;
+    }
+    if (password.length < 8) {
+      showAlert(alertBox, '⚠️ La contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Verificando...';
     alertBox.style.display = 'none';
     try {
-      const data = await api('/usuarios/login', {
+        Auth.clear(); // 🔥 limpiar sesión antes de intentar login
+
+        const data = await api('/usuarios/login', {
         method: 'POST',
         body: {
-          email: document.getElementById('usuario').value.trim().toLowerCase(),
-          password: document.getElementById('password').value,
+          usuario: usuario,
+          password: password,
         },
       });
+      if (!data || typeof data !== 'object') {
+        throw new Error('Respuesta inválida del servidor.');
+      }
+
+      if (!data.token || !data.usuario) {
+        throw new Error(data.error || 'Usuario o contraseña incorrectos.');
+      }
+
+      // 🔥 Validar que el token tenga forma JWT
+      if (!data.token.includes('.')) {
+        throw new Error('Token inválido recibido.');
+      }
+
       Auth.setSession(data.token, data.usuario);
-      window.location.href = '/dashboard.html';
+
+      // pequeña pausa para asegurar guardado
+      setTimeout(() => {
+        window.location.href = '/dashboard.html';
+      }, 100);
     } catch(err) {
-      alertBox.style.display = 'block';
-      alertBox.textContent = err.message || 'Credenciales incorrectas.';
-      btn.disabled = false;
-      btn.innerHTML = 'Ingresar al sistema';
-    }
-  });
+  let mensaje = '❌ ' + (err.message || 'Error al iniciar sesión.');
+
+  if (mensaje.toLowerCase().includes('credenciales')) {
+    mensaje = '❌ Usuario o contraseña incorrectos.';
+  }
+
+  showAlert(alertBox, mensaje);
+
+  btn.disabled = false;
+  btn.innerHTML = 'Ingresar al sistema';
+}}
+  );
+
+  function showAlert(alertBox, message) {
+    alertBox.textContent = message;
+    alertBox.style.display = 'block';
+    alertBox.style.animation = 'slideDown .3s ease';
+  }
 </script>
 </body>
 </html>

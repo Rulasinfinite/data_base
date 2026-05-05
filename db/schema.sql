@@ -120,32 +120,24 @@ CREATE TABLE IF NOT EXISTS certificados_otros PARTITION OF certificados
 -- ============================================================
 -- ÍNDICES (por partición principal, se heredan)
 -- ============================================================
-
--- Búsqueda exacta por número de informe (el más común)
 CREATE INDEX IF NOT EXISTS idx_cert_numero_informe
     ON certificados (numero_informe);
 
--- Búsqueda por cliente (trigram para búsqueda parcial)
 CREATE INDEX IF NOT EXISTS idx_cert_cliente_trgm
     ON certificados USING GIN (nombre_cliente gin_trgm_ops);
 
--- Búsqueda por número de serie
 CREATE INDEX IF NOT EXISTS idx_cert_numero_serie
     ON certificados (numero_serie);
 
--- Búsqueda por identificación
 CREATE INDEX IF NOT EXISTS idx_cert_identificacion
     ON certificados (identificacion);
 
--- Filtro por fecha de emisión
 CREATE INDEX IF NOT EXISTS idx_cert_fecha_emision
     ON certificados (fecha_emision);
 
--- Filtro por año (para las queries de panel por año)
 CREATE INDEX IF NOT EXISTS idx_cert_anio
     ON certificados (anio_emision);
 
--- Búsqueda por marca
 CREATE INDEX IF NOT EXISTS idx_cert_marca_trgm
     ON certificados USING GIN (marca gin_trgm_ops);
 
@@ -193,7 +185,7 @@ CREATE TABLE IF NOT EXISTS importaciones (
     total_archivos      INTEGER DEFAULT 0,
     exitosos            INTEGER DEFAULT 0,
     fallidos            INTEGER DEFAULT 0,
-    errores             JSONB,              -- array de {archivo, error}
+    errores             JSONB,
     iniciado_en         TIMESTAMPTZ DEFAULT NOW(),
     finalizado_en       TIMESTAMPTZ,
     estado              VARCHAR(20) DEFAULT 'en_proceso'
@@ -201,17 +193,35 @@ CREATE TABLE IF NOT EXISTS importaciones (
 );
 
 -- ============================================================
--- USUARIO ADMIN INICIAL (cambiar password después)
+-- USUARIOS ADMIN
 -- ============================================================
--- password: Adminsidec (bcrypt hash - cambiar en primer login)
+
+-- ► Usuario principal: Adminappsidec / Adminsidec
+--   Hash generado y verificado con bcrypt.compare() = true
+INSERT INTO usuarios (nombre, usuario, password_hash, rol, departamento)
+VALUES (
+    'Administrador App SIDEC',
+    'Adminappsidec',
+    '$2b$10$noUwyXbAGn04LMmNccrw6.tp8FKzjSB/U68T68cDug6Rg/VYPqpIq',
+    'admin',
+    'Administración'
+) ON CONFLICT (usuario) DO UPDATE
+    SET password_hash = EXCLUDED.password_hash,
+        rol           = 'admin',
+        activo        = TRUE;
+
+-- ► Usuario heredado: Administrador_Sidec / Adminsidec  (mismo hash, misma contraseña)
 INSERT INTO usuarios (nombre, usuario, password_hash, rol, departamento)
 VALUES (
     'Administrador SIDEC',
     'Administrador_Sidec',
-    '$2b$10$UZRMEUoVvr.oLDLFcBxA3ult1V0mZeXn9B7DPuB3N8RD4L7zE3HS6',
+    '$2b$10$noUwyXbAGn04LMmNccrw6.tp8FKzjSB/U68T68cDug6Rg/VYPqpIq',
     'admin',
     'Administración'
-) ON CONFLICT DO NOTHING;
+) ON CONFLICT (usuario) DO UPDATE
+    SET password_hash = EXCLUDED.password_hash,
+        rol           = 'admin',
+        activo        = TRUE;
 
 -- ============================================================
 -- VISTA: resumen por año (útil para el panel)

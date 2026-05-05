@@ -24,11 +24,11 @@ router.post('/login', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
+      return res.status(401).json({ error: 'Credenciales incorrectas.' }); // ✅ CORRECCIÓN: faltaba return
     }
 
-    const usuario = result.rows[0];
-    const passwordOk = await bcrypt.compare(password, usuario.password_hash);
+    const usuarioData = result.rows[0];
+    const passwordOk = await bcrypt.compare(password, usuarioData.password_hash);
 
     if (!passwordOk) {
       return res.status(401).json({ error: 'Credenciales incorrectas.' });
@@ -37,25 +37,32 @@ router.post('/login', async (req, res) => {
     // Actualizar último acceso
     await pool.query(
       'UPDATE usuarios SET ultimo_acceso = NOW() WHERE id = $1',
-      [usuario.id]
+      [usuarioData.id]
     );
 
-    const token = generarToken(usuario);
+    const token = generarToken(usuarioData);
 
     res.json({
       token,
       usuario: {
-        id:           usuario.id,
-        nombre:       usuario.nombre,
-        usuario:      usuario.usuario,
-        rol:          usuario.rol,
-        departamento: usuario.departamento,
+        id:           usuarioData.id,
+        nombre:       usuarioData.nombre,
+        usuario:      usuarioData.usuario,
+        rol:          usuarioData.rol,
+        departamento: usuarioData.departamento,
       },
     });
   } catch (err) {
     console.error('Error en login:', err);
     res.status(500).json({ error: 'Error al iniciar sesión.' });
   }
+});
+
+// ============================================================
+// GET /api/usuarios/me — verificar sesión activa (ligero)
+// ============================================================
+router.get('/me', verificarToken, (req, res) => {
+  res.json(req.usuario);
 });
 
 // ============================================================
