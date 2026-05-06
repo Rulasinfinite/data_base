@@ -1,0 +1,37 @@
+[10:48:05] INFO     ======================================================================
+[10:48:05] INFO       DIAGNÓSTICO DEL SISTEMA
+[10:48:05] INFO     ======================================================================
+[10:48:05] INFO     Python: C:\Users\sidec42\Downloads\db_s_beta\venv\Scripts\python.exe
+[10:48:05] INFO     Versión: 3.13.13 (tags/v3.13.13:01104ce, Apr  7 2026, 19:25:48) [MSC v.1944 64 bit (AMD64)]
+[10:48:05] INFO     CWD: C:\Users\sidec42\Downloads\db_s_beta
+[10:48:05] INFO     Sistema: win32
+[10:48:05] INFO     psycopg2: ✅
+[10:48:05] INFO     pdfplumber: ✅
+[10:48:05] INFO     tqdm: ✅
+[10:48:05] INFO     Log: logs_python
+[10:48:05] INFO     ======================================================================
+[10:48:05] INFO     
+🔍 VALIDANDO RUTA:
+[10:48:05] INFO        Ruta recibida: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:05] INFO        Tipo: <class 'str'>
+[10:48:05] INFO        Path normalizado: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:05] INFO        Absoluta: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:05] INFO        ¿Existe?: True
+[10:48:05] INFO        ✅ Es carpeta, contiene 2 items
+[10:48:05] INFO           📄 LMD-4415-17-R1 GT PLASTICS.xlsx
+[10:48:05] INFO           📄 LMD-4496-17-R1 PRECISION R.xlsx
+[10:48:05] INFO     
+📂 ESCANEANDO CARPETA:
+[10:48:05] INFO        Raíz: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:05] INFO        Filtro año: ninguno
+[10:48:05] DEBUG       📁 .
+[10:48:05] DEBUG          ✅ LMD-4415-17-R1 GT PLASTICS.xlsx (empleado=None, año=2017)
+[10:48:05] DEBUG          ✅ LMD-4496-17-R1 PRECISION R.xlsx (empleado=None, año=2017)
+[10:48:05] INFO     
+✅ ESCANEO COMPLETADO:
+[10:48:05] INFO        Carpetas visitadas: 1
+[10:48:05] INFO        Total items: 2
+[10:48:05] INFO        Archivos válidos encontrados: 2
+[10:48:05] INFO        Por tipo: {'excel': 2}
+[10:48:05] INFO     
+📊 MODO ESCANEO: 2 archivos

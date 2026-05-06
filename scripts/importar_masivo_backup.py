@@ -322,19 +322,31 @@ if __name__ == '__main__':
     
     # Solo escanear
     if args.solo_escanear:
-        # Contar solo tipos de archivo
+        # Clasificar por tipo y año
         por_tipo = {'excel': 0, 'pdf': 0}
+        por_anio = {}
         for archivo in archivos:
             ext = Path(archivo).suffix.lower()
             if ext in ('.xlsx', '.xls'):
                 por_tipo['excel'] += 1
             elif ext == '.pdf':
                 por_tipo['pdf'] += 1
+            
+            match = re.search(r'20[1-3]\d', archivo)
+            if match:
+                anio_str = match.group()
+                por_anio[anio_str] = por_anio.get(anio_str, 0) + 1
         
         resultado = {
             "total": len(archivos),
+            "exitosos": 0,
+            "fallidos": 0,
+            "no_certificados": 0,
+            "duracion": str(datetime.now() - inicio),
             "por_tipo": por_tipo,
-            "archivos": [Path(a).name for a in archivos[:20]]  # Solo nombres, máximo 20
+            "por_anio": por_anio,
+            "por_empleado": {},
+            "errores": []
         }
         
         if args.json_output:
@@ -376,7 +388,8 @@ if __name__ == '__main__':
         "exitosos": exitosos,
         "fallidos": len(errores),
         "no_certificados": no_certs,
-        "errores": errores[:50] if errores else []
+        "duracion": str(datetime.now() - inicio),
+        "errores": errores[:50]
     }
     
     if args.json_output:

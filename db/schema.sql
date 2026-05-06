@@ -4,11 +4,10 @@
 -- Schema principal con particionamiento por año
 -- ============================================================
 
--- Extensión para búsqueda de texto completo
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- ============================================================
--- TABLA: tipos_magnitud (catálogo)
+-- TABLA: tipos_magnitud
 -- ============================================================
 CREATE TABLE IF NOT EXISTS tipos_magnitud (
     id          SERIAL PRIMARY KEY,
@@ -17,14 +16,8 @@ CREATE TABLE IF NOT EXISTS tipos_magnitud (
 );
 
 INSERT INTO tipos_magnitud (nombre) VALUES
-    ('DIMENSIONAL'),
-    ('ELÉCTRICA'),
-    ('MASA'),
-    ('TEMPERATURA'),
-    ('PRESIÓN'),
-    ('FUERZA'),
-    ('VOLUMEN'),
-    ('OTRA')
+    ('DIMENSIONAL'),('ELÉCTRICA'),('MASA'),('TEMPERATURA'),
+    ('PRESIÓN'),('FUERZA'),('VOLUMEN'),('OTRA')
 ON CONFLICT DO NOTHING;
 
 -- ============================================================
@@ -32,16 +25,11 @@ ON CONFLICT DO NOTHING;
 -- ============================================================
 CREATE TABLE IF NOT EXISTS certificados (
     id                      BIGSERIAL,
-    -- Identificación del certificado
-    numero_informe          VARCHAR(50)  NOT NULL,          -- Ej: LMD-143-25
-    anio_emision            SMALLINT     NOT NULL,          -- Clave de partición
-
-    -- Datos del cliente
+    numero_informe          VARCHAR(50)  NOT NULL,
+    anio_emision            SMALLINT     NOT NULL,
     nombre_cliente          VARCHAR(255),
     direccion               TEXT,
     atencion_a              VARCHAR(255),
-
-    -- Datos del instrumento
     descripcion_instrumento VARCHAR(255),
     alcance                 TEXT,
     numero_serie            VARCHAR(100),
@@ -49,40 +37,34 @@ CREATE TABLE IF NOT EXISTS certificados (
     modelo                  VARCHAR(100),
     marca                   VARCHAR(100),
     magnitud_evaluada       VARCHAR(100),
-
-    -- Resultados
     resultado_calibracion   TEXT,
     incertidumbre           TEXT,
-
-    -- Condiciones ambientales
     temperatura             VARCHAR(50),
     humedad_relativa        VARCHAR(50),
-
-    -- Fechas
     fecha_recepcion         DATE,
     fecha_calibracion       DATE,
     fecha_emision           DATE,
-
-    -- Método y lugar
     metodo_utilizado        TEXT,
     lugar_calibracion       VARCHAR(255),
-
-    -- Personal
     calibrado_por           VARCHAR(255),
     aprobado_por            VARCHAR(255),
-
-    -- Metadatos del sistema
-    ruta_archivo_origen     TEXT,                           -- ruta del .xlsx original
+    ruta_archivo_origen     TEXT,
     fecha_importacion       TIMESTAMPTZ DEFAULT NOW(),
     importado_por           VARCHAR(100),
     activo                  BOOLEAN DEFAULT TRUE,
-
     PRIMARY KEY (id, anio_emision)
 ) PARTITION BY RANGE (anio_emision);
 
 -- ============================================================
--- PARTICIONES POR AÑO (2017 al 2026)
+-- PARTICIONES POR AÑO (2015 al 2030)
+-- ► 2015 y 2016 añadidas — tus PDFs históricos están aquí
 -- ============================================================
+CREATE TABLE IF NOT EXISTS certificados_2015 PARTITION OF certificados
+    FOR VALUES FROM (2015) TO (2016);
+
+CREATE TABLE IF NOT EXISTS certificados_2016 PARTITION OF certificados
+    FOR VALUES FROM (2016) TO (2017);
+
 CREATE TABLE IF NOT EXISTS certificados_2017 PARTITION OF certificados
     FOR VALUES FROM (2017) TO (2018);
 
@@ -113,12 +95,24 @@ CREATE TABLE IF NOT EXISTS certificados_2025 PARTITION OF certificados
 CREATE TABLE IF NOT EXISTS certificados_2026 PARTITION OF certificados
     FOR VALUES FROM (2026) TO (2027);
 
--- Partición para datos sin año definido o futuros
+CREATE TABLE IF NOT EXISTS certificados_2027 PARTITION OF certificados
+    FOR VALUES FROM (2027) TO (2028);
+
+CREATE TABLE IF NOT EXISTS certificados_2028 PARTITION OF certificados
+    FOR VALUES FROM (2028) TO (2029);
+
+CREATE TABLE IF NOT EXISTS certificados_2029 PARTITION OF certificados
+    FOR VALUES FROM (2029) TO (2030);
+
+CREATE TABLE IF NOT EXISTS certificados_2030 PARTITION OF certificados
+    FOR VALUES FROM (2030) TO (2031);
+
+-- Partición para datos con año fuera de rango
 CREATE TABLE IF NOT EXISTS certificados_otros PARTITION OF certificados
     DEFAULT;
 
 -- ============================================================
--- ÍNDICES (por partición principal, se heredan)
+-- ÍNDICES
 -- ============================================================
 CREATE INDEX IF NOT EXISTS idx_cert_numero_informe
     ON certificados (numero_informe);
@@ -150,7 +144,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     usuario         VARCHAR(50)  NOT NULL UNIQUE,
     password_hash   VARCHAR(255) NOT NULL,
     rol             VARCHAR(50)  NOT NULL DEFAULT 'certificaciones',
-                    -- roles: 'admin' | 'calidad' | 'reportes' | 'certificaciones'
     departamento    VARCHAR(100),
     activo          BOOLEAN DEFAULT TRUE,
     creado_en       TIMESTAMPTZ DEFAULT NOW(),
@@ -158,82 +151,76 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 -- ============================================================
--- TABLA: auditoria (registro de cambios)
+-- TABLA: auditoria
 -- ============================================================
 CREATE TABLE IF NOT EXISTS auditoria (
-    id              BIGSERIAL PRIMARY KEY,
-    usuario_id      INTEGER REFERENCES usuarios(id),
-    accion          VARCHAR(50) NOT NULL,   -- 'INSERT' | 'UPDATE' | 'DELETE' | 'VIEW'
-    tabla           VARCHAR(50),
-    registro_id     BIGINT,
-    datos_antes     JSONB,
-    datos_despues   JSONB,
-    ip_origen       VARCHAR(45),
-    creado_en       TIMESTAMPTZ DEFAULT NOW()
+    id          BIGSERIAL PRIMARY KEY,
+    usuario_id  INTEGER REFERENCES usuarios(id),
+    accion      VARCHAR(50) NOT NULL,
+    tabla       VARCHAR(50),
+    registro_id BIGINT,
+    datos_antes JSONB,
+    datos_despues JSONB,
+    ip_origen   VARCHAR(45),
+    creado_en   TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_auditoria_usuario ON auditoria (usuario_id);
 CREATE INDEX IF NOT EXISTS idx_auditoria_fecha   ON auditoria (creado_en);
 
 -- ============================================================
--- TABLA: importaciones (historial de cargas masivas)
+-- TABLA: importaciones
 -- ============================================================
 CREATE TABLE IF NOT EXISTS importaciones (
-    id                  SERIAL PRIMARY KEY,
-    usuario_id          INTEGER REFERENCES usuarios(id),
-    carpeta_origen      TEXT,
-    total_archivos      INTEGER DEFAULT 0,
-    exitosos            INTEGER DEFAULT 0,
-    fallidos            INTEGER DEFAULT 0,
-    errores             JSONB,
-    iniciado_en         TIMESTAMPTZ DEFAULT NOW(),
-    finalizado_en       TIMESTAMPTZ,
-    estado              VARCHAR(20) DEFAULT 'en_proceso'
-                        -- 'en_proceso' | 'completado' | 'con_errores'
+    id              SERIAL PRIMARY KEY,
+    usuario_id      INTEGER REFERENCES usuarios(id),
+    carpeta_origen  TEXT,
+    total_archivos  INTEGER DEFAULT 0,
+    exitosos        INTEGER DEFAULT 0,
+    fallidos        INTEGER DEFAULT 0,
+    errores         JSONB,
+    iniciado_en     TIMESTAMPTZ DEFAULT NOW(),
+    finalizado_en   TIMESTAMPTZ,
+    estado          VARCHAR(20) DEFAULT 'en_proceso'
 );
 
 -- ============================================================
 -- USUARIOS ADMIN
+-- hash verificado: bcrypt.compare('Adminsidec', hash) = true
 -- ============================================================
-
--- ► Usuario principal: Adminappsidec / Adminsidec
---   Hash generado y verificado con bcrypt.compare() = true
 INSERT INTO usuarios (nombre, usuario, password_hash, rol, departamento)
 VALUES (
     'Administrador App SIDEC',
     'Adminappsidec',
     '$2b$10$noUwyXbAGn04LMmNccrw6.tp8FKzjSB/U68T68cDug6Rg/VYPqpIq',
-    'admin',
-    'Administración'
+    'admin', 'Administración'
 ) ON CONFLICT (usuario) DO UPDATE
     SET password_hash = EXCLUDED.password_hash,
         rol           = 'admin',
         activo        = TRUE;
 
--- ► Usuario heredado: Administrador_Sidec / Adminsidec  (mismo hash, misma contraseña)
 INSERT INTO usuarios (nombre, usuario, password_hash, rol, departamento)
 VALUES (
     'Administrador SIDEC',
     'Administrador_Sidec',
     '$2b$10$noUwyXbAGn04LMmNccrw6.tp8FKzjSB/U68T68cDug6Rg/VYPqpIq',
-    'admin',
-    'Administración'
+    'admin', 'Administración'
 ) ON CONFLICT (usuario) DO UPDATE
     SET password_hash = EXCLUDED.password_hash,
         rol           = 'admin',
         activo        = TRUE;
 
 -- ============================================================
--- VISTA: resumen por año (útil para el panel)
+-- VISTA: resumen por año
 -- ============================================================
 CREATE OR REPLACE VIEW resumen_por_anio AS
 SELECT
     anio_emision,
-    COUNT(*)                            AS total_certificados,
-    COUNT(DISTINCT nombre_cliente)      AS total_clientes,
-    COUNT(DISTINCT marca)               AS total_marcas,
-    MIN(fecha_emision)                  AS primera_emision,
-    MAX(fecha_emision)                  AS ultima_emision
+    COUNT(*)                       AS total_certificados,
+    COUNT(DISTINCT nombre_cliente) AS total_clientes,
+    COUNT(DISTINCT marca)          AS total_marcas,
+    MIN(fecha_emision)             AS primera_emision,
+    MAX(fecha_emision)             AS ultima_emision
 FROM certificados
 WHERE activo = TRUE
 GROUP BY anio_emision

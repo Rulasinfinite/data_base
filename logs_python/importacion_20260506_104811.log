@@ -1,0 +1,43 @@
+[10:48:11] INFO     ======================================================================
+[10:48:11] INFO       DIAGNÓSTICO DEL SISTEMA
+[10:48:11] INFO     ======================================================================
+[10:48:11] INFO     Python: C:\Users\sidec42\Downloads\db_s_beta\venv\Scripts\python.exe
+[10:48:11] INFO     Versión: 3.13.13 (tags/v3.13.13:01104ce, Apr  7 2026, 19:25:48) [MSC v.1944 64 bit (AMD64)]
+[10:48:11] INFO     CWD: C:\Users\sidec42\Downloads\db_s_beta
+[10:48:11] INFO     Sistema: win32
+[10:48:11] INFO     psycopg2: ✅
+[10:48:11] INFO     pdfplumber: ✅
+[10:48:11] INFO     tqdm: ✅
+[10:48:11] INFO     Log: logs_python
+[10:48:11] INFO     ======================================================================
+[10:48:11] INFO     
+🔍 VALIDANDO RUTA:
+[10:48:11] INFO        Ruta recibida: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:11] INFO        Tipo: <class 'str'>
+[10:48:11] INFO        Path normalizado: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:11] INFO        Absoluta: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:11] INFO        ¿Existe?: True
+[10:48:11] INFO        ✅ Es carpeta, contiene 2 items
+[10:48:11] INFO           📄 LMD-4415-17-R1 GT PLASTICS.xlsx
+[10:48:11] INFO           📄 LMD-4496-17-R1 PRECISION R.xlsx
+[10:48:11] INFO     
+📂 ESCANEANDO CARPETA:
+[10:48:11] INFO        Raíz: C:\Users\sidec42\Desktop\certificados historico\rocio\2017\2017 DIMENSIONAL\CERTIFICADOS CORRECIONES
+[10:48:11] INFO        Filtro año: ninguno
+[10:48:11] DEBUG       📁 .
+[10:48:11] DEBUG          ✅ LMD-4415-17-R1 GT PLASTICS.xlsx (empleado=None, año=2017)
+[10:48:11] DEBUG          ✅ LMD-4496-17-R1 PRECISION R.xlsx (empleado=None, año=2017)
+[10:48:11] INFO     
+✅ ESCANEO COMPLETADO:
+[10:48:11] INFO        Carpetas visitadas: 1
+[10:48:11] INFO        Total items: 2
+[10:48:11] INFO        Archivos válidos encontrados: 2
+[10:48:11] INFO        Por tipo: {'excel': 2}
+[10:48:11] ERROR    ❌ Error conectando BD: 'utf-8' codec can't decode byte 0xf3 in position 85: invalid continuation byte
+[10:48:11] ERROR    Traceback (most recent call last):
+  File "C:\Users\sidec42\Downloads\db_s_beta\scripts\importar_masivo_v2.py", line 627, in main
+    conn = psycopg2.connect(**DB_CONFIG)
+  File "C:\Users\sidec42\Downloads\db_s_beta\venv\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xf3 in position 85: invalid continuation byte
+
