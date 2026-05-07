@@ -13,10 +13,13 @@ const { verificarToken, requiereRol } = require('../config/auth');
 // Todas las rutas de admin requieren rol admin
 router.use(verificarToken, requiereRol('admin'));
 
-// ── Rutas absolutas (evitan errores de CWD) ───────────────
-const PROJECT_ROOT = path.join(__dirname, '..');  // ← ESTA LÍNEA FALTABA
+// ── Rutas absolutas ───────────────────────────────────────
+const PROJECT_ROOT = path.join(__dirname, '..');
 const SCRIPT_PATH  = path.join(PROJECT_ROOT, 'scripts', 'importar_masivo.py');
 const PYTHON_EXE   = path.join(PROJECT_ROOT, 'venv', 'Scripts', 'python.exe');
+
+// ── Almacenamiento temporal de progreso (en memoria) ─────
+const progresos = {};
 
 // ============================================================
 // POST /api/admin/escanear
@@ -25,7 +28,6 @@ router.post('/escanear', async (req, res) => {
   const { ruta, empleado, anio } = req.body;
   if (!ruta) return res.status(400).json({ error: 'Ruta requerida.' });
 
-  // Verificar que la carpeta existe (acceso desde el servidor)
   if (!fs.existsSync(ruta)) {
     return res.json({
       total: 0,
@@ -42,7 +44,6 @@ router.post('/escanear', async (req, res) => {
 
     const resultado = await ejecutarPython(args);
 
-    // Usar JSON directo de Python (la salida ya está limpia)
     if (resultado.jsonData) {
       const d = resultado.jsonData;
       return res.json({
@@ -53,7 +54,6 @@ router.post('/escanear', async (req, res) => {
       });
     }
 
-    // Fallback (por si no llegó JSON)
     res.json({
       total:    0,
       por_tipo: { excel: 0, pdf: 0 },
@@ -61,10 +61,8 @@ router.post('/escanear', async (req, res) => {
       subarbol: construirSubarbol(ruta, anio),
       _debug:   resultado.stderr || '',
     });
-
   } catch (e) {
     console.error('[escanear] Error:', e.message);
-    // Fallback usando Node.js
     const conteo = contarArchivosLocal(ruta);
     res.json({
       total:    conteo.total,
@@ -91,7 +89,6 @@ router.post('/importar', async (req, res) => {
     return res.status(400).json({ error: 'Se requiere al menos una carpeta.' });
   }
 
-  // Registrar inicio en la tabla importaciones
   let importacion_id = null;
   try {
     const result = await pool.query(
@@ -109,6 +106,7 @@ router.post('/importar', async (req, res) => {
   let exitosos      = 0;
   let fallidos      = 0;
   let noCerts       = 0;
+  let omitidos      = 0;
   const erroresTotal = [];
 
   try {
@@ -118,7 +116,7 @@ router.post('/importar', async (req, res) => {
       if (carpeta.anio)     args.push('--anio', String(carpeta.anio));
       if (soloEscanear)     args.push('--solo-escanear');
 
-      const resultado = await ejecutarPython(args);
+      const resultado = await ejecutarPython(args, importacion_id);
 
       if (resultado.jsonData) {
         const d = resultado.jsonData;
@@ -126,11 +124,11 @@ router.post('/importar', async (req, res) => {
         exitosos      += d.exitosos        || 0;
         fallidos      += d.fallidos        || 0;
         noCerts       += d.no_certificados || 0;
+        omitidos      += d.omitidos        || 0;
         if (Array.isArray(d.errores)) {
           erroresTotal.push(...d.errores.slice(0, 50));
         }
       } else {
-        // Fallback parseando texto (no debería ocurrir con el nuevo script)
         const stats = parsearResumen(resultado.stdout);
         totalArchivos += stats.total    || 0;
         exitosos      += stats.exitosos || 0;
@@ -141,27 +139,30 @@ router.post('/importar', async (req, res) => {
 
     const duracion = ((Date.now() - inicio) / 1000).toFixed(1) + 's';
 
-    // Actualizar registro de importación
     if (importacion_id) {
       await pool.query(
         `UPDATE importaciones SET
            total_archivos=$1, exitosos=$2, fallidos=$3,
-           errores=$4, finalizado_en=NOW(), estado=$5
-         WHERE id=$6`,
+           omitidos=$4, errores=$5, finalizado_en=NOW(), estado=$6
+         WHERE id=$7`,
         [
-          totalArchivos, exitosos, fallidos,
+          totalArchivos, exitosos, fallidos, omitidos,
           JSON.stringify(erroresTotal.slice(0, 100)),
           fallidos > 0 ? 'con_errores' : 'completado',
           importacion_id,
         ]
       );
+      // Limpiar progreso al finalizar
+      delete progresos[importacion_id];
     }
 
     res.json({
+      importacion_id,
       total:    totalArchivos,
       exitosos,
       fallidos,
       no_certs: noCerts,
+      omitidos,
       duracion,
       errores:  erroresTotal.slice(0, 100),
     });
@@ -173,6 +174,7 @@ router.post('/importar', async (req, res) => {
         `UPDATE importaciones SET estado='con_errores', finalizado_en=NOW() WHERE id=$1`,
         [importacion_id]
       ).catch(() => {});
+      delete progresos[importacion_id];
     }
     res.status(500).json({ error: e.message });
   }
@@ -194,6 +196,15 @@ router.get('/importaciones', async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: 'Error al obtener historial.' });
   }
+});
+
+// ============================================================
+// GET /api/admin/progreso/:id — progreso en tiempo real
+// ============================================================
+router.get('/progreso/:id', (req, res) => {
+  const { id } = req.params;
+  const prog = progresos[id] || { actual: 0, total: 0, pct: 0 };
+  res.json(prog);
 });
 
 // ============================================================
@@ -221,7 +232,7 @@ router.get('/verificar-python', (req, res) => {
 // HELPERS
 // ============================================================
 
-function ejecutarPython(args) {
+function ejecutarPython(args, importacion_id = null) {
   return new Promise((resolve, reject) => {
     if (!fs.existsSync(PYTHON_EXE)) {
       return reject(new Error(`Python del venv no encontrado: ${PYTHON_EXE}`));
@@ -239,7 +250,24 @@ function ejecutarPython(args) {
     let stderr = '';
 
     proc.stdout.on('data', d => { stdout += d; });
-    proc.stderr.on('data', d => { stderr += d; });
+
+    proc.stderr.on('data', d => {
+      stderr += d;
+      // Buscar líneas de progreso "Procesados X/Total..."
+      const lineas = d.toString().split('\n');
+      lineas.forEach(linea => {
+        const match = linea.match(/Procesados (\d+)\/(\d+)/);
+        if (match && importacion_id) {
+          const actual = parseInt(match[1]);
+          const total = parseInt(match[2]);
+          progresos[importacion_id] = {
+            actual,
+            total,
+            pct: Math.round((actual / total) * 100)
+          };
+        }
+      });
+    });
 
     proc.on('close', code => {
       if (stderr) console.log('[python stderr]', stderr.slice(0, 800));
@@ -261,8 +289,8 @@ function ejecutarPython(args) {
 
     const timer = setTimeout(() => {
       proc.kill();
-      reject(new Error('Timeout: la operación tardó más de 30 minutos.'));
-    }, 30 * 60 * 1000);
+      reject(new Error('Timeout: la operación tardó más de 4 horas.'));
+    }, 4 * 60 * 60 * 1000);
 
     proc.on('close', () => clearTimeout(timer));
   });

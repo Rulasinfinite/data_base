@@ -5,323 +5,374 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SIDEC — Importar archivos</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ── Layout principal ──────────────────────────────── */
-    .import-grid {
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    /* ── Variables ───────────────────────────────────── */
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .page { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+
+    /* ── Layout principal ───────────────────────────── */
+    .app-layout {
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 16px;
+      grid-template-columns: 320px 1fr;
+      gap: 28px;
       align-items: start;
     }
-    .config-panel { display: flex; flex-direction: column; gap: 12px; }
 
-    /* ── Tarjeta de agregar carpeta ────────────────────── */
-    .add-carpeta-form {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-      box-shadow: var(--shadow-sm);
+    /* ── Panel izquierdo: Pasos ─────────────────────── */
+    .steps-panel { display: flex; flex-direction: column; gap: 0; }
+    .step-card {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      position: relative;
+      transition: all var(--transition);
+      cursor: default;
     }
-    .add-carpeta-form h3 {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin: 0 0 12px 0;
+    .step-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
+    }
+    .step-card.completed {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .step-card .step-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 12px;
+      background: var(--gray-100);
+      transition: all var(--transition);
     }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-    /* ── Árbol de carpetas ─────────────────────────────── */
-    .tree-container {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-    }
-    .tree-header {
-      background: var(--surface2);
-      padding: 10px 14px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-    }
-    .tree-header span {
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
-      font-family: var(--font-mono);
-    }
-    .tree-clear-btn {
-      background: transparent;
-      border: 1px solid var(--border2);
-      color: var(--text3);
+    .step-card.active .step-icon { background: var(--primary-light); }
+    .step-card.completed .step-icon { background: var(--success-light); }
+    .step-card .step-label {
       font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all .15s;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-400);
+      margin-bottom: 4px;
     }
-    .tree-clear-btn:hover { background: var(--surface2); color: var(--text); }
-    .tree-body {
-      padding: 12px;
-      min-height: 200px;
-      max-height: 380px;
-      overflow-y: auto;
+    .step-card .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin: 0;
     }
-    .tree-empty {
-      color: var(--text4);
-      font-size: 13px;
-      font-family: var(--font-mono);
-      padding: 24px 0;
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    /* ── Nodos del árbol ───────────────────────────────── */
-    .tree-node { user-select: none; }
-    .tree-node-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 6px; border-radius: 6px;
-      cursor: pointer; transition: background .1s;
-      font-family: var(--font-mono); font-size: 12px;
-    }
-    .tree-node-row:hover { background: var(--surface2); }
-    .tree-node-row.selected { background: rgba(var(--primary-rgb), .15); }
-    .tree-node-row .icon { font-size: 13px; flex-shrink: 0; }
-    .tree-node-row .name {
-      color: var(--text2);
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .tree-node-row .tag {
-      font-size: 10px;
-      padding: 1px 6px;
-      border-radius: 99px;
-      background: var(--surface2);
-      color: var(--text3);
-      border: 1px solid var(--border);
-    }
-    .tree-node-row .tag.empleado {
-      background: rgba(var(--primary-rgb), .15);
-      color: var(--primary);
-      border-color: rgba(var(--primary-rgb), .2);
-    }
-    .tree-node-row .tag.anio {
-      background: rgba(5,122,85,.15);
-      color: #059669;
-      border-color: rgba(5,122,85,.2);
-    }
-    [data-theme="dark"] .tree-node-row .tag.anio { color: #6ee7b7; }
-    .tree-node-row .tag.mes {
-      background: rgba(146,64,14,.15);
-      color: #92400e;
-      border-color: rgba(146,64,14,.2);
-    }
-    [data-theme="dark"] .tree-node-row .tag.mes { color: #fcd34d; }
-    .tree-children {
-      margin-left: 18px;
-      border-left: 1px solid var(--border);
-      padding-left: 8px;
-    }
-    .tree-toggle { color: var(--text4); font-size: 10px; width: 12px; text-align: center; flex-shrink: 0; }
-
-    /* ── Panel de log / terminal ───────────────────────── */
-    .log-container {
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-    }
-    .log-header {
-      background: var(--surface2);
-      padding: 10px 14px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-    }
-    .log-header span { color: var(--text); font-size: 13px; font-weight: 500; }
-    .log-body {
-      padding: 14px;
-      min-height: 420px;
-      max-height: 420px;
-      overflow-y: auto;
-      font-family: var(--font-mono);
+    .step-card .step-subtitle {
       font-size: 12px;
-      background: var(--surface);
-      line-height: 1.65;
+      color: var(--gray-500);
+      margin-top: 4px;
     }
-    /* Colores del log que funcionan en ambos temas */
-    .log-line { padding: 1px 0; }
-    .log-ok   { color: #22c55e; }
-    .log-warn { color: #f59e0b; }
-    .log-err  { color: #ef4444; }
-    .log-info { color: var(--primary); }
-    .log-dim  { color: var(--text3); }
-    .log-sep  { color: var(--border2); padding: 4px 0; letter-spacing: .05em; }
-
-    /* ── Tabs ──────────────────────────────────────────── */
-    .tab-btn {
-      padding: 8px 18px;
-      font-size: 13px;
-      font-weight: 500;
-      border: 1px solid var(--border);
-      border-bottom: none;
-      background: var(--surface2);
-      color: var(--text3);
-      cursor: pointer;
-      border-radius: var(--radius) var(--radius) 0 0;
-      margin-right: 2px;
-      transition: all .15s;
-    }
-    .tab-btn:hover { background: var(--surface); color: var(--text); }
-    .tab-btn.active {
-      background: var(--surface);
-      color: var(--text);
-      border-color: var(--border);
-      border-bottom-color: var(--surface);
-      position: relative;
-      bottom: -1px;
+    .step-connector {
+      width: 2px;
+      height: 8px;
+      background: var(--gray-200);
+      margin-left: 22px;
     }
 
-    /* ── Progress bar ──────────────────────────────────── */
-    .progress-wrap {
-      background: var(--surface2);
-      border-radius: 4px;
+    /* ── Panel derecho ──────────────────────────────── */
+    .main-panel {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      min-height: 520px;
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
-      height: 7px;
-      margin: 6px 0;
-      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
     }
-    .progress-bar {
+
+    /* ── Estado 1: Vacío ────────────────────────────── */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      text-align: center;
+      color: var(--gray-400);
+    }
+    .empty-state svg { margin-bottom: 20px; opacity: 0.6; }
+    .empty-state h3 { color: var(--gray-600); font-size: 16px; margin: 0 0 8px; font-weight: 500; }
+    .empty-state p { color: var(--gray-400); font-size: 13px; margin: 0; }
+
+    /* ── Zona de arrastre ───────────────────────────── */
+    .drop-zone {
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--radius);
+      padding: 40px 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: var(--gray-50);
+      margin: 20px;
+    }
+    .drop-zone:hover { border-color: var(--primary); background: var(--primary-light); }
+    .drop-zone.drag-over { border-color: var(--primary); background: var(--primary-light); transform: scale(1.01); }
+    .drop-zone .drop-icon { font-size: 40px; margin-bottom: 12px; }
+    .drop-zone .drop-text { font-size: 14px; font-weight: 500; color: var(--gray-600); margin: 0; }
+    .drop-zone .drop-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
+    .drop-zone input[type="file"] { display: none; }
+
+    /* ── Barra de progreso ──────────────────────────── */
+    .progress-section { padding: 24px 28px; }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .progress-header span { font-size: 13px; color: var(--gray-500); font-weight: 500; }
+    .progress-header .pct { font-size: 18px; font-weight: 700; color: var(--primary); }
+    .progress-track {
+      height: 10px;
+      background: var(--gray-100);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--primary), #60a5fa);
-      transition: width .4s ease;
-      border-radius: 4px;
+      border-radius: 8px;
+      transition: width 0.6s ease;
+      width: 0%;
     }
 
-    /* ── Stats de importación ──────────────────────────── */
-    .import-stats {
+    /* ── Contadores en tiempo real ──────────────────── */
+    .live-counters {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 0 28px 20px;
     }
-    .import-stat {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 12px 14px;
+    .live-counter {
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      padding: 16px;
       text-align: center;
-      box-shadow: var(--shadow-sm);
     }
-    .import-stat .val {
-      font-size: 22px;
+    .live-counter .val {
+      font-size: 26px;
       font-weight: 700;
-      color: var(--text);
-      font-family: var(--font-mono);
+      color: var(--gray-800);
     }
-    .import-stat .lbl { font-size: 11px; color: var(--text3); margin-top: 3px; font-weight: 500; }
-    .import-stat.ok   .val { color: #22c55e; }
-    .import-stat.warn .val { color: #f59e0b; }
-    .import-stat.err  .val { color: #ef4444; }
+    .live-counter .lbl { font-size: 11px; color: var(--gray-500); margin-top: 4px; font-weight: 500; }
+    .live-counter.ok .val { color: var(--success); }
+    .live-counter.warn .val { color: var(--warning); }
+    .live-counter.err .val { color: var(--danger); }
 
-    /* ── Opciones ──────────────────────────────────────── */
-    .opciones-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
+    /* ── Dashboard de resultados ────────────────────── */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      padding: 24px 28px;
     }
-    .opciones-header {
-      background: var(--surface2);
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .opciones-body { padding: 14px; }
-    .opcion-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--text2);
-      margin-bottom: 12px;
-      cursor: pointer;
-      padding: 6px 8px;
-      border-radius: var(--radius);
-      transition: background .1s;
-    }
-    .opcion-label:last-child { margin-bottom: 0; }
-    .opcion-label:hover { background: var(--surface2); }
-    .opcion-label input[type="checkbox"] { accent-color: var(--primary); width: 15px; height: 15px; }
-
-    /* ── Historial ─────────────────────────────────────── */
-    .historial-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-    .historial-row:last-child { border-bottom: none; }
-    .hist-estado {
-      font-size: 11px;
-      font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 99px;
-      min-width: 96px;
+    .result-card {
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      padding: 20px;
       text-align: center;
-      white-space: nowrap;
+      transition: all var(--transition);
     }
-    .hist-completado { background: rgba(5,150,105,.15); color: #059669; border: 1px solid rgba(5,150,105,.25); }
-    .hist-errores    { background: rgba(245,158,11,.15); color: #d97706; border: 1px solid rgba(245,158,11,.25); }
-    .hist-proceso    { background: rgba(var(--primary-rgb),.12); color: var(--primary); border: 1px solid rgba(var(--primary-rgb),.2); }
-    [data-theme="dark"] .hist-completado { color: #6ee7b7; }
-    [data-theme="dark"] .hist-errores    { color: #fcd34d; }
-
-    /* ── Botón limpiar log ─────────────────────────────── */
-    .log-clear-btn {
-      background: transparent;
-      border: 1px solid var(--border2);
-      color: var(--text3);
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all .15s;
+    .result-card .val {
+      font-size: 30px;
+      font-weight: 700;
     }
-    .log-clear-btn:hover { background: var(--surface2); color: var(--text); }
+    .result-card .lbl { font-size: 12px; color: var(--gray-500); margin-top: 4px; font-weight: 500; }
+    .result-card.ok { background: var(--success-light); }
+    .result-card.ok .val { color: var(--success); }
+    .result-card.warn { background: var(--warning-light); }
+    .result-card.warn .val { color: var(--warning); }
+    .result-card.err { background: var(--danger-light); }
+    .result-card.err .val { color: var(--danger); }
+    .result-card.info { background: var(--primary-light); }
+    .result-card.info .val { color: var(--primary); }
 
-    /* ── Header de página ──────────────────────────────── */
-    .page-header {
+    /* ── Gráfico circular ───────────────────────────── */
+    .donut-wrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      gap: 24px;
+      padding: 10px 28px 24px;
     }
-    .page-title { font-size: 20px; font-weight: 700; color: var(--text); margin: 0 0 4px 0; }
-    .page-subtitle { font-size: 13px; color: var(--text3); margin: 0; }
+    .donut {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: conic-gradient(var(--success) calc(var(--pct) * 1%), var(--gray-100) 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .donut::after {
+      content: '';
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: white;
+      position: absolute;
+    }
+    .donut .donut-val {
+      position: relative;
+      z-index: 1;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+    .donut-legend { font-size: 12px; color: var(--gray-500); line-height: 1.8; }
 
-    /* ── Scrollbar personalizado para log ──────────────── */
-    .log-body::-webkit-scrollbar,
-    .tree-body::-webkit-scrollbar { width: 5px; }
-    .log-body::-webkit-scrollbar-track,
-    .tree-body::-webkit-scrollbar-track { background: var(--surface2); }
-    .log-body::-webkit-scrollbar-thumb,
-    .tree-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+    /* ── Resumen final ──────────────────────────────── */
+    .summary-row {
+      display: flex;
+      gap: 24px;
+      padding: 16px 28px 24px;
+      font-size: 12px;
+      color: var(--gray-500);
+      flex-wrap: wrap;
+    }
+    .summary-row span { font-weight: 500; color: var(--gray-700); }
 
+    /* ── Panel de escaneo ───────────────────────────── */
+    .scan-result {
+      padding: 24px 28px;
+      text-align: center;
+    }
+    .scan-result .big-num {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .scan-result .label { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ── Drawer / Modal para terminal ───────────────── */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .drawer-overlay.open { display: flex; }
+    .drawer {
+      background: var(--gray-900);
+      color: #e5e7eb;
+      width: 100%;
+      max-width: 800px;
+      max-height: 70vh;
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow-y: auto;
+      padding: 24px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .drawer-header h3 { color: white; font-size: 14px; font-weight: 600; margin: 0; font-family: 'Inter', sans-serif; }
+    .drawer-close {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .log-entry { padding: 2px 0; }
+    .log-ok   { color: #4ade80; }
+    .log-warn { color: #fbbf24; }
+    .log-err  { color: #f87171; }
+    .log-info { color: #60a5fa; }
+    .log-dim  { color: #9ca3af; }
+
+    /* ── Botones ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+      font-family: inherit;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #1d4ed8; box-shadow: var(--shadow); }
+    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); }
+    .btn-outline:hover { background: var(--gray-50); }
+    .btn-ghost { background: transparent; color: var(--gray-500); }
+    .btn-ghost:hover { background: var(--gray-100); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Spinner ─────────────────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ──────────────────────────────────── */
     @media (max-width: 900px) {
-      .import-grid    { grid-template-columns: 1fr; }
-      .import-stats   { grid-template-columns: repeat(2, 1fr); }
+      .app-layout { grid-template-columns: 1fr; }
+      .results-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -330,525 +381,407 @@
 <nav class="navbar" id="navbar"></nav>
 
 <div class="page">
-
   <!-- Header -->
-  <div class="page-header">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
     <div>
-      <h1 class="page-title">📂 Importar archivos</h1>
-      <p class="page-subtitle">Organiza y carga certificados por empleado, año y mes</p>
+      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">📂 Importar certificados</h1>
+      <p style="font-size:13px;color:var(--gray-500);margin:4px 0 0;">Selecciona una carpeta y el sistema procesará los archivos automáticamente</p>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-outline btn-sm" onclick="cargarHistorial()">🕐 Historial</button>
-      <button class="btn btn-primary btn-sm" id="btn-iniciar" onclick="iniciarImportacion()" disabled>
-        ▶ Iniciar importación
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" onclick="toggleDrawer()" id="btn-terminal" style="font-size:13px;">
+        💻 Detalles técnicos
+      </button>
+      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;">
+        🕐 Historial
       </button>
     </div>
   </div>
 
-  <!-- Stats (ocultas hasta que se inicie) -->
-  <div class="import-stats" id="import-stats" style="display:none">
-    <div class="import-stat">
-      <div class="val" id="st-total">0</div>
-      <div class="lbl">Total archivos</div>
+  <!-- Layout principal -->
+  <div class="app-layout">
+    <!-- Panel izquierdo: Pasos -->
+    <div class="steps-panel">
+      <div class="step-card active" id="step-select">
+        <div class="step-icon">📁</div>
+        <div class="step-label">Paso 1</div>
+        <div class="step-title">Seleccionar carpeta</div>
+        <div class="step-subtitle">Elige la carpeta con los certificados</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card" id="step-review">
+        <div class="step-icon">🔍</div>
+        <div class="step-label">Paso 2</div>
+        <div class="step-title">Revisar</div>
+        <div class="step-subtitle">Confirma los archivos encontrados</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card" id="step-import">
+        <div class="step-icon">⬆️</div>
+        <div class="step-label">Paso 3</div>
+        <div class="step-title">Importar</div>
+        <div class="step-subtitle">Inicia la carga a la base de datos</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card" id="step-results">
+        <div class="step-icon">📊</div>
+        <div class="step-label">Paso 4</div>
+        <div class="step-title">Resultados</div>
+        <div class="step-subtitle">Revisa el resumen final</div>
+      </div>
     </div>
-    <div class="import-stat ok">
-      <div class="val" id="st-ok">0</div>
-      <div class="lbl">Exitosos</div>
-    </div>
-    <div class="import-stat warn">
-      <div class="val" id="st-skip">0</div>
-      <div class="lbl">No certificados</div>
-    </div>
-    <div class="import-stat err">
-      <div class="val" id="st-err">0</div>
-      <div class="lbl">Errores</div>
-    </div>
-  </div>
 
-  <!-- Barra de progreso -->
-  <div id="progress-container" style="display:none;margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px">
-      <span id="progress-label">Preparando...</span>
-      <span id="progress-pct" style="font-family:var(--font-mono);font-weight:600;color:var(--text)">0%</span>
-    </div>
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
-    </div>
-  </div>
+    <!-- Panel derecho: Dinámico -->
+    <div class="main-panel" id="main-panel">
+      <!-- Estado 1: Vacío -->
+      <div id="state-empty" class="empty-state">
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+          <rect x="20" y="10" width="60" height="45" rx="6" stroke="#d1d5db" stroke-width="2" fill="#f9fafb"/>
+          <rect x="28" y="18" width="30" height="3" rx="1" fill="#e5e7eb"/>
+          <rect x="28" y="26" width="44" height="3" rx="1" fill="#e5e7eb"/>
+          <rect x="28" y="34" width="20" height="3" rx="1" fill="#e5e7eb"/>
+          <path d="M32 46L44 60L68 32" stroke="#9ca3af" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <h3>Selecciona una carpeta para comenzar</h3>
+        <p>Arrastra la carpeta aquí o usa el botón de abajo</p>
 
-  <div class="import-grid">
+        <!-- Zona de arrastre -->
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('folder-input').click()">
+          <div class="drop-icon">📂</div>
+          <p class="drop-text">Arrastra tu carpeta aquí</p>
+          <p class="drop-hint">o haz clic para seleccionar</p>
+          <input type="file" id="folder-input" webkitdirectory multiple style="display:none;">
+        </div>
 
-    <!-- ═══ Panel izquierdo ═══ -->
-    <div class="config-panel">
-
-      <!-- Agregar carpeta -->
-      <div class="add-carpeta-form">
-        <h3>➕ Agregar carpeta de archivos</h3>
-        <div class="form-group" style="margin-bottom:10px">
-          <label class="form-label">Ruta de la carpeta</label>
+        <!-- Ruta manual -->
+        <div style="display:flex;gap:8px;margin-top:16px;width:100%;max-width:420px;">
           <input class="form-control" type="text" id="input-ruta"
-                 placeholder="Ej: C:\Instrumentos\pedro_garcia">
-        </div>
-        <div class="form-row">
-          <div class="form-group" style="margin-bottom:10px">
-            <label class="form-label">Código de empleado</label>
-            <input class="form-control" type="text" id="input-empleado"
-                   placeholder="pedro_garcia">
-          </div>
-          <div class="form-group" style="margin-bottom:10px">
-            <label class="form-label">Año (opcional)</label>
-            <select class="form-control" id="input-anio">
-              <option value="">Todos los años</option>
-              <option>2015</option><option>2016</option><option>2017</option>
-              <option>2018</option><option>2019</option><option>2020</option>
-              <option>2021</option><option>2022</option><option>2023</option>
-              <option>2024</option><option>2025</option><option>2026</option>
-              <option>2027</option><option>2028</option><option>2029</option><option>2030</option>
-            </select>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-outline btn-sm" style="flex:1" onclick="escanearCarpeta()">
-            🔍 Escanear
-          </button>
-          <button class="btn btn-primary btn-sm" style="flex:1" onclick="agregarCarpeta()">
-            ➕ Agregar
+                 placeholder="O pega la ruta: C:\Instrumentos\..."
+                 style="flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:10px;font-size:13px;">
+          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;">
+            Escanear
           </button>
         </div>
       </div>
 
-      <!-- Árbol de carpetas configuradas -->
-      <div class="tree-container">
-        <div class="tree-header">
-          <span>📁 Carpetas configuradas</span>
-          <button class="tree-clear-btn" onclick="limpiarCarpetas()">Limpiar</button>
+      <!-- Estado 2: Escaneo / Revisión -->
+      <div id="state-scan" style="display:none;padding:24px 28px;text-align:center;">
+        <div class="scan-result">
+          <div class="big-num" id="scan-count">—</div>
+          <div class="label" id="scan-label">archivos encontrados</div>
         </div>
-        <div class="tree-body" id="tree-body">
-          <div class="tree-empty">
-            No hay carpetas configuradas.<br>Agrega una carpeta arriba.
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:20px;">
+          <button class="btn btn-outline" onclick="resetear()">Cancelar</button>
+          <button class="btn btn-primary" id="btn-iniciar-import" onclick="iniciarImportacion()">
+            ⬆️ Iniciar importación
+          </button>
+        </div>
+      </div>
+
+      <!-- Estado 3: Procesando -->
+      <div id="state-processing" style="display:none;">
+        <div class="progress-section">
+          <div class="progress-header">
+            <span id="progress-label">Procesando archivos...</span>
+            <span class="pct" id="progress-pct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
           </div>
         </div>
-      </div>
-
-      <!-- Opciones -->
-      <div class="opciones-card">
-        <div class="opciones-header">⚙️ Opciones de importación</div>
-        <div class="opciones-body">
-          <label class="opcion-label">
-            <input type="checkbox" id="opt-soloescanear">
-            Solo escanear (sin importar a la BD)
-          </label>
-          <label class="opcion-label">
-            <input type="checkbox" id="opt-skip-dup" checked>
-            Omitir duplicados automáticamente
-          </label>
-          <label class="opcion-label">
-            <input type="checkbox" id="opt-pdf" checked>
-            Procesar archivos PDF
-          </label>
+        <div class="live-counters">
+          <div class="live-counter"><div class="val" id="live-total">0</div><div class="lbl">Procesados</div></div>
+          <div class="live-counter ok"><div class="val" id="live-ok">0</div><div class="lbl">Importados</div></div>
+          <div class="live-counter err"><div class="val" id="live-err">0</div><div class="lbl">Errores</div></div>
         </div>
       </div>
 
-    </div><!-- /config-panel -->
-
-    <!-- ═══ Panel derecho: log ═══ -->
-    <div>
-      <!-- Tabs -->
-      <div style="display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--border)">
-        <button class="tab-btn active" onclick="cambiarTab('log')"    id="tab-log">Terminal</button>
-        <button class="tab-btn"        onclick="cambiarTab('hist')"   id="tab-hist">Historial</button>
-        <button class="tab-btn"        onclick="cambiarTab('errors')" id="tab-errors">
-          Errores <span id="errors-badge" style="display:none;background:#ef4444;color:#fff;font-size:10px;
-            padding:1px 5px;border-radius:99px;margin-left:4px;font-weight:700" id="errors-count-badge">0</span>
-        </button>
-      </div>
-
-      <!-- Tab: Terminal -->
-      <div id="panel-log" class="log-container"
-           style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
-        <div class="log-header">
-          <span>🖥 Terminal de importación</span>
-          <button class="log-clear-btn" onclick="limpiarLog()">Limpiar</button>
-        </div>
-        <div class="log-body" id="log-body">
-          <div class="log-line log-dim">SIDEC Sistema de Importación v1.0</div>
-          <div class="log-line log-dim">─────────────────────────────────</div>
-          <div class="log-line log-info">Listo. Configura una carpeta y presiona Escanear.</div>
-          <div class="log-line log-dim"></div>
-          <div class="log-line log-warn">⚠ IMPORTANTE: El servidor Node debe llamar al Python del venv,</div>
-          <div class="log-line log-warn">  no al Python del sistema.</div>
-        </div>
-      </div>
-
-      <!-- Tab: Historial -->
-      <div id="panel-hist" style="display:none">
-        <div class="card" style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg);border-top:none">
-          <div class="card-body" id="historial-body">
-            <div class="empty-state">
-              <div style="font-size:32px;margin-bottom:8px">🕐</div>
-              <p>No hay importaciones registradas aún.</p>
+      <!-- Estado 4: Resultados -->
+      <div id="state-results" style="display:none;">
+        <div style="padding:24px 28px 0;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+            <span style="font-size:20px;">✅</span>
+            <div>
+              <div style="font-weight:600;color:var(--gray-800);">Importación completada</div>
+              <div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Tab: Errores -->
-      <div id="panel-errors" style="display:none">
-        <div class="log-container"
-             style="border-radius:0 var(--radius-lg) var(--radius-lg) var(--radius-lg)">
-          <div class="log-header">
-            <span>❌ Archivos con errores</span>
-            <span id="errors-count" style="font-size:12px;color:var(--text3);font-family:var(--font-mono)">0 errores</span>
+        <div class="results-grid">
+          <div class="result-card info"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div></div>
+          <div class="result-card ok"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div></div>
+          <div class="result-card warn"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div></div>
+          <div class="result-card err"><div class="val" id="res-err">0</div><div class="lbl">Errores</div></div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut" id="donut" style="--pct:0;">
+            <div class="donut-val" id="donut-val">0%</div>
           </div>
-          <div class="log-body" id="errors-body">
-            <div class="log-line log-dim">Sin errores registrados.</div>
+          <div class="donut-legend">
+            <div>🟢 Éxito: <b id="leg-ok">0</b></div>
+            <div>🟡 Advertencias: <b id="leg-warn">0</b></div>
+            <div>🔴 Errores: <b id="leg-err">0</b></div>
           </div>
         </div>
+        <div class="summary-row">
+          <div>📁 Carpeta: <span id="sum-carpeta">—</span></div>
+          <div>⏱ Duración: <span id="sum-duracion">—</span></div>
+        </div>
+        <div style="padding:0 28px 24px;display:flex;gap:8px;">
+          <button class="btn btn-primary" onclick="resetear()">Nueva importación</button>
+          <button class="btn btn-outline" onclick="toggleDrawer()">Ver detalles técnicos</button>
+        </div>
       </div>
-
-    </div><!-- /panel derecho -->
-  </div><!-- /import-grid -->
-
-  <!-- Historial de importaciones (tarjeta inferior) -->
-  <div class="card" style="margin-top:20px;display:none" id="card-historial">
-    <div class="card-header">
-      <span class="card-title">🕐 Historial de importaciones</span>
-    </div>
-    <div class="card-body" id="historial-content">
-      <div class="empty-state"><p>Cargando...</p></div>
     </div>
   </div>
+</div>
 
-</div><!-- /page -->
+<!-- Drawer: Terminal técnica -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="if(event.target===this) toggleDrawer()">
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h3>💻 Terminal de importación</h3>
+      <button class="drawer-close" onclick="toggleDrawer()">✕ Cerrar</button>
+    </div>
+    <div id="drawer-log">
+      <div class="log-entry log-dim">SIDEC Sistema de Importación v1.0</div>
+      <div class="log-entry log-dim">──────────────────────────</div>
+      <div class="log-entry log-info">Terminal lista. Los logs aparecerán aquí durante la importación.</div>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 <script>
 if (!Auth.requireLogin()) throw new Error('not logged');
 renderNavbar('importar');
 
-// ── Estado ────────────────────────────────────────────────
-let carpetas  = [];
-let errores   = [];
+// ── Estado global ──────────────────────────────────────
+let carpetas = [];
+let errores = [];
 let importando = false;
+let importacionActualId = null;
+let intervaloProgreso = null;
+let rutaActual = '';
+let archivosEncontrados = 0;
 
-// ── Tabs ──────────────────────────────────────────────────
-function cambiarTab(tab) {
-  ['log','hist','errors'].forEach(t => {
-    document.getElementById(`panel-${t}`).style.display = 'none';
-    document.getElementById(`tab-${t}`).classList.remove('active');
+// ── Referencias DOM ────────────────────────────────────
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+// ── Cambio de estado visual ────────────────────────────
+function setState(state) {
+  ['empty','scan','processing','results'].forEach(s => {
+    const el = document.getElementById(`state-${s}`);
+    if (el) el.style.display = 'none';
   });
-  document.getElementById(`panel-${tab}`).style.display = 'block';
-  document.getElementById(`tab-${tab}`).classList.add('active');
+  const target = document.getElementById(`state-${state}`);
+  if (target) target.style.display = '';
+
+  // Actualizar pasos
+  const steps = ['select','review','import','results'];
+  steps.forEach(s => document.getElementById(`step-${s}`).classList.remove('active','completed'));
+  if (state === 'empty') {
+    document.getElementById('step-select').classList.add('active');
+  } else if (state === 'scan') {
+    document.getElementById('step-select').classList.add('completed');
+    document.getElementById('step-review').classList.add('active');
+  } else if (state === 'processing') {
+    document.getElementById('step-select').classList.add('completed');
+    document.getElementById('step-review').classList.add('completed');
+    document.getElementById('step-import').classList.add('active');
+  } else if (state === 'results') {
+    document.getElementById('step-select').classList.add('completed');
+    document.getElementById('step-review').classList.add('completed');
+    document.getElementById('step-import').classList.add('completed');
+    document.getElementById('step-results').classList.add('active');
+  }
 }
 
-// ── Log ───────────────────────────────────────────────────
-function log(msg, tipo = 'dim') {
-  const body = document.getElementById('log-body');
-  const line = document.createElement('div');
-  line.className = `log-line log-${tipo}`;
+// ── Terminal (drawer) ──────────────────────────────────
+function toggleDrawer() {
+  const overlay = document.getElementById('drawer-overlay');
+  overlay.classList.toggle('open');
+}
+function logTerminal(msg, tipo = 'dim') {
+  const body = document.getElementById('drawer-log');
+  const entry = document.createElement('div');
+  entry.className = `log-entry log-${tipo}`;
   const ts = new Date().toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  line.textContent = `[${ts}] ${msg}`;
-  body.appendChild(line);
+  entry.textContent = `[${ts}] ${msg}`;
+  body.appendChild(entry);
   body.scrollTop = body.scrollHeight;
 }
-function logSep() {
-  const body = document.getElementById('log-body');
-  const line = document.createElement('div');
-  line.className = 'log-line log-sep';
-  line.textContent = '─'.repeat(50);
-  body.appendChild(line);
-}
-function limpiarLog() {
-  document.getElementById('log-body').innerHTML =
-    '<div class="log-line log-dim">Log limpiado.</div>';
-}
+function logSepTerminal() { logTerminal('─'.repeat(45), 'dim'); }
 
-// ── Árbol de carpetas ─────────────────────────────────────
-function renderTree() {
-  const body = document.getElementById('tree-body');
-  if (carpetas.length === 0) {
-    body.innerHTML = '<div class="tree-empty">No hay carpetas configuradas.<br>Agrega una carpeta arriba.</div>';
-    document.getElementById('btn-iniciar').disabled = true;
-    return;
+// ── Drag & Drop ────────────────────────────────────────
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const items = e.dataTransfer.files;
+  if (items.length > 0) {
+    const path = items[0].path || items[0].webkitRelativePath || '';
+    const carpeta = path.split('\\').slice(0,-1).join('\\') || path;
+    document.getElementById('input-ruta').value = carpeta;
+    agregarYEscanear();
   }
-  document.getElementById('btn-iniciar').disabled = false;
-  body.innerHTML = '';
+});
 
-  carpetas.forEach((c, idx) => {
-    const node = document.createElement('div');
-    node.className = 'tree-node';
-    node.innerHTML = `
-      <div class="tree-node-row" onclick="seleccionarCarpeta(${idx})">
-        <span class="icon">📁</span>
-        <span class="name" title="${c.ruta}">${c.ruta.split('\\').pop() || c.ruta.split('/').pop() || c.ruta}</span>
-        ${c.empleado ? `<span class="tag empleado">${c.empleado}</span>` : ''}
-        ${c.anio     ? `<span class="tag anio">${c.anio}</span>` : ''}
-        <button onclick="eliminarCarpeta(event,${idx})"
-                style="margin-left:auto;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);
-                       color:#ef4444;font-size:11px;padding:1px 7px;border-radius:4px;cursor:pointer">✕</button>
-      </div>
-      ${c.subarbol ? renderSubarbol(c.subarbol) : ''}
-    `;
-    body.appendChild(node);
-  });
-}
-
-function renderSubarbol(items) {
-  if (!items || items.length === 0) return '';
-  let html = '<div class="tree-children">';
-  items.forEach(item => {
-    const icon = item.tipo === 'anio' ? '📅' : item.tipo === 'mes' ? '📆' : item.tipo === 'archivo' ? '📄' : '📁';
-    const tag  = item.tipo === 'anio' ? 'anio' : item.tipo === 'mes' ? 'mes' : '';
-    html += `
-      <div class="tree-node">
-        <div class="tree-node-row">
-          <span class="icon">${icon}</span>
-          <span class="name">${item.nombre}</span>
-          ${tag ? `<span class="tag ${tag}">${item.tipo}</span>` : ''}
-          ${item.count ? `<span class="tag">${item.count} arch.</span>` : ''}
-        </div>
-        ${item.hijos ? renderSubarbol(item.hijos) : ''}
-      </div>`;
-  });
-  html += '</div>';
-  return html;
-}
-
-function seleccionarCarpeta(idx) {
-  document.querySelectorAll('.tree-node-row').forEach(r => r.classList.remove('selected'));
-}
-function eliminarCarpeta(e, idx) {
-  e.stopPropagation();
-  carpetas.splice(idx, 1);
-  renderTree();
-  log('Carpeta eliminada de la lista.', 'warn');
-}
-function limpiarCarpetas() {
-  carpetas = [];
-  renderTree();
-  log('Lista de carpetas limpiada.', 'warn');
-}
-
-// ── Agregar carpeta ───────────────────────────────────────
-function agregarCarpeta() {
-  const ruta     = document.getElementById('input-ruta').value.trim();
-  const empleado = document.getElementById('input-empleado').value.trim();
-  const anio     = document.getElementById('input-anio').value;
-
-  if (!ruta) { showAlert('Ingresa la ruta de la carpeta.'); return; }
-  if (carpetas.find(c => c.ruta === ruta)) {
-    showAlert('Esa carpeta ya está en la lista.', 'error');
-    return;
+// ── Input de carpeta nativo ────────────────────────────
+document.getElementById('folder-input').addEventListener('change', function() {
+  const files = this.files;
+  if (files.length > 0) {
+    const path = files[0].webkitRelativePath || files[0].name;
+    const carpeta = path.split('/').slice(0,-1).join('/') || path;
+    document.getElementById('input-ruta').value = carpeta;
+    agregarYEscanear();
   }
+});
 
-  carpetas.push({ ruta, empleado: empleado || null, anio: anio || null, subarbol: null });
-  renderTree();
-
-  log(`✅ Carpeta agregada: ${ruta}`, 'ok');
-  if (empleado) log(`   Empleado: ${empleado}`, 'info');
-  if (anio)     log(`   Año:      ${anio}`, 'info');
-
-  document.getElementById('input-ruta').value    = '';
-  document.getElementById('input-empleado').value = '';
-  document.getElementById('input-anio').value     = '';
-}
-
-// ── Escanear carpeta ──────────────────────────────────────
-async function escanearCarpeta() {
-  const ruta     = document.getElementById('input-ruta').value.trim();
-  const empleado = document.getElementById('input-empleado').value.trim();
-  const anio     = document.getElementById('input-anio').value;
-
-  if (!ruta) { showAlert('Ingresa la ruta de la carpeta primero.'); return; }
-
-  log(`🔍 Escaneando: ${ruta}`, 'info');
-  logSep();
-
+// ── Agregar y escanear ─────────────────────────────────
+async function agregarYEscanear() {
+  const ruta = document.getElementById('input-ruta').value.trim();
+  if (!ruta) { showAlert('Ingresa una ruta de carpeta.'); return; }
+  rutaActual = ruta;
+  carpetas = [{ ruta, empleado: null, anio: null, subarbol: null }];
+  logTerminal(`🔍 Escaneando: ${ruta}`, 'info');
   try {
-    const data = await api('/admin/escanear', {
-      method: 'POST',
-      body: { ruta, empleado: empleado || null, anio: anio || null }
-    });
-
-    log(`📊 Resultados del escaneo:`, 'info');
-    log(`   Total archivos: ${data.total}`,         data.total > 0 ? 'ok' : 'warn');
-    log(`   Excel (.xlsx):  ${data.por_tipo?.excel  || 0}`, 'dim');
-    log(`   PDF (.pdf):     ${data.por_tipo?.pdf    || 0}`, 'dim');
-    log(`   Omitidos:       ${data.por_tipo?.skip   || 0}`, 'warn');
-
-    if (data.por_anio && Object.keys(data.por_anio).length > 0) {
-      log(`   Por año:`, 'info');
-      Object.entries(data.por_anio).sort().forEach(([a, n]) => {
-        log(`     ${a}: ${n} archivos`, 'dim');
-      });
-    }
-    if (data.por_empleado && Object.keys(data.por_empleado).length > 0) {
-      log(`   Por empleado:`, 'info');
-      Object.entries(data.por_empleado).forEach(([e, n]) => {
-        log(`     ${e}: ${n} archivos`, 'dim');
-      });
-    }
-
-    if (data.total === 0) {
-      log(`⚠ Sin archivos encontrados. Verifica que el servidor use el Python del venv.`, 'warn');
-    }
-
-    const idx = carpetas.findIndex(c => c.ruta === ruta);
-    if (idx >= 0 && data.subarbol) {
-      carpetas[idx].subarbol = data.subarbol;
-      renderTree();
-    } else if (idx < 0) {
-      carpetas.push({ ruta, empleado: empleado || null, anio: anio || null, subarbol: data.subarbol || null });
-      renderTree();
-    }
-
-    logSep();
-    log(`✅ Escaneo completado. ${data.total} archivos encontrados.`, data.total > 0 ? 'ok' : 'warn');
-
+    const data = await api('/admin/escanear', { method:'POST', body:{ ruta } });
+    archivosEncontrados = data.total || 0;
+    document.getElementById('scan-count').textContent = archivosEncontrados;
+    document.getElementById('scan-label').textContent = archivosEncontrados === 1 ? 'archivo encontrado' : 'archivos encontrados';
+    setState('scan');
+    logTerminal(`📊 ${archivosEncontrados} archivos encontrados`, 'ok');
   } catch (e) {
-    log(`❌ Error al escanear: ${e.message}`, 'err');
-    log(`   Verifica que la ruta existe y el servidor tiene acceso.`, 'warn');
+    logTerminal(`❌ Error: ${e.message}`, 'err');
+    showAlert('Error al escanear: ' + e.message);
   }
 }
 
-// ── Iniciar importación ───────────────────────────────────
+// ── Iniciar importación ─────────────────────────────────
 async function iniciarImportacion() {
-  if (carpetas.length === 0) { showAlert('Agrega al menos una carpeta primero.'); return; }
-  if (importando) { showAlert('Ya hay una importación en proceso.', 'error'); return; }
-
-  const soloEscanear = document.getElementById('opt-soloescanear').checked;
-  const skipDup      = document.getElementById('opt-skip-dup').checked;
-  const procesarPdf  = document.getElementById('opt-pdf').checked;
-
+  if (carpetas.length === 0) { showAlert('Escanea una carpeta primero.'); return; }
+  if (importando) return;
   importando = true;
   errores = [];
-  document.getElementById('btn-iniciar').disabled = true;
-  document.getElementById('btn-iniciar').innerHTML = '<span class="spinner"></span> Importando...';
-
-  document.getElementById('import-stats').style.display = 'grid';
-  document.getElementById('progress-container').style.display = 'block';
-  actualizarStats(0, 0, 0, 0);
-  setProgress(0, 'Iniciando...');
-
-  logSep();
-  log(`▶ Iniciando ${soloEscanear ? 'escaneo' : 'importación'}`, 'info');
-  log(`  Carpetas: ${carpetas.length}`, 'info');
-  log(`  Opciones: skipDup=${skipDup}, pdf=${procesarPdf}`, 'dim');
-  logSep();
+  setState('processing');
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-pct').textContent = '0%';
+  document.getElementById('live-total').textContent = '0';
+  document.getElementById('live-ok').textContent = '0';
+  document.getElementById('live-err').textContent = '0';
+  logTerminal('▶ Iniciando importación...', 'info');
+  logSepTerminal();
 
   try {
     const data = await api('/admin/importar', {
-      method: 'POST',
+      method:'POST',
       body: {
         carpetas: carpetas.map(c => ({ ruta: c.ruta, empleado: c.empleado, anio: c.anio })),
-        soloEscanear,
-        skipDuplicados: skipDup,
-        procesarPdf,
+        soloEscanear: false,
+        skipDuplicados: true,
       }
     });
+    importacionActualId = data.importacion_id;
+    if (importacionActualId) intervaloProgreso = setInterval(actualizarProgresoUI, 1500);
 
-    log(`📊 Resultados finales:`, 'info');
-    log(`   Total archivos:     ${data.total}`,        'dim');
-    log(`   ✅ Importados:      ${data.exitosos}`,     'ok');
-    log(`   ⚠ No certificados:  ${data.no_certs}`,    'warn');
-    log(`   ❌ Errores:         ${data.fallidos}`,     'err');
-    log(`   ⏱ Tiempo:          ${data.duracion}`,     'dim');
-
-    actualizarStats(data.total, data.exitosos, data.no_certs, data.fallidos);
-    setProgress(100, 'Completado');
-
-    if (data.errores && data.errores.length > 0) {
-      errores = data.errores;
-      renderErrores();
-      // Mostrar badge en tab de errores
-      const badge = document.getElementById('errors-badge');
-      if (badge) { badge.textContent = data.errores.length; badge.style.display = 'inline'; }
-    }
-
-    logSep();
-    log(`✅ ${soloEscanear ? 'Escaneo' : 'Importación'} completada.`, 'ok');
-    if (!soloEscanear && data.exitosos > 0) {
-      log(`   ${data.exitosos} certificados agregados a la base de datos.`, 'ok');
-    }
-
+    // Esperar el resultado final (ya llegó)
+    mostrarResultados(data);
   } catch (e) {
-    log(`❌ Error durante la importación: ${e.message}`, 'err');
-    setProgress(0, 'Error');
+    logTerminal(`❌ Error: ${e.message}`, 'err');
+    setState('empty');
   } finally {
+    clearInterval(intervaloProgreso);
+    importacionActualId = null;
     importando = false;
-    document.getElementById('btn-iniciar').disabled = false;
-    document.getElementById('btn-iniciar').innerHTML = '▶ Iniciar importación';
   }
 }
 
-function actualizarStats(total, ok, skip, err) {
-  document.getElementById('st-total').textContent = total.toLocaleString('es-MX');
-  document.getElementById('st-ok').textContent    = ok.toLocaleString('es-MX');
-  document.getElementById('st-skip').textContent  = skip.toLocaleString('es-MX');
-  document.getElementById('st-err').textContent   = err.toLocaleString('es-MX');
+async function actualizarProgresoUI() {
+  if (!importacionActualId) return;
+  try {
+    const prog = await api(`/admin/progreso/${importacionActualId}`);
+    if (prog && prog.total > 0) {
+      const pct = prog.pct || Math.round((prog.actual / prog.total) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-pct').textContent = pct + '%';
+      document.getElementById('progress-label').textContent = `Procesados ${prog.actual} de ${prog.total}`;
+      document.getElementById('live-total').textContent = prog.actual;
+      document.getElementById('live-ok').textContent = Math.round(prog.actual * 0.9); // estimado
+      logTerminal(`Procesados ${prog.actual}/${prog.total} (${pct}%)`, 'dim');
+    }
+  } catch (e) {}
 }
 
-function setProgress(pct, label) {
-  document.getElementById('progress-bar').style.width   = pct + '%';
-  document.getElementById('progress-label').textContent = label;
-  document.getElementById('progress-pct').textContent   = pct + '%';
-}
+// ── Mostrar resultados finales ──────────────────────────
+function mostrarResultados(data) {
+  const total = data.total || 0;
+  const ok = data.exitosos || 0;
+  const err = data.fallidos || 0;
+  const warn = data.no_certs || 0;
+  const omitidos = data.omitidos || 0;
+  const pctOk = total > 0 ? Math.round((ok / total) * 100) : 0;
 
-function renderErrores() {
-  const body = document.getElementById('errors-body');
-  document.getElementById('errors-count').textContent = `${errores.length} errores`;
-  if (errores.length === 0) {
-    body.innerHTML = '<div class="log-line log-dim">Sin errores registrados.</div>';
-    return;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-ok').textContent = ok;
+  document.getElementById('res-warn').textContent = warn + omitidos;
+  document.getElementById('res-err').textContent = err;
+  document.getElementById('results-time').textContent = `Duración: ${data.duracion || '—'}`;
+  document.getElementById('sum-carpeta').textContent = rutaActual || '—';
+  document.getElementById('sum-duracion').textContent = data.duracion || '—';
+
+  // Donut
+  const donut = document.getElementById('donut');
+  donut.style.setProperty('--pct', pctOk);
+  document.getElementById('donut-val').textContent = pctOk + '%';
+  document.getElementById('leg-ok').textContent = ok;
+  document.getElementById('leg-warn').textContent = warn + omitidos;
+  document.getElementById('leg-err').textContent = err;
+
+  setState('results');
+  logTerminal('✅ Importación completada.', 'ok');
+  logTerminal(`   Total: ${total} | Éxitos: ${ok} | Fallos: ${err} | Omitidos: ${omitidos}`, 'info');
+
+  if (data.errores && data.errores.length > 0) {
+    errores = data.errores;
+    logTerminal('❌ Errores encontrados:', 'err');
+    data.errores.forEach(e => logTerminal(`   ${e.archivo?.split('\\').pop()}: ${e.error}`, 'err'));
   }
-  body.innerHTML = '';
-  errores.forEach(e => {
-    const line = document.createElement('div');
-    line.className = 'log-line';
-    line.innerHTML = `<span class="log-err">❌</span> <span class="log-warn">${e.archivo?.split('\\').pop() || e.archivo}</span>
-                      <span class="log-dim"> — ${e.error}</span>`;
-    body.appendChild(line);
-  });
 }
 
-// ── Historial ─────────────────────────────────────────────
+// ── Resetear ────────────────────────────────────────────
+function resetear() {
+  carpetas = [];
+  errores = [];
+  archivosEncontrados = 0;
+  rutaActual = '';
+  document.getElementById('input-ruta').value = '';
+  setState('empty');
+  document.getElementById('drawer-log').innerHTML = '<div class="log-entry log-dim">Terminal lista.</div>';
+}
+
+// ── Historial (se mantiene en drawer) ──────────────────
 async function cargarHistorial() {
-  cambiarTab('hist');
-  const body = document.getElementById('historial-body');
-  body.innerHTML = '<div class="empty-state"><p>Cargando...</p></div>';
+  toggleDrawer();
   try {
     const data = await api('/admin/importaciones');
-    if (!data || data.length === 0) {
-      body.innerHTML = '<div class="empty-state"><div style="font-size:32px">🕐</div><p>No hay importaciones registradas aún.</p></div>';
-      return;
+    if (data && data.length > 0) {
+      logSepTerminal();
+      logTerminal('📋 Últimas importaciones:', 'info');
+      data.slice(0,5).forEach(imp => {
+        logTerminal(`${new Date(imp.iniciado_en).toLocaleDateString()} — ${imp.carpeta_origen || '?'} — ✅${imp.exitosos} ❌${imp.fallidos}`, 'dim');
+      });
     }
-    body.innerHTML = data.map(imp => `
-      <div class="historial-row">
-        <span class="hist-estado ${imp.estado === 'completado' ? 'hist-completado' : imp.estado === 'con_errores' ? 'hist-errores' : 'hist-proceso'}">
-          ${imp.estado}
-        </span>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:500;color:var(--text);font-size:13px;
-               white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-            ${imp.carpeta_origen || '—'}
-          </div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px">
-            ${new Date(imp.iniciado_en).toLocaleString('es-MX')}
-          </div>
-        </div>
-        <div style="text-align:right;font-size:12px;white-space:nowrap;font-family:var(--font-mono)">
-          <span style="color:#22c55e">✅ ${imp.exitosos}</span>
-          <span style="color:var(--text4);margin:0 4px">/</span>
-          <span style="color:#ef4444">❌ ${imp.fallidos}</span>
-          <span style="color:var(--text4);margin:0 4px">/</span>
-          <span style="color:var(--text3)">${imp.total_archivos} total</span>
-        </div>
-      </div>
-    `).join('');
-  } catch (e) {
-    body.innerHTML = `<div class="empty-state"><p style="color:var(--danger)">Error al cargar historial: ${e.message}</p></div>`;
-  }
+  } catch (e) { /* ignore */ }
 }
+
+// ── Inicialización ──────────────────────────────────────
+setState('empty');
 </script>
 </body>
 </html>

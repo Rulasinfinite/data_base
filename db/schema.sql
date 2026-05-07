@@ -1,7 +1,7 @@
 -- ============================================================
 -- SIDEC - Sistema de Certificados de Calibración
 -- Base de datos: sidec_db | Server: sidecmexico
--- Schema principal con particionamiento por año
+-- Schema principal (sin particionamiento, con UNIQUE en numero_informe)
 -- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
@@ -16,16 +16,18 @@ CREATE TABLE IF NOT EXISTS tipos_magnitud (
 );
 
 INSERT INTO tipos_magnitud (nombre) VALUES
-    ('DIMENSIONAL'),('ELÉCTRICA'),('MASA'),('TEMPERATURA'),
-    ('PRESIÓN'),('FUERZA'),('VOLUMEN'),('OTRA')
-ON CONFLICT DO NOTHING;
+    ('DIMENSIONAL'),('ELÉCTRICA'),('MASA'),('TEMPERATURA Y HUMEDAD'),
+    ('PRESIÓN'),('FUERZA'),('VOLUMEN'),('PAR TORSIONAL'),
+    ('TIEMPO Y FRECUENCIA'),('QUÍMICA'),('FLUJO'),('ACELERACIÓN'),
+    ('DENSIDAD')
+ON CONFLICT (nombre) DO NOTHING;
 
 -- ============================================================
--- TABLA: certificados (particionada por año de emisión)
+-- TABLA: certificados (versión unificada)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS certificados (
-    id                      BIGSERIAL,
-    numero_informe          VARCHAR(50)  NOT NULL,
+    id                      BIGSERIAL PRIMARY KEY,
+    numero_informe          VARCHAR(50)  NOT NULL UNIQUE,
     anio_emision            SMALLINT     NOT NULL,
     nombre_cliente          VARCHAR(255),
     direccion               TEXT,
@@ -51,65 +53,8 @@ CREATE TABLE IF NOT EXISTS certificados (
     ruta_archivo_origen     TEXT,
     fecha_importacion       TIMESTAMPTZ DEFAULT NOW(),
     importado_por           VARCHAR(100),
-    activo                  BOOLEAN DEFAULT TRUE,
-    PRIMARY KEY (id, anio_emision)
-) PARTITION BY RANGE (anio_emision);
-
--- ============================================================
--- PARTICIONES POR AÑO (2015 al 2030)
--- ► 2015 y 2016 añadidas — tus PDFs históricos están aquí
--- ============================================================
-CREATE TABLE IF NOT EXISTS certificados_2015 PARTITION OF certificados
-    FOR VALUES FROM (2015) TO (2016);
-
-CREATE TABLE IF NOT EXISTS certificados_2016 PARTITION OF certificados
-    FOR VALUES FROM (2016) TO (2017);
-
-CREATE TABLE IF NOT EXISTS certificados_2017 PARTITION OF certificados
-    FOR VALUES FROM (2017) TO (2018);
-
-CREATE TABLE IF NOT EXISTS certificados_2018 PARTITION OF certificados
-    FOR VALUES FROM (2018) TO (2019);
-
-CREATE TABLE IF NOT EXISTS certificados_2019 PARTITION OF certificados
-    FOR VALUES FROM (2019) TO (2020);
-
-CREATE TABLE IF NOT EXISTS certificados_2020 PARTITION OF certificados
-    FOR VALUES FROM (2020) TO (2021);
-
-CREATE TABLE IF NOT EXISTS certificados_2021 PARTITION OF certificados
-    FOR VALUES FROM (2021) TO (2022);
-
-CREATE TABLE IF NOT EXISTS certificados_2022 PARTITION OF certificados
-    FOR VALUES FROM (2022) TO (2023);
-
-CREATE TABLE IF NOT EXISTS certificados_2023 PARTITION OF certificados
-    FOR VALUES FROM (2023) TO (2024);
-
-CREATE TABLE IF NOT EXISTS certificados_2024 PARTITION OF certificados
-    FOR VALUES FROM (2024) TO (2025);
-
-CREATE TABLE IF NOT EXISTS certificados_2025 PARTITION OF certificados
-    FOR VALUES FROM (2025) TO (2026);
-
-CREATE TABLE IF NOT EXISTS certificados_2026 PARTITION OF certificados
-    FOR VALUES FROM (2026) TO (2027);
-
-CREATE TABLE IF NOT EXISTS certificados_2027 PARTITION OF certificados
-    FOR VALUES FROM (2027) TO (2028);
-
-CREATE TABLE IF NOT EXISTS certificados_2028 PARTITION OF certificados
-    FOR VALUES FROM (2028) TO (2029);
-
-CREATE TABLE IF NOT EXISTS certificados_2029 PARTITION OF certificados
-    FOR VALUES FROM (2029) TO (2030);
-
-CREATE TABLE IF NOT EXISTS certificados_2030 PARTITION OF certificados
-    FOR VALUES FROM (2030) TO (2031);
-
--- Partición para datos con año fuera de rango
-CREATE TABLE IF NOT EXISTS certificados_otros PARTITION OF certificados
-    DEFAULT;
+    activo                  BOOLEAN DEFAULT TRUE
+);
 
 -- ============================================================
 -- ÍNDICES
@@ -136,7 +81,7 @@ CREATE INDEX IF NOT EXISTS idx_cert_marca_trgm
     ON certificados USING GIN (marca gin_trgm_ops);
 
 -- ============================================================
--- TABLA: usuarios
+-- TABLA: usuarios (sin cambios)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS usuarios (
     id              SERIAL PRIMARY KEY,
@@ -178,6 +123,7 @@ CREATE TABLE IF NOT EXISTS importaciones (
     total_archivos  INTEGER DEFAULT 0,
     exitosos        INTEGER DEFAULT 0,
     fallidos        INTEGER DEFAULT 0,
+    omitidos        INTEGER DEFAULT 0,
     errores         JSONB,
     iniciado_en     TIMESTAMPTZ DEFAULT NOW(),
     finalizado_en   TIMESTAMPTZ,
@@ -186,7 +132,6 @@ CREATE TABLE IF NOT EXISTS importaciones (
 
 -- ============================================================
 -- USUARIOS ADMIN
--- hash verificado: bcrypt.compare('Adminsidec', hash) = true
 -- ============================================================
 INSERT INTO usuarios (nombre, usuario, password_hash, rol, departamento)
 VALUES (
@@ -225,7 +170,3 @@ FROM certificados
 WHERE activo = TRUE
 GROUP BY anio_emision
 ORDER BY anio_emision DESC;
-
--- ============================================================
--- FIN DEL SCHEMA
--- ============================================================

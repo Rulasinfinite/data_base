@@ -17,6 +17,7 @@ router.get('/', async (req, res) => {
   try {
     const {
       q,               // búsqueda general
+      numero_informe,  // número de informe (nuevo filtro)
       anio,            // año de emisión
       cliente,         // nombre del cliente
       marca,           // marca del instrumento
@@ -48,6 +49,10 @@ router.get('/', async (req, res) => {
     if (anio) {
       params.push(parseInt(anio));
       condiciones.push(`c.anio_emision = $${params.length}`);
+    }
+    if (numero_informe) {
+      params.push(`%${numero_informe}%`);
+      condiciones.push(`c.numero_informe ILIKE $${params.length}`);
     }
     if (cliente) {
       params.push(`%${cliente}%`);

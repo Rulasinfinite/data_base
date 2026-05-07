@@ -118,7 +118,12 @@
                  placeholder="No. informe, cliente, No. serie, identificación, modelo, marca...">
         </div>
       </div>
-
+      <!-- Agregar justo después del div "Búsqueda general" -->
+      <div>
+        <label class="form-label">No. Informe</label>
+        <input class="form-control" type="text" id="filtro-informe"
+              placeholder="Ej: LMD-...">
+      </div>
       <!-- Cliente específico -->
       <div>
         <label class="form-label">Cliente</label>
@@ -152,15 +157,13 @@
         <label class="form-label">Magnitud / Área</label>
         <select class="form-control" id="filtro-magnitud">
           <option value="">Todas las áreas</option>
-          <optgroup label="✅ En operación">
+        <optgroup label="En operación">
             <option value="DIMENSIONAL">Dimensional</option>
             <option value="ELÉCTRICA">Eléctrica</option>
             <option value="PRESIÓN">Presión</option>
             <option value="MASA">Masa</option>
             <option value="VOLUMEN">Volumen</option>
             <option value="FUERZA">Fuerza</option>
-          </optgroup>
-          <optgroup label="— En desarrollo">
             <option value="TEMPERATURA">Temperatura y Humedad</option>
             <option value="PAR TORSIONAL">Par Torsional</option>
             <option value="TIEMPO Y FRECUENCIA">Tiempo y Frecuencia</option>
@@ -293,6 +296,7 @@
       if (v) params.set(k, v);
     };
     add('q',        'q');
+    add('numero_informe', 'filtro-informe');
     add('cliente',  'filtro-cliente');
     add('serie',    'filtro-serie');
     add('identificacion', 'filtro-id');
@@ -411,7 +415,7 @@
   }
 
   function limpiarFiltros() {
-    ['q','filtro-cliente','filtro-serie','filtro-id','filtro-marca','filtro-desde','filtro-hasta'].forEach(id => {
+    ['q','filtro-informe','filtro-cliente','filtro-serie','filtro-id','filtro-marca','filtro-desde','filtro-hasta'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
