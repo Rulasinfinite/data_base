@@ -12,7 +12,6 @@
     * { box-sizing: border-box; }
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
 
-    /* ── Variables ───────────────────────────────────── */
     :root {
       --primary: #2563eb;
       --primary-light: #eff6ff;
@@ -42,7 +41,6 @@
 
     .page { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
 
-    /* ── Layout principal ───────────────────────────── */
     .app-layout {
       display: grid;
       grid-template-columns: 320px 1fr;
@@ -50,330 +48,149 @@
       align-items: start;
     }
 
-    /* ── Panel izquierdo: Pasos ─────────────────────── */
     .steps-panel { display: flex; flex-direction: column; gap: 0; }
     .step-card {
-      background: white;
-      border: 2px solid var(--gray-200);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin-bottom: 12px;
-      position: relative;
-      transition: all var(--transition);
-      cursor: default;
+      background: white; border: 2px solid var(--gray-200); border-radius: var(--radius);
+      padding: 20px 24px; margin-bottom: 12px; position: relative; transition: all var(--transition);
     }
-    .step-card.active {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(37,99,235,0.08);
-    }
-    .step-card.completed {
-      border-color: var(--success);
-      background: var(--success-light);
-    }
+    .step-card.active { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.08); }
+    .step-card.completed { border-color: var(--success); background: var(--success-light); }
     .step-card .step-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 12px;
-      background: var(--gray-100);
-      transition: all var(--transition);
+      width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 12px; background: var(--gray-100); transition: all var(--transition);
     }
     .step-card.active .step-icon { background: var(--primary-light); }
     .step-card.completed .step-icon { background: var(--success-light); }
-    .step-card .step-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--gray-400);
-      margin-bottom: 4px;
-    }
-    .step-card .step-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--gray-800);
-      margin: 0;
-    }
-    .step-card .step-subtitle {
-      font-size: 12px;
-      color: var(--gray-500);
-      margin-top: 4px;
-    }
-    .step-connector {
-      width: 2px;
-      height: 8px;
-      background: var(--gray-200);
-      margin-left: 22px;
-    }
+    .step-card .step-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-400); margin-bottom: 4px; }
+    .step-card .step-title { font-size: 15px; font-weight: 600; color: var(--gray-800); margin: 0; }
+    .step-card .step-subtitle { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+    .step-connector { width: 2px; height: 8px; background: var(--gray-200); margin-left: 22px; }
 
-    /* ── Panel derecho ──────────────────────────────── */
     .main-panel {
-      background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius);
-      min-height: 520px;
-      box-shadow: var(--shadow-sm);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      min-height: 520px; box-shadow: var(--shadow-sm); overflow: hidden; display: flex; flex-direction: column;
     }
 
-    /* ── Estado 1: Vacío ────────────────────────────── */
     .empty-state {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 40px;
-      text-align: center;
-      color: var(--gray-400);
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 40px; text-align: center; color: var(--gray-400);
     }
     .empty-state svg { margin-bottom: 20px; opacity: 0.6; }
     .empty-state h3 { color: var(--gray-600); font-size: 16px; margin: 0 0 8px; font-weight: 500; }
     .empty-state p { color: var(--gray-400); font-size: 13px; margin: 0; }
 
-    /* ── Zona de arrastre ───────────────────────────── */
     .drop-zone {
-      border: 2px dashed var(--gray-300);
-      border-radius: var(--radius);
-      padding: 40px 30px;
-      text-align: center;
-      cursor: pointer;
-      transition: all var(--transition);
-      background: var(--gray-50);
-      margin: 20px;
+      border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 40px 30px; text-align: center;
+      cursor: pointer; transition: all var(--transition); background: var(--gray-50); margin: 20px;
     }
-    .drop-zone:hover { border-color: var(--primary); background: var(--primary-light); }
-    .drop-zone.drag-over { border-color: var(--primary); background: var(--primary-light); transform: scale(1.01); }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: var(--primary); background: var(--primary-light); }
     .drop-zone .drop-icon { font-size: 40px; margin-bottom: 12px; }
     .drop-zone .drop-text { font-size: 14px; font-weight: 500; color: var(--gray-600); margin: 0; }
     .drop-zone .drop-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
     .drop-zone input[type="file"] { display: none; }
 
-    /* ── Barra de progreso ──────────────────────────── */
     .progress-section { padding: 24px 28px; }
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .progress-header span { font-size: 13px; color: var(--gray-500); font-weight: 500; }
     .progress-header .pct { font-size: 18px; font-weight: 700; color: var(--primary); }
-    .progress-track {
-      height: 10px;
-      background: var(--gray-100);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), #60a5fa);
-      border-radius: 8px;
-      transition: width 0.6s ease;
-      width: 0%;
-    }
+    .progress-track { height: 10px; background: var(--gray-100); border-radius: 8px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #60a5fa); border-radius: 8px; transition: width 0.3s ease; width: 0%; }
 
-    /* ── Contadores en tiempo real ──────────────────── */
-    .live-counters {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding: 0 28px 20px;
-    }
-    .live-counter {
-      background: var(--gray-50);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      text-align: center;
-    }
-    .live-counter .val {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--gray-800);
-    }
+    .live-counters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 28px 20px; }
+    .live-counter { background: var(--gray-50); border-radius: var(--radius-sm); padding: 16px; text-align: center; }
+    .live-counter .val { font-size: 26px; font-weight: 700; color: var(--gray-800); }
     .live-counter .lbl { font-size: 11px; color: var(--gray-500); margin-top: 4px; font-weight: 500; }
     .live-counter.ok .val { color: var(--success); }
     .live-counter.warn .val { color: var(--warning); }
     .live-counter.err .val { color: var(--danger); }
 
-    /* ── Dashboard de resultados ────────────────────── */
-    .results-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      padding: 24px 28px;
-    }
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 24px 28px; }
     .result-card {
-      background: var(--gray-50);
-      border-radius: var(--radius-sm);
-      padding: 20px;
-      text-align: center;
-      transition: all var(--transition);
+      background: var(--gray-50); border-radius: var(--radius-sm); padding: 20px; text-align: center;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
-    .result-card .val {
-      font-size: 30px;
-      font-weight: 700;
-    }
+    .result-card.clickable { cursor: pointer; }
+    .result-card.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .result-card .val { font-size: 30px; font-weight: 700; }
     .result-card .lbl { font-size: 12px; color: var(--gray-500); margin-top: 4px; font-weight: 500; }
-    .result-card.ok { background: var(--success-light); }
-    .result-card.ok .val { color: var(--success); }
-    .result-card.warn { background: var(--warning-light); }
-    .result-card.warn .val { color: var(--warning); }
-    .result-card.err { background: var(--danger-light); }
-    .result-card.err .val { color: var(--danger); }
-    .result-card.info { background: var(--primary-light); }
-    .result-card.info .val { color: var(--primary); }
+    .result-card.ok { background: var(--success-light); } .result-card.ok .val { color: var(--success); }
+    .result-card.warn { background: var(--warning-light); } .result-card.warn .val { color: var(--warning); }
+    .result-card.err { background: var(--danger-light); } .result-card.err .val { color: var(--danger); }
+    .result-card.info { background: var(--primary-light); } .result-card.info .val { color: var(--primary); }
 
-    /* ── Gráfico circular ───────────────────────────── */
-    .donut-wrap {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      padding: 10px 28px 24px;
-    }
+    .detail-list { padding: 0 28px 16px; font-size: 13px; color: var(--gray-600); }
+    .detail-item { margin-bottom: 6px; display: flex; gap: 8px; }
+
+    .donut-wrap { display: flex; align-items: center; gap: 24px; padding: 10px 28px 24px; }
     .donut {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
+      width: 100px; height: 100px; border-radius: 50%;
       background: conic-gradient(var(--success) calc(var(--pct) * 1%), var(--gray-100) 0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;
     }
-    .donut::after {
-      content: '';
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: white;
-      position: absolute;
-    }
-    .donut .donut-val {
-      position: relative;
-      z-index: 1;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--gray-800);
-    }
+    .donut::after { content: ''; width: 64px; height: 64px; border-radius: 50%; background: white; position: absolute; }
+    .donut .donut-val { position: relative; z-index: 1; font-size: 20px; font-weight: 700; color: var(--gray-800); }
     .donut-legend { font-size: 12px; color: var(--gray-500); line-height: 1.8; }
 
-    /* ── Resumen final ──────────────────────────────── */
-    .summary-row {
-      display: flex;
-      gap: 24px;
-      padding: 16px 28px 24px;
-      font-size: 12px;
-      color: var(--gray-500);
-      flex-wrap: wrap;
-    }
+    .summary-row { display: flex; gap: 24px; padding: 16px 28px 24px; font-size: 12px; color: var(--gray-500); flex-wrap: wrap; }
     .summary-row span { font-weight: 500; color: var(--gray-700); }
 
-    /* ── Panel de escaneo ───────────────────────────── */
-    .scan-result {
-      padding: 24px 28px;
-      text-align: center;
-    }
-    .scan-result .big-num {
-      font-size: 48px;
-      font-weight: 700;
-      color: var(--primary);
-    }
+    .scan-result { padding: 24px 28px; text-align: center; }
+    .scan-result .big-num { font-size: 48px; font-weight: 700; color: var(--primary); }
     .scan-result .label { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
 
-    /* ── Drawer / Modal para terminal ───────────────── */
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      z-index: 100;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
     .drawer-overlay.open { display: flex; }
-    .drawer {
-      background: var(--gray-900);
-      color: #e5e7eb;
-      width: 100%;
-      max-width: 800px;
-      max-height: 70vh;
-      border-radius: var(--radius) var(--radius) 0 0;
-      overflow-y: auto;
-      padding: 24px;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 12px;
-      line-height: 1.7;
-    }
-    .drawer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .drawer-header h3 { color: white; font-size: 14px; font-weight: 600; margin: 0; font-family: 'Inter', sans-serif; }
-    .drawer-close {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
+    .drawer { background: var(--gray-900); color: #e5e7eb; width: 100%; max-width: 800px; max-height: 70vh; border-radius: var(--radius) var(--radius) 0 0; overflow-y: auto; padding: 24px; font-family: monospace; font-size: 12px; line-height: 1.7; }
+    .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .drawer-header h3 { color: white; font-size: 14px; font-weight: 600; margin: 0; }
+    .drawer-close { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
     .log-entry { padding: 2px 0; }
-    .log-ok   { color: #4ade80; }
-    .log-warn { color: #fbbf24; }
-    .log-err  { color: #f87171; }
-    .log-info { color: #60a5fa; }
-    .log-dim  { color: #9ca3af; }
+    .log-ok { color: #4ade80; } .log-warn { color: #fbbf24; } .log-err { color: #f87171; } .log-info { color: #60a5fa; } .log-dim { color: #9ca3af; }
 
-    /* ── Botones ─────────────────────────────────────── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: all var(--transition);
-      font-family: inherit;
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 10px;
+      font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all var(--transition); font-family: inherit;
     }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: #1d4ed8; box-shadow: var(--shadow); }
-    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); }
-    .btn-outline:hover { background: var(--gray-50); }
-    .btn-ghost { background: transparent; color: var(--gray-500); }
-    .btn-ghost:hover { background: var(--gray-100); }
+    .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: #1d4ed8; }
+    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); } .btn-outline:hover { background: var(--gray-50); }
+    .btn-ghost { background: transparent; color: var(--gray-500); } .btn-ghost:hover { background: var(--gray-100); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* ── Spinner ─────────────────────────────────────── */
-    .spinner {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Responsive ──────────────────────────────────── */
-    @media (max-width: 900px) {
-      .app-layout { grid-template-columns: 1fr; }
-      .results-grid { grid-template-columns: 1fr 1fr; }
+    .config-base-path {
+      font-size: 12px; color: var(--gray-500); margin-top: 8px; display: flex; align-items: center; gap: 6px;
     }
+    .config-base-path input { width: 200px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 12px; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-content { background: white; border-radius: var(--radius); padding: 24px; max-width: 760px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-header h3 { margin: 0; font-size:16px; }
+    .modal-close { background: none; border: 1px solid var(--gray-300); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+    .modal-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .modal-body th { text-align: left; padding: 10px 12px; background: var(--gray-50); border-bottom: 2px solid var(--gray-200); font-weight:600; color:var(--gray-700); font-size:11px; text-transform:uppercase; letter-spacing:0.04em; }
+    .modal-body td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); word-break: break-all; vertical-align:middle; }
+    .modal-body tr:last-child td { border-bottom: none; }
+    .modal-body tr:hover td { background: var(--gray-50); }
+    .modal-badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-weight:600; }
+    .badge-ok { background:var(--success-light); color:var(--success); }
+    .badge-warn { background:var(--warning-light); color:var(--warning); }
+    .badge-err { background:var(--danger-light); color:var(--danger); }
+    .modal-empty { text-align:center; padding:40px; color:var(--gray-400); font-size:14px; }
+    .modal-summary { background:var(--gray-50); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:14px; font-size:13px; color:var(--gray-600); }
+    .file-name { font-family:monospace; font-size:12px; color:var(--gray-800); }
+    .file-report { font-size:12px; color:var(--primary); font-weight:500; }
+    .file-reason { font-size:12px; color:var(--gray-500); }
+
+    .processing-file-list {
+      max-height: 180px; overflow-y: auto; margin: 0 28px 12px;
+      font-size: 12px; color: var(--gray-500); font-family: var(--font-mono);
+    }
+
+    @media (max-width: 900px) { .app-layout { grid-template-columns: 1fr; } .results-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
@@ -381,60 +198,34 @@
 <nav class="navbar" id="navbar"></nav>
 
 <div class="page">
-  <!-- Header -->
   <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
     <div>
       <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">📂 Importar certificados</h1>
       <p style="font-size:13px;color:var(--gray-500);margin:4px 0 0;">Selecciona una carpeta y el sistema procesará los archivos automáticamente</p>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost" onclick="toggleDrawer()" id="btn-terminal" style="font-size:13px;">
-        💻 Detalles técnicos
-      </button>
-      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;">
-        🕐 Historial
-      </button>
+      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;">💻 Detalles técnicos</button>
+      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;">🕐 Historial</button>
     </div>
   </div>
 
-  <!-- Layout principal -->
   <div class="app-layout">
-    <!-- Panel izquierdo: Pasos -->
+    <!-- Pasos -->
     <div class="steps-panel">
-      <div class="step-card active" id="step-select">
-        <div class="step-icon">📁</div>
-        <div class="step-label">Paso 1</div>
-        <div class="step-title">Seleccionar carpeta</div>
-        <div class="step-subtitle">Elige la carpeta con los certificados</div>
-      </div>
+      <div class="step-card active" id="step-select"><div class="step-icon">📁</div><div class="step-label">Paso 1</div><div class="step-title">Seleccionar carpeta</div><div class="step-subtitle">Elige la carpeta con los certificados</div></div>
       <div class="step-connector"></div>
-      <div class="step-card" id="step-review">
-        <div class="step-icon">🔍</div>
-        <div class="step-label">Paso 2</div>
-        <div class="step-title">Revisar</div>
-        <div class="step-subtitle">Confirma los archivos encontrados</div>
-      </div>
+      <div class="step-card" id="step-review"><div class="step-icon">🔍</div><div class="step-label">Paso 2</div><div class="step-title">Revisar</div><div class="step-subtitle">Confirma los archivos encontrados</div></div>
       <div class="step-connector"></div>
-      <div class="step-card" id="step-import">
-        <div class="step-icon">⬆️</div>
-        <div class="step-label">Paso 3</div>
-        <div class="step-title">Importar</div>
-        <div class="step-subtitle">Inicia la carga a la base de datos</div>
-      </div>
+      <div class="step-card" id="step-import"><div class="step-icon">⬆️</div><div class="step-label">Paso 3</div><div class="step-title">Importar</div><div class="step-subtitle">Inicia la carga a la base de datos</div></div>
       <div class="step-connector"></div>
-      <div class="step-card" id="step-results">
-        <div class="step-icon">📊</div>
-        <div class="step-label">Paso 4</div>
-        <div class="step-title">Resultados</div>
-        <div class="step-subtitle">Revisa el resumen final</div>
-      </div>
+      <div class="step-card" id="step-results"><div class="step-icon">📊</div><div class="step-label">Paso 4</div><div class="step-title">Resultados</div><div class="step-subtitle">Revisa el resumen final</div></div>
     </div>
 
-    <!-- Panel derecho: Dinámico -->
+    <!-- Panel dinámico -->
     <div class="main-panel" id="main-panel">
-      <!-- Estado 1: Vacío -->
+      <!-- Estado vacío -->
       <div id="state-empty" class="empty-state">
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+        <svg width="100" height="80" viewBox="0 0 100 80" fill="none" style="margin-bottom:20px;opacity:0.6;">
           <rect x="20" y="10" width="60" height="45" rx="6" stroke="#d1d5db" stroke-width="2" fill="#f9fafb"/>
           <rect x="28" y="18" width="30" height="3" rx="1" fill="#e5e7eb"/>
           <rect x="28" y="26" width="44" height="3" rx="1" fill="#e5e7eb"/>
@@ -442,28 +233,30 @@
           <path d="M32 46L44 60L68 32" stroke="#9ca3af" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
         <h3>Selecciona una carpeta para comenzar</h3>
-        <p>Arrastra la carpeta aquí o usa el botón de abajo</p>
+        <p>Arrastra la carpeta aquí, usa el selector o escribe la ruta manualmente</p>
 
-        <!-- Zona de arrastre -->
-        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('folder-input').click()">
+        <div class="drop-zone" id="drop-zone">
           <div class="drop-icon">📂</div>
           <p class="drop-text">Arrastra tu carpeta aquí</p>
           <p class="drop-hint">o haz clic para seleccionar</p>
           <input type="file" id="folder-input" webkitdirectory multiple style="display:none;">
         </div>
 
-        <!-- Ruta manual -->
         <div style="display:flex;gap:8px;margin-top:16px;width:100%;max-width:420px;">
           <input class="form-control" type="text" id="input-ruta"
                  placeholder="O pega la ruta: C:\Instrumentos\..."
                  style="flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:10px;font-size:13px;">
-          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;">
-            Escanear
-          </button>
+          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;">Escanear</button>
+        </div>
+
+        <div class="config-base-path">
+          <span>🗂 Carpeta base:</span>
+          <input type="text" id="base-path" placeholder="C:\Instrumentos">
+          <button class="btn btn-outline" style="padding:4px 8px;font-size:11px;" onclick="guardarBasePath()">Guardar</button>
         </div>
       </div>
 
-      <!-- Estado 2: Escaneo / Revisión -->
+      <!-- Escaneo -->
       <div id="state-scan" style="display:none;padding:24px 28px;text-align:center;">
         <div class="scan-result">
           <div class="big-num" id="scan-count">—</div>
@@ -471,47 +264,44 @@
         </div>
         <div style="display:flex;gap:8px;justify-content:center;margin-top:20px;">
           <button class="btn btn-outline" onclick="resetear()">Cancelar</button>
-          <button class="btn btn-primary" id="btn-iniciar-import" onclick="iniciarImportacion()">
-            ⬆️ Iniciar importación
-          </button>
+          <button class="btn btn-primary" id="btn-iniciar-import" onclick="iniciarImportacion()">⬆️ Iniciar importación</button>
         </div>
       </div>
 
-      <!-- Estado 3: Procesando -->
+      <!-- Procesando -->
       <div id="state-processing" style="display:none;">
         <div class="progress-section">
-          <div class="progress-header">
-            <span id="progress-label">Procesando archivos...</span>
-            <span class="pct" id="progress-pct">0%</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progress-fill"></div>
-          </div>
+          <div class="progress-header"><span id="progress-label">Procesando...</span><span class="pct" id="progress-pct">0%</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <div style="font-size:12px;color:var(--gray-400);margin-top:6px;" id="progress-sub">Iniciando proceso...</div>
         </div>
-        <div class="live-counters">
-          <div class="live-counter"><div class="val" id="live-total">0</div><div class="lbl">Procesados</div></div>
-          <div class="live-counter ok"><div class="val" id="live-ok">0</div><div class="lbl">Importados</div></div>
-          <div class="live-counter err"><div class="val" id="live-err">0</div><div class="lbl">Errores</div></div>
+        <div style="padding:0 28px 12px;">
+          <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Archivos procesados</div>
+          <div class="processing-file-list" id="processing-file-list" style="max-height:280px;overflow-y:auto;font-size:12px;font-family:monospace;background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;color:var(--gray-600);border:1px solid var(--gray-200);"></div>
+        </div>
+        <!-- Hidden counters still needed by JS -->
+        <div style="display:none;">
+          <span id="live-total">0</span>
+          <span id="live-ok">0</span>
+          <span id="live-err">0</span>
         </div>
       </div>
 
-      <!-- Estado 4: Resultados -->
+      <!-- Resultados -->
       <div id="state-results" style="display:none;">
         <div style="padding:24px 28px 0;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
             <span style="font-size:20px;">✅</span>
-            <div>
-              <div style="font-weight:600;color:var(--gray-800);">Importación completada</div>
-              <div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div>
-            </div>
+            <div><div style="font-weight:600;">Importación completada</div><div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div></div>
           </div>
         </div>
         <div class="results-grid">
-          <div class="result-card info"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div></div>
-          <div class="result-card ok"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div></div>
-          <div class="result-card warn"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div></div>
-          <div class="result-card err"><div class="val" id="res-err">0</div><div class="lbl">Errores</div></div>
+          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div></div>
+          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div></div>
+          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div></div>
+          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div></div>
         </div>
+        <div class="detail-list" id="detail-list"></div>
         <div class="donut-wrap">
           <div class="donut" id="donut" style="--pct:0;">
             <div class="donut-val" id="donut-val">0%</div>
@@ -535,7 +325,7 @@
   </div>
 </div>
 
-<!-- Drawer: Terminal técnica -->
+<!-- Drawer terminal -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="if(event.target===this) toggleDrawer()">
   <div class="drawer" id="drawer">
     <div class="drawer-header">
@@ -545,8 +335,19 @@
     <div id="drawer-log">
       <div class="log-entry log-dim">SIDEC Sistema de Importación v1.0</div>
       <div class="log-entry log-dim">──────────────────────────</div>
-      <div class="log-entry log-info">Terminal lista. Los logs aparecerán aquí durante la importación.</div>
+      <div class="log-entry log-info">Terminal lista.</div>
     </div>
+  </div>
+</div>
+
+<!-- Modal para listas -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-title">Detalle</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
 
@@ -555,20 +356,24 @@
 if (!Auth.requireLogin()) throw new Error('not logged');
 renderNavbar('importar');
 
-// ── Estado global ──────────────────────────────────────
-let carpetas = [];
-let errores = [];
-let importando = false;
-let importacionActualId = null;
-let intervaloProgreso = null;
-let rutaActual = '';
-let archivosEncontrados = 0;
+let carpetas = [], errores = [], importando = false;
+let rutaActual = '', archivosEncontrados = 0;
+let lastImportData = null;
+let importacionActualId = null, intervaloProgreso = null;
 
-// ── Referencias DOM ────────────────────────────────────
+function getBasePath() { return localStorage.getItem('sidec_base_path') || ''; }
+function setBasePath(val) {
+  if (val) localStorage.setItem('sidec_base_path', val);
+  else localStorage.removeItem('sidec_base_path');
+  document.getElementById('base-path').value = val;
+}
+document.getElementById('base-path').value = getBasePath();
+function guardarBasePath() {
+  setBasePath(document.getElementById('base-path').value.trim());
+  showAlert('Carpeta base guardada.', 'success');
+}
+
 const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => document.querySelectorAll(sel);
-
-// ── Cambio de estado visual ────────────────────────────
 function setState(state) {
   ['empty','scan','processing','results'].forEach(s => {
     const el = document.getElementById(`state-${s}`);
@@ -576,37 +381,21 @@ function setState(state) {
   });
   const target = document.getElementById(`state-${state}`);
   if (target) target.style.display = '';
-
-  // Actualizar pasos
-  const steps = ['select','review','import','results'];
-  steps.forEach(s => document.getElementById(`step-${s}`).classList.remove('active','completed'));
-  if (state === 'empty') {
-    document.getElementById('step-select').classList.add('active');
-  } else if (state === 'scan') {
-    document.getElementById('step-select').classList.add('completed');
-    document.getElementById('step-review').classList.add('active');
-  } else if (state === 'processing') {
-    document.getElementById('step-select').classList.add('completed');
-    document.getElementById('step-review').classList.add('completed');
-    document.getElementById('step-import').classList.add('active');
-  } else if (state === 'results') {
-    document.getElementById('step-select').classList.add('completed');
-    document.getElementById('step-review').classList.add('completed');
-    document.getElementById('step-import').classList.add('completed');
-    document.getElementById('step-results').classList.add('active');
-  }
+  ['select','review','import','results'].forEach((s,i) => {
+    const step = document.getElementById(`step-${s}`);
+    step.classList.remove('active','completed');
+    const idx = {empty:0, scan:1, processing:2, results:3}[state];
+    if (i < idx) step.classList.add('completed');
+    else if (i === idx) step.classList.add('active');
+  });
 }
 
-// ── Terminal (drawer) ──────────────────────────────────
-function toggleDrawer() {
-  const overlay = document.getElementById('drawer-overlay');
-  overlay.classList.toggle('open');
-}
-function logTerminal(msg, tipo = 'dim') {
+function toggleDrawer() { document.getElementById('drawer-overlay').classList.toggle('open'); }
+function logTerminal(msg, tipo='dim') {
   const body = document.getElementById('drawer-log');
   const entry = document.createElement('div');
   entry.className = `log-entry log-${tipo}`;
-  const ts = new Date().toLocaleTimeString('es-MX', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const ts = new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   entry.textContent = `[${ts}] ${msg}`;
   body.appendChild(entry);
   body.scrollTop = body.scrollHeight;
@@ -615,35 +404,55 @@ function logSepTerminal() { logTerminal('─'.repeat(45), 'dim'); }
 
 // ── Drag & Drop ────────────────────────────────────────
 const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dropZone.classList.add('drag-over');
-});
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', (e) => {
+dropZone.addEventListener('drop', async e => {
   e.preventDefault();
   dropZone.classList.remove('drag-over');
   const items = e.dataTransfer.files;
-  if (items.length > 0) {
-    const path = items[0].path || items[0].webkitRelativePath || '';
-    const carpeta = path.split('\\').slice(0,-1).join('\\') || path;
-    document.getElementById('input-ruta').value = carpeta;
+  if (items.length === 0) return;
+  let rutaDetectada = '';
+  for (const file of items) {
+    if (file.path) { rutaDetectada = file.path.replace(/[\\/][^\\/]*$/, ''); break; }
+  }
+  if (rutaDetectada) {
+    document.getElementById('input-ruta').value = rutaDetectada;
     agregarYEscanear();
+  } else {
+    const base = getBasePath();
+    if (base) {
+      let carpetaRelativa = '';
+      if (items[0].webkitRelativePath) {
+        const partes = items[0].webkitRelativePath.split('/');
+        if (partes.length > 1) carpetaRelativa = partes[0];
+      }
+      if (carpetaRelativa) {
+        document.getElementById('input-ruta').value = base + '\\' + carpetaRelativa;
+        agregarYEscanear();
+      } else {
+        showAlert('No se pudo obtener la ruta automáticamente.');
+      }
+    } else {
+      showAlert('Arrastrar no revela la ruta completa. Configura una "Carpeta base".');
+    }
   }
 });
 
-// ── Input de carpeta nativo ────────────────────────────
-document.getElementById('folder-input').addEventListener('change', function() {
+const folderInput = document.getElementById('folder-input');
+folderInput.addEventListener('change', function() {
   const files = this.files;
-  if (files.length > 0) {
-    const path = files[0].webkitRelativePath || files[0].name;
-    const carpeta = path.split('/').slice(0,-1).join('/') || path;
-    document.getElementById('input-ruta').value = carpeta;
-    agregarYEscanear();
+  if (files.length === 0) return;
+  let rootFolder = '';
+  if (files[0].webkitRelativePath) {
+    const partes = files[0].webkitRelativePath.split('/');
+    rootFolder = partes[0];
   }
+  const base = getBasePath();
+  document.getElementById('input-ruta').value = (base && rootFolder) ? base + '\\' + rootFolder : rootFolder;
+  agregarYEscanear();
 });
+dropZone.addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT') folderInput.click(); });
 
-// ── Agregar y escanear ─────────────────────────────────
 async function agregarYEscanear() {
   const ruta = document.getElementById('input-ruta').value.trim();
   if (!ruta) { showAlert('Ingresa una ruta de carpeta.'); return; }
@@ -663,46 +472,75 @@ async function agregarYEscanear() {
   }
 }
 
-// ── Iniciar importación ─────────────────────────────────
 async function iniciarImportacion() {
   if (carpetas.length === 0) { showAlert('Escanea una carpeta primero.'); return; }
   if (importando) return;
-  importando = true;
-  errores = [];
+  importando = true; errores = [];
+  _archivosYaMostrados.clear();
   setState('processing');
+
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('progress-pct').textContent = '0%';
+  document.getElementById('progress-label').textContent = 'Iniciando...';
+  document.getElementById('progress-sub').textContent = 'Preparando importación...';
   document.getElementById('live-total').textContent = '0';
   document.getElementById('live-ok').textContent = '0';
   document.getElementById('live-err').textContent = '0';
+  const fileListEl = document.getElementById('processing-file-list');
+  fileListEl.innerHTML = '<div style="color:#9ca3af;font-style:italic;">Esperando archivos...</div>';
+
   logTerminal('▶ Iniciando importación...', 'info');
   logSepTerminal();
 
   try {
+    // PASO 1 — Reservar el ID en BD antes de ejecutar Python
+    // Esto permite hacer polling del progreso real desde el inicio
+    let importacion_id = null;
+    try {
+      const reserva = await api('/admin/importar/reservar', {
+        method: 'POST',
+        body: { carpetas: carpetas.map(c => ({ ruta: c.ruta, empleado: c.empleado, anio: c.anio })) }
+      });
+      importacion_id = reserva.importacion_id;
+      importacionActualId = importacion_id;
+      // Arrancar polling ANTES de llamar a Python
+      if (importacion_id) {
+        intervaloProgreso = setInterval(pollProgreso, 600);
+        logTerminal(`🔗 Importación registrada (id=${importacion_id}), iniciando proceso...`, 'info');
+      }
+    } catch (e) {
+      // Si /reservar falla (versión anterior del backend sin ese endpoint), continuar sin polling
+      logTerminal('⚠ No se pudo reservar ID previo, el progreso se mostrará al finalizar.', 'warn');
+    }
+
+    // PASO 2 — Ejecutar la importación real (bloqueante hasta que Python termina)
     const data = await api('/admin/importar', {
-      method:'POST',
+      method: 'POST',
       body: {
         carpetas: carpetas.map(c => ({ ruta: c.ruta, empleado: c.empleado, anio: c.anio })),
         soloEscanear: false,
         skipDuplicados: true,
+        importacion_id,           // ← el backend reutiliza este registro en vez de crear uno nuevo
       }
     });
-    importacionActualId = data.importacion_id;
-    if (importacionActualId) intervaloProgreso = setInterval(actualizarProgresoUI, 1500);
 
-    // Esperar el resultado final (ya llegó)
+    lastImportData = data;
     mostrarResultados(data);
+
   } catch (e) {
     logTerminal(`❌ Error: ${e.message}`, 'err');
     setState('empty');
   } finally {
     clearInterval(intervaloProgreso);
+    intervaloProgreso = null;
     importacionActualId = null;
     importando = false;
   }
 }
 
-async function actualizarProgresoUI() {
+const _archivosYaMostrados = new Set();
+
+async function pollProgreso() {
   if (!importacionActualId) return;
   try {
     const prog = await api(`/admin/progreso/${importacionActualId}`);
@@ -710,62 +548,170 @@ async function actualizarProgresoUI() {
       const pct = prog.pct || Math.round((prog.actual / prog.total) * 100);
       document.getElementById('progress-fill').style.width = pct + '%';
       document.getElementById('progress-pct').textContent = pct + '%';
-      document.getElementById('progress-label').textContent = `Procesados ${prog.actual} de ${prog.total}`;
+      document.getElementById('progress-label').textContent = `Procesando archivos...`;
+      document.getElementById('progress-sub').textContent = `${prog.actual} de ${prog.total} archivos procesados`;
       document.getElementById('live-total').textContent = prog.actual;
-      document.getElementById('live-ok').textContent = Math.round(prog.actual * 0.9); // estimado
-      logTerminal(`Procesados ${prog.actual}/${prog.total} (${pct}%)`, 'dim');
+    } else if (prog && prog.total === 0) {
+      // Aún no hay datos — mostrar animación de espera
+      document.getElementById('progress-label').textContent = 'Iniciando...';
+    }
+
+    // Mostrar archivo actual si es nuevo
+    if (prog && prog.archivo_actual && !_archivosYaMostrados.has(prog.archivo_actual)) {
+      _archivosYaMostrados.add(prog.archivo_actual);
+      const fileList = document.getElementById('processing-file-list');
+      if (fileList.querySelector('div[style*="italic"]')) fileList.innerHTML = '';
+      const name = prog.archivo_actual.split(/[\\/]/).pop();
+      const line = document.createElement('div');
+      line.style.cssText = 'padding:3px 0;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;';
+      line.innerHTML = `<span style="color:#16a34a;font-size:10px;">●</span><span>${name}</span>`;
+      fileList.appendChild(line);
+      fileList.scrollTop = fileList.scrollHeight;
     }
   } catch (e) {}
 }
 
-// ── Mostrar resultados finales ──────────────────────────
 function mostrarResultados(data) {
+  lastImportData = data;
   const total = data.total || 0;
   const ok = data.exitosos || 0;
   const err = data.fallidos || 0;
-  const warn = data.no_certs || 0;
+  const noCerts = data.no_certs || 0;
   const omitidos = data.omitidos || 0;
+  const advertencias = noCerts + omitidos;
   const pctOk = total > 0 ? Math.round((ok / total) * 100) : 0;
 
   document.getElementById('res-total').textContent = total;
   document.getElementById('res-ok').textContent = ok;
-  document.getElementById('res-warn').textContent = warn + omitidos;
+  document.getElementById('res-warn').textContent = advertencias;
   document.getElementById('res-err').textContent = err;
   document.getElementById('results-time').textContent = `Duración: ${data.duracion || '—'}`;
   document.getElementById('sum-carpeta').textContent = rutaActual || '—';
   document.getElementById('sum-duracion').textContent = data.duracion || '—';
 
-  // Donut
+  const detailDiv = document.getElementById('detail-list');
+  let detalles = [];
+  if (omitidos > 0) detalles.push(`🟡 ${omitidos} archivo(s) ya estaban en la base de datos (omitidos por duplicados).`);
+  if (noCerts > 0) detalles.push(`🟠 ${noCerts} archivo(s) no son certificados válidos (falta número de informe o datos insuficientes).`);
+  if (err > 0 && data.errores) {
+    detalles.push(`🔴 ${err} archivo(s) con errores:`);
+    data.errores.forEach(e => {
+      const nombre = e.archivo?.split(/[\\/]/).pop() || e.archivo;
+      detalles.push(`   • ${nombre}: ${e.error}`);
+    });
+  }
+  if (detalles.length === 0) detalles.push('✅ Todos los archivos se procesaron correctamente.');
+  detailDiv.innerHTML = detalles.map(d => `<div class="detail-item">${d}</div>`).join('');
+
   const donut = document.getElementById('donut');
   donut.style.setProperty('--pct', pctOk);
   document.getElementById('donut-val').textContent = pctOk + '%';
   document.getElementById('leg-ok').textContent = ok;
-  document.getElementById('leg-warn').textContent = warn + omitidos;
+  document.getElementById('leg-warn').textContent = advertencias;
   document.getElementById('leg-err').textContent = err;
+
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  document.getElementById('progress-label').textContent = 'Completado';
+  document.getElementById('progress-sub').textContent = `${total} archivos procesados en total`;
+  document.getElementById('live-total').textContent = total;
+
+  // Populate the file list with all processed files
+  const fileListEl = document.getElementById('processing-file-list');
+  const allFiles = [
+    ...(data.archivos_exitosos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'ok' })),
+    ...(data.archivos_omitidos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
+    ...(data.archivos_no_validos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
+    ...(data.errores || []).map(e => ({ name: (e.archivo || '').split(/[\\/]/).pop(), type: 'err' })),
+  ];
+  if (allFiles.length > 0) {
+    fileListEl.innerHTML = allFiles.map(f => {
+      const dot = f.type === 'ok' ? '#16a34a' : f.type === 'warn' ? '#d97706' : '#dc2626';
+      return `<div style="padding:3px 0;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;"><span style="color:${dot};font-size:10px;">●</span><span>${f.name}</span></div>`;
+    }).join('');
+  }
 
   setState('results');
   logTerminal('✅ Importación completada.', 'ok');
-  logTerminal(`   Total: ${total} | Éxitos: ${ok} | Fallos: ${err} | Omitidos: ${omitidos}`, 'info');
-
-  if (data.errores && data.errores.length > 0) {
-    errores = data.errores;
-    logTerminal('❌ Errores encontrados:', 'err');
-    data.errores.forEach(e => logTerminal(`   ${e.archivo?.split('\\').pop()}: ${e.error}`, 'err'));
-  }
+  logTerminal(`   Total: ${total} | Éxitos: ${ok} | Advertencias: ${advertencias} | Errores: ${err}`, 'info');
 }
 
-// ── Resetear ────────────────────────────────────────────
+function showFileList(type) {
+  if (!lastImportData) return;
+  const modal = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+  const body = document.getElementById('modal-body');
+
+  let files = [];
+  const typeLabels = { total: 'Todos los archivos', ok: 'Importados correctamente', warn: 'Advertencias', err: 'Errores' };
+
+  const extractName = (f) => typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
+  const extractReport = (f) => {
+    const name = typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
+    // Try to extract report number from filename (common patterns: INF-001, 2024-001, any number sequence)
+    const m = name.match(/(\d{3,}[-_]?\d*|\bINF[-_]?\d+)/i);
+    return m ? m[0] : name.replace(/\.(xlsx?|pdf)$/i, '');
+  };
+
+  if (type === 'total') {
+    (lastImportData.archivos_exitosos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'ok', badgeLabel: 'Éxito', reason: '' }));
+    (lastImportData.archivos_omitidos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Duplicado', reason: 'Ya existe en la base de datos' }));
+    (lastImportData.archivos_no_validos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Sin datos', reason: 'Falta número de informe o datos insuficientes (<7 campos)' }));
+    (lastImportData.errores || []).forEach(e => files.push({ name: extractName(e), report: extractReport(e), badge: 'err', badgeLabel: 'Error', reason: e.error || 'Error desconocido' }));
+  } else if (type === 'ok') {
+    (lastImportData.archivos_exitosos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'ok', badgeLabel: 'Éxito', reason: 'Importado correctamente' }));
+  } else if (type === 'warn') {
+    (lastImportData.archivos_omitidos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Duplicado', reason: 'El archivo ya existe en la base de datos (duplicado)' }));
+    (lastImportData.archivos_no_validos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Datos insuficientes', reason: 'Falta número de informe o menos de 7 campos requeridos' }));
+  } else if (type === 'err') {
+    (lastImportData.errores || []).forEach(e => files.push({ name: extractName(e), report: extractReport(e), badge: 'err', badgeLabel: 'Error', reason: e.error || 'Error desconocido' }));
+  }
+
+  title.textContent = typeLabels[type] || 'Detalle';
+
+  const badgeColors = { ok: 'badge-ok', warn: 'badge-warn', err: 'badge-err' };
+
+  if (files.length === 0) {
+    body.innerHTML = `<div class="modal-empty">✅ No hay archivos en esta categoría.</div>`;
+  } else {
+    const summaryText = type === 'warn'
+      ? `${files.filter(f=>f.badgeLabel==='Duplicado').length} duplicado(s), ${files.filter(f=>f.badgeLabel!=='Duplicado').length} con datos insuficientes`
+      : `${files.length} archivo(s) en esta categoría`;
+    body.innerHTML = `
+      <div class="modal-summary">${summaryText}</div>
+      <table>
+        <thead><tr>
+          <th>#</th>
+          <th>Archivo / No. Informe</th>
+          <th>Estado</th>
+          <th>Motivo / Detalle</th>
+        </tr></thead>
+        <tbody>
+          ${files.map((f, i) => `<tr>
+            <td style="color:var(--gray-400);font-size:11px;">${i + 1}</td>
+            <td>
+              <div class="file-name">${f.name}</div>
+              <div class="file-report">${f.report}</div>
+            </td>
+            <td><span class="modal-badge ${badgeColors[f.badge]}">${f.badgeLabel}</span></td>
+            <td class="file-reason">${f.reason}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  modal.classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
 function resetear() {
-  carpetas = [];
-  errores = [];
-  archivosEncontrados = 0;
-  rutaActual = '';
+  carpetas = []; errores = []; archivosEncontrados = 0; rutaActual = '';
   document.getElementById('input-ruta').value = '';
   setState('empty');
   document.getElementById('drawer-log').innerHTML = '<div class="log-entry log-dim">Terminal lista.</div>';
 }
 
-// ── Historial (se mantiene en drawer) ──────────────────
 async function cargarHistorial() {
   toggleDrawer();
   try {
@@ -777,10 +723,9 @@ async function cargarHistorial() {
         logTerminal(`${new Date(imp.iniciado_en).toLocaleDateString()} — ${imp.carpeta_origen || '?'} — ✅${imp.exitosos} ❌${imp.fallidos}`, 'dim');
       });
     }
-  } catch (e) { /* ignore */ }
+  } catch (e) {}
 }
 
-// ── Inicialización ──────────────────────────────────────
 setState('empty');
 </script>
 </body>

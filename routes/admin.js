@@ -75,30 +75,57 @@ router.post('/escanear', async (req, res) => {
 });
 
 // ============================================================
-// POST /api/admin/importar
+// POST /api/admin/importar/reservar
+// Registra la importación en BD y devuelve el id ANTES de ejecutar Python.
+// El frontend usa este id para hacer polling del progreso.
 // ============================================================
-router.post('/importar', async (req, res) => {
-  const {
-    carpetas      = [],
-    soloEscanear  = false,
-    skipDuplicados = true,
-    procesarPdf   = true,
-  } = req.body;
-
-  if (!carpetas.length) {
-    return res.status(400).json({ error: 'Se requiere al menos una carpeta.' });
-  }
-
-  let importacion_id = null;
+router.post('/importar/reservar', async (req, res) => {
+  const { carpetas = [] } = req.body;
+  if (!carpetas.length) return res.status(400).json({ error: 'Se requiere al menos una carpeta.' });
   try {
     const result = await pool.query(
       `INSERT INTO importaciones (usuario_id, carpeta_origen, estado)
        VALUES ($1, $2, 'en_proceso') RETURNING id`,
       [req.usuario.id, carpetas.map(c => c.ruta).join(', ')]
     );
-    importacion_id = result.rows[0].id;
+    const importacion_id = result.rows[0].id;
+    progresos[importacion_id] = { actual: 0, total: 0, pct: 0, archivo_actual: null };
+    res.json({ importacion_id });
   } catch (e) {
-    console.warn('[importar] No se pudo registrar en BD:', e.message);
+    res.status(500).json({ error: 'No se pudo registrar la importación: ' + e.message });
+  }
+});
+
+// ============================================================
+// POST /api/admin/importar
+// ============================================================
+router.post('/importar', async (req, res) => {
+  const {
+    carpetas       = [],
+    soloEscanear   = false,
+    skipDuplicados = true,
+    procesarPdf    = true,
+    importacion_id: importacion_id_previo = null,   // ← viene del /reservar
+  } = req.body;
+
+  if (!carpetas.length) {
+    return res.status(400).json({ error: 'Se requiere al menos una carpeta.' });
+  }
+
+  let importacion_id = importacion_id_previo ? parseInt(importacion_id_previo) : null;
+
+  // Solo crear nuevo registro si no se pasó uno del /reservar
+  if (!importacion_id) {
+    try {
+      const result = await pool.query(
+        `INSERT INTO importaciones (usuario_id, carpeta_origen, estado)
+         VALUES ($1, $2, 'en_proceso') RETURNING id`,
+        [req.usuario.id, carpetas.map(c => c.ruta).join(', ')]
+      );
+      importacion_id = result.rows[0].id;
+    } catch (e) {
+      console.warn('[importar] No se pudo registrar en BD:', e.message);
+    }
   }
 
   const inicio = Date.now();
@@ -107,7 +134,10 @@ router.post('/importar', async (req, res) => {
   let fallidos      = 0;
   let noCerts       = 0;
   let omitidos      = 0;
-  const erroresTotal = [];
+  const erroresTotal        = [];
+  const archivosExitososAll = [];
+  const archivosOmitidosAll = [];
+  const archivosNoValidosAll = [];
 
   try {
     for (const carpeta of carpetas) {
@@ -120,14 +150,15 @@ router.post('/importar', async (req, res) => {
 
       if (resultado.jsonData) {
         const d = resultado.jsonData;
-        totalArchivos += d.total           || 0;
-        exitosos      += d.exitosos        || 0;
-        fallidos      += d.fallidos        || 0;
-        noCerts       += d.no_certificados || 0;
-        omitidos      += d.omitidos        || 0;
-        if (Array.isArray(d.errores)) {
-          erroresTotal.push(...d.errores.slice(0, 50));
-        }
+        totalArchivos += d.total              || 0;
+        exitosos      += d.exitosos           || 0;
+        fallidos      += d.fallidos           || 0;
+        noCerts       += d.no_certificados    || 0;
+        omitidos      += d.omitidos           || 0;
+        if (Array.isArray(d.archivos_exitosos))   archivosExitososAll.push(...d.archivos_exitosos);
+        if (Array.isArray(d.archivos_omitidos))   archivosOmitidosAll.push(...d.archivos_omitidos);
+        if (Array.isArray(d.archivos_no_validos)) archivosNoValidosAll.push(...d.archivos_no_validos);
+        if (Array.isArray(d.errores))             erroresTotal.push(...d.errores.slice(0, 50));
       } else {
         const stats = parsearResumen(resultado.stdout);
         totalArchivos += stats.total    || 0;
@@ -152,7 +183,6 @@ router.post('/importar', async (req, res) => {
           importacion_id,
         ]
       );
-      // Limpiar progreso al finalizar
       delete progresos[importacion_id];
     }
 
@@ -164,7 +194,10 @@ router.post('/importar', async (req, res) => {
       no_certs: noCerts,
       omitidos,
       duracion,
-      errores:  erroresTotal.slice(0, 100),
+      errores:             erroresTotal.slice(0, 100),
+      archivos_exitosos:   archivosExitososAll,
+      archivos_omitidos:   archivosOmitidosAll,
+      archivos_no_validos: archivosNoValidosAll,
     });
 
   } catch (e) {
@@ -253,17 +286,26 @@ function ejecutarPython(args, importacion_id = null) {
 
     proc.stderr.on('data', d => {
       stderr += d;
-      // Buscar líneas de progreso "Procesados X/Total..."
       const lineas = d.toString().split('\n');
       lineas.forEach(linea => {
-        const match = linea.match(/Procesados (\d+)\/(\d+)/);
-        if (match && importacion_id) {
-          const actual = parseInt(match[1]);
-          const total = parseInt(match[2]);
+        // Progreso: "Procesados X/Total..."
+        const matchProg = linea.match(/Procesados (\d+)\/(\d+)/);
+        if (matchProg && importacion_id) {
+          const actual = parseInt(matchProg[1]);
+          const total  = parseInt(matchProg[2]);
           progresos[importacion_id] = {
+            ...(progresos[importacion_id] || {}),
             actual,
             total,
-            pct: Math.round((actual / total) * 100)
+            pct: Math.round((actual / total) * 100),
+          };
+        }
+        // Archivo actual: "Procesando: ruta/al/archivo.xlsx"
+        const matchFile = linea.match(/Procesando:\s*(.+\.(xlsx?|pdf))/i);
+        if (matchFile && importacion_id) {
+          progresos[importacion_id] = {
+            ...(progresos[importacion_id] || {}),
+            archivo_actual: matchFile[1].trim(),
           };
         }
       });
