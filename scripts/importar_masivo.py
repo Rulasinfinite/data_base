@@ -472,6 +472,9 @@ if __name__ == '__main__':
 
     for i, archivo in enumerate(archivos,1):
         ext = Path(archivo).suffix.lower()
+        # Emitir nombre del archivo actual ANTES de procesarlo
+        print(f"Procesando: {archivo}", file=sys.stderr, flush=True)
+
         if ext in ('.xlsx','.xls'):
             datos, error = extraer_datos_excel(archivo)
         else:
@@ -491,8 +494,8 @@ if __name__ == '__main__':
             no_certs += 1
 
         # Emitir progreso cada 5 archivos (o en el primero y último)
-        if i % 5 == 0 or i == total:
-            print(f"Procesados {i}/{total} archivos...", file=sys.stderr)
+        if i % 5 == 0 or i == 1 or i == total:
+            print(f"Procesados {i}/{total} archivos...", file=sys.stderr, flush=True)
 
     exitosos, omitidos, archivos_omitidos, errores_insercion = insertar_certificados(conn, datos_validos, args.empleado)
     conn.close()

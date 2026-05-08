@@ -111,6 +111,7 @@
     }
     .result-card.clickable { cursor: pointer; }
     .result-card.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .card-hint { font-size: 10px; color: var(--gray-400); margin-top: 6px; letter-spacing: 0.02em; }
     .result-card .val { font-size: 30px; font-weight: 700; }
     .result-card .lbl { font-size: 12px; color: var(--gray-500); margin-top: 4px; font-weight: 500; }
     .result-card.ok { background: var(--success-light); } .result-card.ok .val { color: var(--success); }
@@ -158,6 +159,7 @@
 
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
 
     .config-base-path {
       font-size: 12px; color: var(--gray-500); margin-top: 8px; display: flex; align-items: center; gap: 6px;
@@ -186,8 +188,17 @@
     .file-reason { font-size:12px; color:var(--gray-500); }
 
     .processing-file-list {
-      max-height: 180px; overflow-y: auto; margin: 0 28px 12px;
+      max-height: 280px; overflow-y: auto; margin: 0 28px 12px;
       font-size: 12px; color: var(--gray-500); font-family: var(--font-mono);
+    }
+
+    .instruction-text {
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 8px;
+      margin-bottom: 12px;
+      font-style: italic;
     }
 
     @media (max-width: 900px) { .app-layout { grid-template-columns: 1fr; } .results-grid { grid-template-columns: 1fr 1fr; } }
@@ -204,8 +215,8 @@
       <p style="font-size:13px;color:var(--gray-500);margin:4px 0 0;">Selecciona una carpeta y el sistema procesará los archivos automáticamente</p>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;">💻 Detalles técnicos</button>
-      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;">🕐 Historial</button>
+      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;"> Detalles técnicos</button>
+      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;"> Historial</button>
     </div>
   </div>
 
@@ -277,9 +288,8 @@
         </div>
         <div style="padding:0 28px 12px;">
           <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Archivos procesados</div>
-          <div class="processing-file-list" id="processing-file-list" style="max-height:280px;overflow-y:auto;font-size:12px;font-family:monospace;background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;color:var(--gray-600);border:1px solid var(--gray-200);"></div>
+          <div class="processing-file-list" id="processing-file-list" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;color:var(--gray-600);border:1px solid var(--gray-200);"></div>
         </div>
-        <!-- Hidden counters still needed by JS -->
         <div style="display:none;">
           <span id="live-total">0</span>
           <span id="live-ok">0</span>
@@ -295,13 +305,14 @@
             <div><div style="font-weight:600;">Importación completada</div><div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div></div>
           </div>
         </div>
+        <div class="instruction-text" id="results-instruction"> Haz clic en las tarjetas para ver la lista de archivos</div>
         <div class="results-grid">
-          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div></div>
-          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div></div>
-          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div></div>
-          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div></div>
+          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint"> Toca para ver lista</div></div>
+          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint"> Toca para ver cuáles</div></div>
+          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint"> Toca para ver motivos</div></div>
+          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint"> Toca para ver detalles</div></div>
         </div>
-        <div class="detail-list" id="detail-list"></div>
+        <div class="detail-list" id="detail-list" style="display:none;"></div>
         <div class="donut-wrap">
           <div class="donut" id="donut" style="--pct:0;">
             <div class="donut-val" id="donut-val">0%</div>
@@ -313,8 +324,8 @@
           </div>
         </div>
         <div class="summary-row">
-          <div>📁 Carpeta: <span id="sum-carpeta">—</span></div>
-          <div>⏱ Duración: <span id="sum-duracion">—</span></div>
+          <div style="flex:1;">📁 Carpeta: <span id="sum-carpeta" style="font-weight:600;color:var(--gray-800);font-size:13px;word-break:break-all;">—</span></div>
+          <div style="white-space:nowrap;">⏱ <span id="sum-duracion" style="font-weight:600;color:var(--gray-800);">—</span></div>
         </div>
         <div style="padding:0 28px 24px;display:flex;gap:8px;">
           <button class="btn btn-primary" onclick="resetear()">Nueva importación</button>
@@ -360,6 +371,7 @@ let carpetas = [], errores = [], importando = false;
 let rutaActual = '', archivosEncontrados = 0;
 let lastImportData = null;
 let importacionActualId = null, intervaloProgreso = null;
+const _archivosYaMostrados = new Set();
 
 function getBasePath() { return localStorage.getItem('sidec_base_path') || ''; }
 function setBasePath(val) {
@@ -487,14 +499,12 @@ async function iniciarImportacion() {
   document.getElementById('live-ok').textContent = '0';
   document.getElementById('live-err').textContent = '0';
   const fileListEl = document.getElementById('processing-file-list');
-  fileListEl.innerHTML = '<div style="color:#9ca3af;font-style:italic;">Esperando archivos...</div>';
+  fileListEl.innerHTML = '<div class="placeholder-waiting" style="color:#9ca3af;font-style:italic;padding:4px 0;">⏳ Iniciando proceso...</div>';
 
   logTerminal('▶ Iniciando importación...', 'info');
   logSepTerminal();
 
   try {
-    // PASO 1 — Reservar el ID en BD antes de ejecutar Python
-    // Esto permite hacer polling del progreso real desde el inicio
     let importacion_id = null;
     try {
       const reserva = await api('/admin/importar/reservar', {
@@ -503,24 +513,21 @@ async function iniciarImportacion() {
       });
       importacion_id = reserva.importacion_id;
       importacionActualId = importacion_id;
-      // Arrancar polling ANTES de llamar a Python
       if (importacion_id) {
         intervaloProgreso = setInterval(pollProgreso, 600);
         logTerminal(`🔗 Importación registrada (id=${importacion_id}), iniciando proceso...`, 'info');
       }
     } catch (e) {
-      // Si /reservar falla (versión anterior del backend sin ese endpoint), continuar sin polling
       logTerminal('⚠ No se pudo reservar ID previo, el progreso se mostrará al finalizar.', 'warn');
     }
 
-    // PASO 2 — Ejecutar la importación real (bloqueante hasta que Python termina)
     const data = await api('/admin/importar', {
       method: 'POST',
       body: {
         carpetas: carpetas.map(c => ({ ruta: c.ruta, empleado: c.empleado, anio: c.anio })),
         soloEscanear: false,
         skipDuplicados: true,
-        importacion_id,           // ← el backend reutiliza este registro en vez de crear uno nuevo
+        importacion_id,
       }
     });
 
@@ -538,8 +545,6 @@ async function iniciarImportacion() {
   }
 }
 
-const _archivosYaMostrados = new Set();
-
 async function pollProgreso() {
   if (!importacionActualId) return;
   try {
@@ -552,23 +557,37 @@ async function pollProgreso() {
       document.getElementById('progress-sub').textContent = `${prog.actual} de ${prog.total} archivos procesados`;
       document.getElementById('live-total').textContent = prog.actual;
     } else if (prog && prog.total === 0) {
-      // Aún no hay datos — mostrar animación de espera
       document.getElementById('progress-label').textContent = 'Iniciando...';
     }
 
-    // Mostrar archivo actual si es nuevo
     if (prog && prog.archivo_actual && !_archivosYaMostrados.has(prog.archivo_actual)) {
       _archivosYaMostrados.add(prog.archivo_actual);
       const fileList = document.getElementById('processing-file-list');
-      if (fileList.querySelector('div[style*="italic"]')) fileList.innerHTML = '';
+      if (fileList.querySelector('.placeholder-waiting')) fileList.innerHTML = '';
       const name = prog.archivo_actual.split(/[\\/]/).pop();
       const line = document.createElement('div');
-      line.style.cssText = 'padding:3px 0;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;';
-      line.innerHTML = `<span style="color:#16a34a;font-size:10px;">●</span><span>${name}</span>`;
+      line.style.cssText = 'padding:4px 0;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;animation:fadeIn 0.2s ease;';
+      line.innerHTML = `<span style="color:#16a34a;font-size:10px;">●</span><span style="font-family:monospace;font-size:12px;">${name}</span>`;
       fileList.appendChild(line);
       fileList.scrollTop = fileList.scrollHeight;
+    } else if (prog && prog.actual > 0 && _archivosYaMostrados.size === 0) {
+      const fileList = document.getElementById('processing-file-list');
+      const placeholder = fileList.querySelector('.placeholder-waiting');
+      if (placeholder) placeholder.textContent = `⏳ Procesando archivos... (${prog.actual}/${prog.total})`;
     }
   } catch (e) {}
+}
+
+function formatDuracion(durStr) {
+  if (!durStr) return '—';
+  const seg = parseFloat(durStr.replace('s', ''));
+  if (isNaN(seg)) return durStr;
+  const h = Math.floor(seg / 3600);
+  const m = Math.floor((seg % 3600) / 60);
+  const s = Math.floor(seg % 60);
+  if (h > 0) return `${h}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+  if (m > 0) return `${m}m ${s.toString().padStart(2,'0')}s`;
+  return `${s}s`;
 }
 
 function mostrarResultados(data) {
@@ -585,9 +604,9 @@ function mostrarResultados(data) {
   document.getElementById('res-ok').textContent = ok;
   document.getElementById('res-warn').textContent = advertencias;
   document.getElementById('res-err').textContent = err;
-  document.getElementById('results-time').textContent = `Duración: ${data.duracion || '—'}`;
+  document.getElementById('results-time').textContent = `Duración: ${formatDuracion(data.duracion)}`;
   document.getElementById('sum-carpeta').textContent = rutaActual || '—';
-  document.getElementById('sum-duracion').textContent = data.duracion || '—';
+  document.getElementById('sum-duracion').textContent = formatDuracion(data.duracion);
 
   const detailDiv = document.getElementById('detail-list');
   let detalles = [];
@@ -616,7 +635,6 @@ function mostrarResultados(data) {
   document.getElementById('progress-sub').textContent = `${total} archivos procesados en total`;
   document.getElementById('live-total').textContent = total;
 
-  // Populate the file list with all processed files
   const fileListEl = document.getElementById('processing-file-list');
   const allFiles = [
     ...(data.archivos_exitosos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'ok' })),
@@ -648,7 +666,6 @@ function showFileList(type) {
   const extractName = (f) => typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
   const extractReport = (f) => {
     const name = typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
-    // Try to extract report number from filename (common patterns: INF-001, 2024-001, any number sequence)
     const m = name.match(/(\d{3,}[-_]?\d*|\bINF[-_]?\d+)/i);
     return m ? m[0] : name.replace(/\.(xlsx?|pdf)$/i, '');
   };
