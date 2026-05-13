@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIDEC — Editar certificado</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Ajustes extra para el formulario */
+    .section-title {
+      font-size: 14px; font-weight: 600; color: var(--gray-700);
+      margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .readonly-field {
+      padding: 8px 12px; background: var(--gray-50);
+      border: 1px solid var(--gray-200); border-radius: 8px;
+      font-size: 14px; color: var(--gray-500);
+    }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) {
+      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar"></nav>
+
+<div class="page" style="max-width: 1000px;">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:13px;color:var(--gray-500)">
+    <a href="/dashboard.html" style="color:var(--gray-500)">Certificados</a>
+    <span>›</span>
+    <a id="breadcrumb-detalle" href="#" style="color:var(--gray-500)">Detalle</a>
+    <span>›</span>
+    <span style="color:var(--gray-700);font-weight:500">Editar</span>
+  </div>
+
+  <div id="alert-container"></div>
+
+  <div id="loading" style="text-align:center;padding:60px">
+    <span class="spinner" style="width:28px;height:28px;border-width:3px"></span>
+    <p style="margin-top:12px;color:var(--gray-400)">Cargando certificado...</p>
+  </div>
+
+  <div id="form-contenido" style="display:none;">
+
+    <!-- Card: Cliente (solo lectura) -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header">
+        <span class="card-title">🧾 Cliente</span>
+        <span style="font-size:12px;color:var(--gray-400)">No editable desde aquí</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-field">
+            <label>Nombre del cliente</label>
+            <span id="ro-nombre_cliente" class="readonly-field" style="display:block;"></span>
+          </div>
+          <div class="detail-field">
+            <label>Atención a</label>
+            <span id="ro-atencion_a" class="readonly-field" style="display:block;"></span>
+          </div>
+          <div class="detail-field" style="grid-column: span 2">
+            <label>Dirección</label>
+            <span id="ro-direccion" class="readonly-field" style="display:block;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario principal -->
+    <form id="edit-form">
+      <!-- Instrumento -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <span class="card-title">🔧 Instrumento</span>
+        </div>
+        <div class="card-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Descripción *</label>
+              <input class="form-control" type="text" id="f-descripcion_instrumento" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Magnitud evaluada *</label>
+              <select class="form-control" id="f-magnitud_evaluada">
+                <option value="">Seleccionar...</option>
+                <option value="DIMENSIONAL">Dimensional</option>
+                <option value="ELÉCTRICA">Eléctrica</option>
+                <option value="MASA">Masa</option>
+                <option value="TEMPERATURA Y HUMEDAD">Temperatura y Humedad</option>
+                <option value="PRESIÓN">Presión</option>
+                <option value="FUERZA">Fuerza</option>
+                <option value="VOLUMEN">Volumen</option>
+                <option value="PAR TORSIONAL">Par Torsional</option>
+                <option value="TIEMPO Y FRECUENCIA">Tiempo y Frecuencia</option>
+                <option value="QUÍMICA">Química</option>
+                <option value="FLUJO">Flujo</option>
+                <option value="ACELERACIÓN">Aceleración</option>
+                <option value="DENSIDAD">Densidad</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Marca</label>
+              <input class="form-control" type="text" id="f-marca">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Modelo</label>
+              <input class="form-control" type="text" id="f-modelo">
+            </div>
+            <div class="form-group">
+              <label class="form-label">No. de serie</label>
+              <input class="form-control" type="text" id="f-numero_serie">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Identificación</label>
+              <input class="form-control" type="text" id="f-identificacion">
+            </div>
+            <div class="form-group" style="grid-column: span 2">
+              <label class="form-label">Alcance de medición</label>
+              <input class="form-control" type="text" id="f-alcance" placeholder="Ej: 0 kgf a 10 kgf">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados y condiciones -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <div class="card">
+          <div class="card-header"><span class="card-title">📊 Resultados</span></div>
+          <div class="card-body">
+            <div class="form-group" style="margin-bottom:14px;">
+              <label class="form-label">Resultado de calibración</label>
+              <input class="form-control" type="text" id="f-resultado_calibracion">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Incertidumbre</label>
+              <input class="form-control" type="text" id="f-incertidumbre">
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">🌡️ Condiciones ambientales</span></div>
+          <div class="card-body">
+            <div class="form-group" style="margin-bottom:14px;">
+              <label class="form-label">Temperatura</label>
+              <input class="form-control" type="text" id="f-temperatura" placeholder="Ej: 23 °C ± 1 °C">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Humedad relativa</label>
+              <input class="form-control" type="text" id="f-humedad_relativa" placeholder="Ej: 36 % ± 10 %">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fechas y procedimiento -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header"><span class="card-title">📅 Fechas y procedimiento</span></div>
+        <div class="card-body">
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Fecha de recepción</label>
+              <input class="form-control" type="date" id="f-fecha_recepcion">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha de calibración</label>
+              <input class="form-control" type="date" id="f-fecha_calibracion">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha de emisión</label>
+              <input class="form-control" type="date" id="f-fecha_emision">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lugar de calibración</label>
+              <input class="form-control" type="text" id="f-lugar_calibracion">
+            </div>
+            <div class="form-group" style="grid-column: span 2">
+              <label class="form-label">Método utilizado</label>
+              <input class="form-control" type="text" id="f-metodo_utilizado">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado y vigencia -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><span class="card-title">📌 Estado y vigencia</span></div>
+        <div class="card-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Estado</label>
+              <select class="form-control" id="f-estado">
+                <option value="vigente">Vigente</option>
+                <option value="provisional">Provisional</option>
+                <option value="anulado">Anulado</option>
+                <option value="vencido">Vencido</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha de vencimiento</label>
+              <input class="form-control" type="date" id="f-fecha_vencimiento">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Firmantes (opcionales) -->
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><span class="card-title">✍️ Firmantes (opcional)</span></div>
+        <div class="card-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Calibrado por</label>
+              <input class="form-control" type="text" id="f-calibrado_por">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Aprobado por</label>
+              <input class="form-control" type="text" id="f-aprobado_por">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-bottom:40px;">
+        <a id="cancel-link" href="#" class="btn btn-outline">Cancelar</a>
+        <button type="submit" class="btn btn-primary" id="btn-guardar">💾 Guardar cambios</button>
+      </div>
+    </form>
+
+  </div><!-- /form-contenido -->
+</div>
+
+<script src="app.js"></script>
+<script>
+  // ── Control de acceso ──
+  if (!Auth.requireLogin()) throw new Error('not logged');
+  if (!Auth.hasRole('calidad')) {
+    window.location.href = '/dashboard.html';
+    throw new Error('acceso denegado');
+  }
+  renderNavbar('inicio');  // o 'editar', da igual
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) window.location.href = '/dashboard.html';
+
+  // Enlaces breadcrumb
+  document.getElementById('breadcrumb-detalle').href = `/detalle.html?id=${id}`;
+  document.getElementById('cancel-link').href = `/detalle.html?id=${id}`;
+
+  let certOriginal = null;
+
+  async function cargarCertificado() {
+    try {
+      certOriginal = await api('/certificados/' + id);
+      poblarFormulario(certOriginal);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('form-contenido').style.display = 'block';
+    } catch (e) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('alert-container').innerHTML =
+        `<div class="alert alert-error">${e.message}</div>`;
+    }
+  }
+
+  function poblarFormulario(cert) {
+    // Solo lectura cliente
+    document.getElementById('ro-nombre_cliente').textContent = cert.nombre_cliente || '—';
+    document.getElementById('ro-atencion_a').textContent = cert.atencion_a || '—';
+    document.getElementById('ro-direccion').textContent = cert.direccion || '—';
+
+    // Instrumento
+    document.getElementById('f-descripcion_instrumento').value = cert.descripcion_instrumento || '';
+    document.getElementById('f-magnitud_evaluada').value = cert.magnitud_evaluada || '';
+    document.getElementById('f-marca').value = cert.marca || '';
+    document.getElementById('f-modelo').value = cert.modelo || '';
+    document.getElementById('f-numero_serie').value = cert.numero_serie || '';
+    document.getElementById('f-identificacion').value = cert.identificacion || '';
+    document.getElementById('f-alcance').value = cert.alcance || '';
+
+    // Resultados / Condiciones
+    document.getElementById('f-resultado_calibracion').value = cert.resultado_calibracion || '';
+    document.getElementById('f-incertidumbre').value = cert.incertidumbre || '';
+    document.getElementById('f-temperatura').value = cert.temperatura || '';
+    document.getElementById('f-humedad_relativa').value = cert.humedad_relativa || '';
+
+    // Fechas
+    document.getElementById('f-fecha_recepcion').value = cert.fecha_recepcion || '';
+    document.getElementById('f-fecha_calibracion').value = cert.fecha_calibracion || '';
+    document.getElementById('f-fecha_emision').value = cert.fecha_emision || '';
+    document.getElementById('f-lugar_calibracion').value = cert.lugar_calibracion || '';
+    document.getElementById('f-metodo_utilizado').value = cert.metodo_utilizado || '';
+
+    // Estado / Vencimiento
+    document.getElementById('f-estado').value = cert.estado || 'vigente';
+    document.getElementById('f-fecha_vencimiento').value = cert.fecha_vencimiento || '';
+
+    // Firmantes
+    document.getElementById('f-calibrado_por').value = cert.calibrado_por || '';
+    document.getElementById('f-aprobado_por').value = cert.aprobado_por || '';
+  }
+
+  // ── Enviar formulario ──
+  document.getElementById('edit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-guardar');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Guardando...';
+
+    const payload = {
+      descripcion_instrumento: document.getElementById('f-descripcion_instrumento').value || null,
+      magnitud_evaluada:       document.getElementById('f-magnitud_evaluada').value || null,
+      marca:                   document.getElementById('f-marca').value || null,
+      modelo:                  document.getElementById('f-modelo').value || null,
+      numero_serie:            document.getElementById('f-numero_serie').value || null,
+      identificacion:          document.getElementById('f-identificacion').value || null,
+      alcance:                 document.getElementById('f-alcance').value || null,
+      resultado_calibracion:   document.getElementById('f-resultado_calibracion').value || null,
+      incertidumbre:           document.getElementById('f-incertidumbre').value || null,
+      temperatura:             document.getElementById('f-temperatura').value || null,
+      humedad_relativa:        document.getElementById('f-humedad_relativa').value || null,
+      fecha_recepcion:         document.getElementById('f-fecha_recepcion').value || null,
+      fecha_calibracion:       document.getElementById('f-fecha_calibracion').value || null,
+      fecha_emision:           document.getElementById('f-fecha_emision').value || null,
+      lugar_calibracion:       document.getElementById('f-lugar_calibracion').value || null,
+      metodo_utilizado:        document.getElementById('f-metodo_utilizado').value || null,
+      estado:                  document.getElementById('f-estado').value || null,
+      fecha_vencimiento:       document.getElementById('f-fecha_vencimiento').value || null,
+      calibrado_por:           document.getElementById('f-calibrado_por').value || null,
+      aprobado_por:            document.getElementById('f-aprobado_por').value || null,
+    };
+
+    try {
+      await api(`/certificados/${id}`, { method: 'PUT', body: payload });
+      window.location.href = `/detalle.html?id=${id}`;
+    } catch (err) {
+      document.getElementById('alert-container').innerHTML =
+        `<div class="alert alert-error">${err.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '💾 Guardar cambios';
+    }
+  });
+
+  cargarCertificado();
+</script>
+</body>
+</html>

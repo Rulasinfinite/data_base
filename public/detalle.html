@@ -40,7 +40,7 @@
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap" id="btn-acciones">
             <button class="btn btn-outline" onclick="window.history.back()">← Volver</button>
-            <!-- Botón editar: solo para calidad/admin, se agrega por JS -->
+            <a href="/editar.html?id=" id="link-editar" class="btn btn-outline" style="display:none">✏️ Editar</a>
           </div>
         </div>
       </div>
@@ -53,13 +53,9 @@
       </div>
       <div class="card-body">
         <div class="detail-grid">
-          <div class="detail-field">
+          <div class="detail-field" style="grid-column: span 2">
             <label>Nombre del cliente</label>
             <span id="f-nombre_cliente"></span>
-          </div>
-          <div class="detail-field">
-            <label>Atención a</label>
-            <span id="f-atencion_a"></span>
           </div>
           <div class="detail-field" style="grid-column: span 2">
             <label>Dirección</label>
@@ -68,7 +64,6 @@
         </div>
       </div>
     </div>
-
     <!-- Datos del instrumento -->
     <div class="card" style="margin-bottom:16px">
       <div class="card-header">
@@ -163,14 +158,6 @@
             <label>Método utilizado</label>
             <span id="f-metodo_utilizado"></span>
           </div>
-          <div class="detail-field">
-            <label>Calibrado por</label>
-            <span id="f-calibrado_por"></span>
-          </div>
-          <div class="detail-field">
-            <label>Aprobado por</label>
-            <span id="f-aprobado_por"></span>
-          </div>
         </div>
       </div>
     </div>
@@ -210,7 +197,7 @@
   const id = params.get('id');
 
   if (!id) {
-    window.location.href = '/index.html';
+    window.location.href = '/dashboard.html';
   }
 
   function setField(fieldId, valor) {
@@ -247,11 +234,12 @@
 
       // Botón editar si tiene permiso
       if (Auth.hasRole('calidad')) {
-        document.getElementById('btn-acciones').innerHTML += `
-          <a href="/editar.html?id=${id}" class="btn btn-outline">✏️ Editar</a>`;
+        const link = document.getElementById('link-editar');
+        link.href = `/editar.html?id=${id}`;
+        link.style.display = 'inline-flex';
       }
 
-      // Rellenar campos
+      // Rellenar campos (sin calibrado_por ni aprobado_por)
       const campos = [
         'nombre_cliente', 'atencion_a', 'direccion',
         'descripcion_instrumento', 'magnitud_evaluada', 'marca', 'modelo',
@@ -259,7 +247,6 @@
         'resultado_calibracion', 'incertidumbre',
         'temperatura', 'humedad_relativa',
         'metodo_utilizado', 'lugar_calibracion',
-        'calibrado_por', 'aprobado_por',
         'ruta_archivo_origen',
       ];
       campos.forEach(c => setField(c, cert[c]));

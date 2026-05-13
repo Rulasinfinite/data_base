@@ -1,7 +1,8 @@
 -- ============================================================
 -- SIDEC - Sistema de Certificados de Calibración
 -- Base de datos: sidec_db | Server: sidecmexico
--- Schema principal (sin particionamiento, con UNIQUE en numero_informe)
+-- Schema con clientes normalizados, archivos adjuntos,
+-- estado del certificado y fecha de vencimiento manual.
 -- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
@@ -23,15 +24,23 @@ INSERT INTO tipos_magnitud (nombre) VALUES
 ON CONFLICT (nombre) DO NOTHING;
 
 -- ============================================================
--- TABLA: certificados (versión unificada)
+-- TABLA: clientes (normalizada)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS clientes (
+    id          SERIAL PRIMARY KEY,
+    nombre      VARCHAR(255) NOT NULL UNIQUE,
+    direccion   TEXT,
+    atencion_a  VARCHAR(255)
+);
+
+-- ============================================================
+-- TABLA: certificados
 -- ============================================================
 CREATE TABLE IF NOT EXISTS certificados (
     id                      BIGSERIAL PRIMARY KEY,
-    numero_informe          VARCHAR(50)  NOT NULL UNIQUE,
+    numero_informe          VARCHAR(50)  NOT NULL,
     anio_emision            SMALLINT     NOT NULL,
-    nombre_cliente          VARCHAR(255),
-    direccion               TEXT,
-    atencion_a              VARCHAR(255),
+    cliente_id              INTEGER REFERENCES clientes(id),
     descripcion_instrumento VARCHAR(255),
     alcance                 TEXT,
     numero_serie            VARCHAR(100),
@@ -46,6 +55,9 @@ CREATE TABLE IF NOT EXISTS certificados (
     fecha_recepcion         DATE,
     fecha_calibracion       DATE,
     fecha_emision           DATE,
+    fecha_vencimiento       DATE,                     -- se asigna manualmente
+    estado                  VARCHAR(20) DEFAULT 'vigente'
+                            CHECK (estado IN ('vigente','anulado','provisional','vencido')),
     metodo_utilizado        TEXT,
     lugar_calibracion       VARCHAR(255),
     calibrado_por           VARCHAR(255),
@@ -53,7 +65,9 @@ CREATE TABLE IF NOT EXISTS certificados (
     ruta_archivo_origen     TEXT,
     fecha_importacion       TIMESTAMPTZ DEFAULT NOW(),
     importado_por           VARCHAR(100),
-    activo                  BOOLEAN DEFAULT TRUE
+    activo                  BOOLEAN DEFAULT TRUE,
+    -- Evitar duplicados exactos de mismo informe + cliente + marca
+    CONSTRAINT unique_certificado UNIQUE (numero_informe, cliente_id, marca)
 );
 
 -- ============================================================
@@ -62,8 +76,8 @@ CREATE TABLE IF NOT EXISTS certificados (
 CREATE INDEX IF NOT EXISTS idx_cert_numero_informe
     ON certificados (numero_informe);
 
-CREATE INDEX IF NOT EXISTS idx_cert_cliente_trgm
-    ON certificados USING GIN (nombre_cliente gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cert_cliente_id
+    ON certificados (cliente_id);
 
 CREATE INDEX IF NOT EXISTS idx_cert_numero_serie
     ON certificados (numero_serie);
@@ -77,8 +91,26 @@ CREATE INDEX IF NOT EXISTS idx_cert_fecha_emision
 CREATE INDEX IF NOT EXISTS idx_cert_anio
     ON certificados (anio_emision);
 
-CREATE INDEX IF NOT EXISTS idx_cert_marca_trgm
-    ON certificados USING GIN (marca gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cert_estado
+    ON certificados (estado);
+
+-- Índice de texto sobre nombre de cliente (ahora en tabla clientes)
+CREATE INDEX IF NOT EXISTS idx_clientes_trgm
+    ON clientes USING GIN (nombre gin_trgm_ops);
+
+-- ============================================================
+-- TABLA: archivos_adjuntos
+-- ============================================================
+CREATE TABLE IF NOT EXISTS archivos_adjuntos (
+    id              SERIAL PRIMARY KEY,
+    certificado_id  BIGINT REFERENCES certificados(id) ON DELETE CASCADE,
+    nombre_original VARCHAR(500),
+    ruta_archivo    TEXT NOT NULL,
+    fecha_subida    TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_adjuntos_certificado
+    ON archivos_adjuntos (certificado_id);
 
 -- ============================================================
 -- TABLA: usuarios (sin cambios)
@@ -160,13 +192,14 @@ VALUES (
 -- ============================================================
 CREATE OR REPLACE VIEW resumen_por_anio AS
 SELECT
-    anio_emision,
-    COUNT(*)                       AS total_certificados,
-    COUNT(DISTINCT nombre_cliente) AS total_clientes,
-    COUNT(DISTINCT marca)          AS total_marcas,
-    MIN(fecha_emision)             AS primera_emision,
-    MAX(fecha_emision)             AS ultima_emision
-FROM certificados
-WHERE activo = TRUE
-GROUP BY anio_emision
-ORDER BY anio_emision DESC;
+    c.anio_emision,
+    COUNT(*)                          AS total_certificados,
+    COUNT(DISTINCT cl.nombre)         AS total_clientes,
+    COUNT(DISTINCT c.marca)           AS total_marcas,
+    MIN(c.fecha_emision)              AS primera_emision,
+    MAX(c.fecha_emision)              AS ultima_emision
+FROM certificados c
+JOIN clientes cl ON cl.id = c.cliente_id
+WHERE c.activo = TRUE
+GROUP BY c.anio_emision
+ORDER BY c.anio_emision DESC;

@@ -89,6 +89,20 @@
     .drop-zone .drop-hint { font-size: 12px; color: var(--gray-400); margin-top: 6px; }
     .drop-zone input[type="file"] { display: none; }
 
+    /* ── Botones de selección ── */
+    .select-btns {
+      display: flex; gap: 10px; margin: 4px 20px 0; justify-content: center;
+    }
+    .select-btn {
+      flex: 1; max-width: 180px; display: flex; flex-direction: column; align-items: center;
+      gap: 6px; padding: 14px 10px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm);
+      background: white; cursor: pointer; transition: all var(--transition); font-family: inherit;
+    }
+    .select-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+    .select-btn .sb-icon { font-size: 22px; }
+    .select-btn .sb-label { font-size: 12px; font-weight: 600; color: var(--gray-700); }
+    .select-btn .sb-hint { font-size: 11px; color: var(--gray-400); }
+
     .progress-section { padding: 24px 28px; }
     .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .progress-header span { font-size: 13px; color: var(--gray-500); font-weight: 500; }
@@ -161,11 +175,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
 
-    .config-base-path {
-      font-size: 12px; color: var(--gray-500); margin-top: 8px; display: flex; align-items: center; gap: 6px;
-    }
-    .config-base-path input { width: 200px; padding: 4px 8px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 12px; }
-
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
     .modal-content { background: white; border-radius: var(--radius); padding: 24px; max-width: 760px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
@@ -193,13 +202,76 @@
     }
 
     .instruction-text {
-      text-align: center;
-      font-size: 13px;
-      color: var(--gray-500);
-      margin-top: 8px;
-      margin-bottom: 12px;
-      font-style: italic;
+      text-align: center; font-size: 13px; color: var(--gray-500);
+      margin-top: 8px; margin-bottom: 12px; font-style: italic;
     }
+
+    /* ── File Review State ── */
+    .review-panel { padding: 24px 28px; }
+    .review-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .review-badge {
+      display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light);
+      color: var(--primary); font-size: 12px; font-weight: 600; padding: 4px 12px;
+      border-radius: 20px; margin-left: 10px;
+    }
+    .review-file-list {
+      max-height: 260px; overflow-y: auto; border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm); margin-bottom: 16px; background: white;
+    }
+    .review-file-item {
+      padding: 8px 14px; border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; gap: 10px; font-size: 13px;
+    }
+    .review-file-item:last-child { border-bottom: none; }
+    .review-file-item .file-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px;
+      border-radius: 20px; text-transform: uppercase; flex-shrink: 0;
+    }
+    .badge-excel { background: #dcfce7; color: #15803d; }
+    .badge-pdf   { background: #fee2e2; color: #b91c1c; }
+
+    /* ── footer de revisión ── */
+    .review-scan-footer {
+      display: flex; flex-direction: column; gap: 10px; padding-top: 4px;
+    }
+    .review-scan-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .review-manual-toggle {
+      background: none; border: none; font-size: 12px; color: var(--gray-400);
+      cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 3px;
+      font-family: inherit; transition: color var(--transition);
+    }
+    .review-manual-toggle:hover { color: var(--gray-600); }
+    .review-manual-box {
+      background: var(--gray-50); border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm); padding: 12px 14px;
+      animation: fadeIn 0.15s ease;
+    }
+    .review-manual-box .rm-hint {
+      font-size: 11px; color: var(--gray-400); margin-bottom: 8px;
+    }
+    .review-manual-row { display: flex; gap: 8px; }
+    .review-manual-row input {
+      flex: 1; padding: 9px 12px; border: 1px solid var(--gray-300); border-radius: 8px;
+      font-size: 12px; font-family: monospace; outline: none; color: var(--gray-700);
+    }
+    .review-manual-row input:focus { border-color: var(--primary); }
+
+    .too-many-box {
+      background: var(--warning-light); border: 1px solid #fcd34d;
+      border-radius: var(--radius-sm); padding: 16px;
+    }
+    .too-many-box .tm-title { font-weight: 600; color: var(--warning); margin-bottom: 8px; }
+    .too-many-box .tm-desc { font-size: 13px; color: var(--gray-600); margin: 0 0 12px; }
+    .too-many-row { display: flex; gap: 8px; }
+    .too-many-row input {
+      flex: 1; padding: 10px 14px; border: 1px solid #fcd34d; border-radius: 10px;
+      font-size: 13px; font-family: monospace; outline: none;
+    }
+    .too-many-row input:focus { border-color: var(--warning); }
 
     @media (max-width: 900px) { .app-layout { grid-template-columns: 1fr; } .results-grid { grid-template-columns: 1fr 1fr; } }
   </style>
@@ -211,30 +283,51 @@
 <div class="page">
   <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
     <div>
-      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">📂 Importar certificados</h1>
+      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">📥 Importar certificados</h1>
       <p style="font-size:13px;color:var(--gray-500);margin:4px 0 0;">Selecciona una carpeta y el sistema procesará los archivos automáticamente</p>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;"> Detalles técnicos</button>
-      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;"> Historial</button>
+      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;">💻 Detalles técnicos</button>
+      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;">📋 Historial</button>
     </div>
   </div>
 
   <div class="app-layout">
-    <!-- Pasos -->
+    <!-- ── Pasos ── -->
     <div class="steps-panel">
-      <div class="step-card active" id="step-select"><div class="step-icon">📁</div><div class="step-label">Paso 1</div><div class="step-title">Seleccionar carpeta</div><div class="step-subtitle">Elige la carpeta con los certificados</div></div>
+      <div class="step-card active" id="step-select">
+        <div class="step-icon">📁</div>
+        <div class="step-label">Paso 1</div>
+        <div class="step-title">Seleccionar carpeta</div>
+        <div class="step-subtitle">Elige la carpeta con los certificados</div>
+      </div>
       <div class="step-connector"></div>
-      <div class="step-card" id="step-review"><div class="step-icon">🔍</div><div class="step-label">Paso 2</div><div class="step-title">Revisar</div><div class="step-subtitle">Confirma los archivos encontrados</div></div>
+      <div class="step-card" id="step-review">
+        <div class="step-icon">🔍</div>
+        <div class="step-label">Paso 2</div>
+        <div class="step-title">Revisar</div>
+        <div class="step-subtitle">Confirma los archivos encontrados</div>
+      </div>
       <div class="step-connector"></div>
-      <div class="step-card" id="step-import"><div class="step-icon">⬆️</div><div class="step-label">Paso 3</div><div class="step-title">Importar</div><div class="step-subtitle">Inicia la carga a la base de datos</div></div>
+      <div class="step-card" id="step-import">
+        <div class="step-icon">⬆️</div>
+        <div class="step-label">Paso 3</div>
+        <div class="step-title">Importar</div>
+        <div class="step-subtitle">Inicia la carga a la base de datos</div>
+      </div>
       <div class="step-connector"></div>
-      <div class="step-card" id="step-results"><div class="step-icon">📊</div><div class="step-label">Paso 4</div><div class="step-title">Resultados</div><div class="step-subtitle">Revisa el resumen final</div></div>
+      <div class="step-card" id="step-results">
+        <div class="step-icon">📊</div>
+        <div class="step-label">Paso 4</div>
+        <div class="step-title">Resultados</div>
+        <div class="step-subtitle">Revisa el resumen final</div>
+      </div>
     </div>
 
-    <!-- Panel dinámico -->
+    <!-- ── Panel dinámico ── -->
     <div class="main-panel" id="main-panel">
-      <!-- Estado vacío -->
+
+      <!-- ══ ESTADO: vacío ══ -->
       <div id="state-empty" class="empty-state">
         <svg width="100" height="80" viewBox="0 0 100 80" fill="none" style="margin-bottom:20px;opacity:0.6;">
           <rect x="20" y="10" width="60" height="45" rx="6" stroke="#d1d5db" stroke-width="2" fill="#f9fafb"/>
@@ -244,30 +337,98 @@
           <path d="M32 46L44 60L68 32" stroke="#9ca3af" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
         </svg>
         <h3>Selecciona una carpeta para comenzar</h3>
-        <p>Arrastra la carpeta aquí, usa el selector o escribe la ruta manualmente</p>
+        <p>Arrastra la carpeta aquí, usa los botones de abajo o escribe la ruta manualmente</p>
 
+        <!-- Drop zone -->
         <div class="drop-zone" id="drop-zone">
           <div class="drop-icon">📂</div>
           <p class="drop-text">Arrastra tu carpeta aquí</p>
-          <p class="drop-hint">o haz clic para seleccionar</p>
-          <input type="file" id="folder-input" webkitdirectory multiple style="display:none;">
+          <p class="drop-hint">o usa los botones de abajo para seleccionar</p>
         </div>
 
-        <div style="display:flex;gap:8px;margin-top:16px;width:100%;max-width:420px;">
+        <!-- Botones de selección -->
+        <div class="select-btns">
+          <button class="select-btn" onclick="document.getElementById('folder-input').click()">
+            <span class="sb-icon">🗂️</span>
+            <span class="sb-label">Seleccionar carpeta</span>
+            <span class="sb-hint">Hasta 50 archivos</span>
+          </button>
+          <button class="select-btn" onclick="document.getElementById('files-input').click()">
+            <span class="sb-icon">📄</span>
+            <span class="sb-label">Seleccionar archivos</span>
+            <span class="sb-hint">Excel / PDF individuales</span>
+          </button>
+        </div>
+
+        <!-- Inputs ocultos -->
+        <input type="file" id="folder-input" webkitdirectory multiple style="display:none;"
+               accept=".xlsx,.xls,.pdf">
+        <input type="file" id="files-input" multiple style="display:none;"
+               accept=".xlsx,.xls,.pdf">
+
+        <!-- Ruta manual -->
+        <div style="display:flex;gap:8px;margin-top:20px;width:100%;max-width:480px;">
           <input class="form-control" type="text" id="input-ruta"
-                 placeholder="O pega la ruta: C:\Instrumentos\..."
-                 style="flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:10px;font-size:13px;">
-          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;">Escanear</button>
-        </div>
-
-        <div class="config-base-path">
-          <span>🗂 Carpeta base:</span>
-          <input type="text" id="base-path" placeholder="C:\Instrumentos">
-          <button class="btn btn-outline" style="padding:4px 8px;font-size:11px;" onclick="guardarBasePath()">Guardar</button>
+                 placeholder="O pega la ruta directamente: C:\Instrumentos\2024\..."
+                 style="flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:10px;font-size:13px;"
+                 onkeydown="if(event.key==='Enter') agregarYEscanear()">
+          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;">🔍 Escanear</button>
         </div>
       </div>
 
-      <!-- Escaneo -->
+      <!-- ══ ESTADO: revisión de archivos ══ -->
+      <div id="state-file-review" style="display:none;">
+        <div class="review-panel">
+          <div class="review-header">
+            <div style="display:flex;align-items:center;">
+              <div style="font-weight:600;font-size:15px;color:var(--gray-800);">📂 Archivos detectados</div>
+              <span class="review-badge" id="review-badge-count">0 archivos</span>
+            </div>
+            <button class="btn btn-ghost" onclick="resetear()" style="font-size:13px;">✕ Cancelar</button>
+          </div>
+
+          <!-- Aviso: más de 50 archivos -->
+          <div id="review-too-many" style="display:none;" class="too-many-box">
+            <div class="tm-title">⚠️ Carpeta grande detectada (+5000 archivos)</div>
+            <p class="tm-desc">
+              Esta carpeta tiene demasiados archivos para seleccionarlos uno a uno.<br>
+              Para importaciones masivas, escribe o pega la ruta completa de la carpeta:
+            </p>
+            <div class="too-many-row">
+              <input type="text" id="review-ruta-masiva"
+                     placeholder="Ej: C:\Instrumentos\2024\DUREZA"
+                     onkeydown="if(event.key==='Enter') usarRutaMasiva()">
+              <button class="btn btn-primary" onclick="usarRutaMasiva()">🔍 Escanear</button>
+            </div>
+          </div>
+
+          <!-- Lista de archivos (≤50) -->
+          <div id="review-file-list-wrap">
+            <div class="review-file-list" id="review-file-list"></div>
+
+            <div class="review-scan-footer">
+              <div class="review-scan-row">
+                <button class="btn btn-primary" style="flex:1;" onclick="escanearDesdeReview()">🔍 Escanear archivos</button>
+                <button class="review-manual-toggle" onclick="toggleManualPath()" id="btn-manual-toggle">
+                  📁 Especificar ruta manualmente
+                </button>
+              </div>
+              <!-- Ruta manual: solo visible si el usuario la pide -->
+              <div id="review-manual-box" class="review-manual-box" style="display:none;">
+                <div class="rm-hint">¿Los archivos no se detectaron correctamente? Escribe la ruta completa de la carpeta en el servidor:</div>
+                <div class="review-manual-row">
+                  <input type="text" id="review-ruta-confirm"
+                         placeholder="Ej: C:\Instrumentos\2024\DUREZA"
+                         onkeydown="if(event.key==='Enter') escanearDesdeReview(true)">
+                  <button class="btn btn-primary" onclick="escanearDesdeReview(true)">🔍 Escanear</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ESTADO: escaneo completado ══ -->
       <div id="state-scan" style="display:none;padding:24px 28px;text-align:center;">
         <div class="scan-result">
           <div class="big-num" id="scan-count">—</div>
@@ -279,7 +440,7 @@
         </div>
       </div>
 
-      <!-- Procesando -->
+      <!-- ══ ESTADO: procesando ══ -->
       <div id="state-processing" style="display:none;">
         <div class="progress-section">
           <div class="progress-header"><span id="progress-label">Procesando...</span><span class="pct" id="progress-pct">0%</span></div>
@@ -288,7 +449,8 @@
         </div>
         <div style="padding:0 28px 12px;">
           <div style="font-size:12px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">Archivos procesados</div>
-          <div class="processing-file-list" id="processing-file-list" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;color:var(--gray-600);border:1px solid var(--gray-200);"></div>
+          <div class="processing-file-list" id="processing-file-list"
+               style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;color:var(--gray-600);border:1px solid var(--gray-200);"></div>
         </div>
         <div style="display:none;">
           <span id="live-total">0</span>
@@ -297,20 +459,23 @@
         </div>
       </div>
 
-      <!-- Resultados -->
+      <!-- ══ ESTADO: resultados ══ -->
       <div id="state-results" style="display:none;">
         <div style="padding:24px 28px 0;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
             <span style="font-size:20px;">✅</span>
-            <div><div style="font-weight:600;">Importación completada</div><div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div></div>
+            <div>
+              <div style="font-weight:600;">Importación completada</div>
+              <div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div>
+            </div>
           </div>
         </div>
-        <div class="instruction-text" id="results-instruction"> Haz clic en las tarjetas para ver la lista de archivos</div>
+        <div class="instruction-text" id="results-instruction">Haz clic en las tarjetas para ver la lista de archivos</div>
         <div class="results-grid">
-          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint"> Toca para ver lista</div></div>
-          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint"> Toca para ver cuáles</div></div>
-          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint"> Toca para ver motivos</div></div>
-          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint"> Toca para ver detalles</div></div>
+          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint">🔍 Toca para ver lista</div></div>
+          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint">🔍 Toca para ver cuáles</div></div>
+          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint">🔍 Toca para ver motivos</div></div>
+          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint">🔍 Toca para ver detalles</div></div>
         </div>
         <div class="detail-list" id="detail-list" style="display:none;"></div>
         <div class="donut-wrap">
@@ -332,11 +497,12 @@
           <button class="btn btn-outline" onclick="toggleDrawer()">Ver detalles técnicos</button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- Drawer terminal -->
+    </div><!-- /main-panel -->
+  </div><!-- /app-layout -->
+</div><!-- /page -->
+
+<!-- ── Drawer terminal ── -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="if(event.target===this) toggleDrawer()">
   <div class="drawer" id="drawer">
     <div class="drawer-header">
@@ -351,7 +517,7 @@
   </div>
 </div>
 
-<!-- Modal para listas -->
+<!-- ── Modal para listas ── -->
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeModal()">
   <div class="modal-content">
     <div class="modal-header">
@@ -367,115 +533,364 @@
 if (!Auth.requireLogin()) throw new Error('not logged');
 renderNavbar('importar');
 
+// ── Estado global ──────────────────────────────────────────
 let carpetas = [], errores = [], importando = false;
 let rutaActual = '', archivosEncontrados = 0;
 let lastImportData = null;
 let importacionActualId = null, intervaloProgreso = null;
 const _archivosYaMostrados = new Set();
 
-function getBasePath() { return localStorage.getItem('sidec_base_path') || ''; }
-function setBasePath(val) {
-  if (val) localStorage.setItem('sidec_base_path', val);
-  else localStorage.removeItem('sidec_base_path');
-  document.getElementById('base-path').value = val;
-}
-document.getElementById('base-path').value = getBasePath();
-function guardarBasePath() {
-  setBasePath(document.getElementById('base-path').value.trim());
-  showAlert('Carpeta base guardada.', 'success');
-}
+const LIMITE_ARCHIVOS = 3000;
+let rutaReview = ''; // Ruta detectada automáticamente en el paso de revisión
 
+// ── Helpers UI ────────────────────────────────────────────
 const $ = (sel) => document.querySelector(sel);
+
 function setState(state) {
-  ['empty','scan','processing','results'].forEach(s => {
+  ['empty', 'file-review', 'scan', 'processing', 'results'].forEach(s => {
     const el = document.getElementById(`state-${s}`);
     if (el) el.style.display = 'none';
   });
   const target = document.getElementById(`state-${state}`);
   if (target) target.style.display = '';
-  ['select','review','import','results'].forEach((s,i) => {
+
+  const stepIdx = { empty: 0, 'file-review': 1, scan: 1, processing: 2, results: 3 };
+  ['select', 'review', 'import', 'results'].forEach((s, i) => {
     const step = document.getElementById(`step-${s}`);
-    step.classList.remove('active','completed');
-    const idx = {empty:0, scan:1, processing:2, results:3}[state];
+    step.classList.remove('active', 'completed');
+    const idx = stepIdx[state] ?? 0;
     if (i < idx) step.classList.add('completed');
     else if (i === idx) step.classList.add('active');
   });
 }
 
 function toggleDrawer() { document.getElementById('drawer-overlay').classList.toggle('open'); }
-function logTerminal(msg, tipo='dim') {
+
+function logTerminal(msg, tipo = 'dim') {
   const body = document.getElementById('drawer-log');
   const entry = document.createElement('div');
   entry.className = `log-entry log-${tipo}`;
-  const ts = new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const ts = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   entry.textContent = `[${ts}] ${msg}`;
   body.appendChild(entry);
   body.scrollTop = body.scrollHeight;
 }
 function logSepTerminal() { logTerminal('─'.repeat(45), 'dim'); }
 
-// ── Drag & Drop ────────────────────────────────────────
+// ── Leer entradas FileSystem API (drag & drop) ────────────
+async function leerEntries(entries) {
+  const archivos = [];
+  const MAX_CHECK = LIMITE_ARCHIVOS + 1; // Detectar si supera el límite
+
+  async function procesarEntry(entry) {
+    if (archivos.length >= MAX_CHECK) return;
+    if (entry.isFile) {
+      await new Promise(resolve => {
+        entry.file(f => {
+          const ext = f.name.split('.').pop().toLowerCase();
+          if (['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$')) {
+            archivos.push({ nombre: f.name, tipo: ext === 'pdf' ? 'pdf' : 'excel' });
+          }
+          resolve();
+        }, resolve);
+      });
+    } else if (entry.isDirectory) {
+      const reader = entry.createReader();
+      // readEntries puede retornar <100 por lote; para nuestro límite de 51 es suficiente
+      await new Promise(resolve => {
+        reader.readEntries(async subEntries => {
+          for (const sub of subEntries) {
+            if (archivos.length >= MAX_CHECK) break;
+            await procesarEntry(sub);
+          }
+          resolve();
+        }, resolve);
+      });
+    }
+  }
+
+  for (const entry of entries) {
+    if (archivos.length >= MAX_CHECK) break;
+    await procesarEntry(entry);
+  }
+  return archivos;
+}
+
+// ── Mostrar paso de revisión ──────────────────────────────
+function mostrarReviewArchivos(archivos, carpetaRaiz = '', rutaCompleta = '') {
+  // Guardar ruta detectada para usarla al escanear
+  rutaReview = rutaCompleta || '';
+
+  // Ocultar campo manual al entrar
+  document.getElementById('review-manual-box').style.display = 'none';
+  document.getElementById('btn-manual-toggle').textContent = '📁 Especificar ruta manualmente';
+
+  const excedeLimite = archivos.length > LIMITE_ARCHIVOS;
+  const archivosValidos = archivos.slice(0, LIMITE_ARCHIVOS);
+
+  // Actualizar badge de conteo
+  document.getElementById('review-badge-count').textContent =
+    excedeLimite ? `+${LIMITE_ARCHIVOS} archivos` : `${archivos.length} archivo${archivos.length !== 1 ? 's' : ''}`;
+
+  // Secciones según límite
+  document.getElementById('review-too-many').style.display       = excedeLimite ? '' : 'none';
+  document.getElementById('review-file-list-wrap').style.display = excedeLimite ? 'none' : '';
+
+  if (excedeLimite) {
+    const inputMasiva = document.getElementById('review-ruta-masiva');
+    inputMasiva.value = rutaCompleta || carpetaRaiz;
+    if (!rutaCompleta) {
+      inputMasiva.placeholder = carpetaRaiz
+        ? `Escribe la ruta completa, ej: C:\\Instrumentos\\${carpetaRaiz}`
+        : 'Ej: C:\\Instrumentos\\2024\\DUREZA';
+    }
+    logTerminal(`⚠ ${archivos.length} archivos detectados — excede el límite de ${LIMITE_ARCHIVOS}. Pide ruta completa.`, 'warn');
+  } else {
+    // Construir lista de archivos
+    const listEl = document.getElementById('review-file-list');
+    if (archivosValidos.length === 0) {
+      listEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--gray-400);font-size:13px;">
+        ⚠️ No se encontraron archivos Excel (.xlsx/.xls) ni PDF en la selección.
+      </div>`;
+    } else {
+      listEl.innerHTML = archivosValidos.map((f, i) => {
+        const icon = f.tipo === 'pdf' ? '📄' : '📊';
+        const badgeClass = f.tipo === 'pdf' ? 'badge-pdf' : 'badge-excel';
+        return `<div class="review-file-item">
+          <span style="color:var(--gray-400);font-size:11px;min-width:20px;">${i + 1}</span>
+          <span>${icon}</span>
+          <span style="font-family:monospace;color:var(--gray-700);font-size:12px;">${f.nombre}</span>
+          <span class="file-badge ${badgeClass}">${f.tipo === 'pdf' ? 'PDF' : 'EXCEL'}</span>
+        </div>`;
+      }).join('');
+    }
+
+    // Pre-rellenar campo manual (oculto) si tenemos algo
+    const inputConfirm = document.getElementById('review-ruta-confirm');
+    if (rutaCompleta) {
+      inputConfirm.value = rutaCompleta;
+    } else {
+      inputConfirm.value = '';
+      inputConfirm.placeholder = carpetaRaiz
+        ? `Ej: C:\\Instrumentos\\${carpetaRaiz}`
+        : 'Ej: C:\\Instrumentos\\2024\\DUREZA';
+    }
+
+    if (rutaCompleta) {
+      logTerminal(`📁 Ruta detectada: ${rutaCompleta} — ${archivosValidos.length} archivos listos para escanear.`, 'ok');
+    } else {
+      logTerminal(`📂 ${archivosValidos.length} archivos detectados. Listo para escanear.`, 'info');
+    }
+  }
+
+  setState('file-review');
+}
+
+// ── Toggle del campo ruta manual ─────────────────────────
+function toggleManualPath(forceOpen = false) {
+  const box = document.getElementById('review-manual-box');
+  const btn = document.getElementById('btn-manual-toggle');
+  const visible = box.style.display !== 'none';
+  if (forceOpen || visible) {
+    box.style.display = forceOpen ? '' : 'none';
+    btn.textContent = (forceOpen || !visible) ? '✕ Cerrar ruta manual' : '📁 Especificar ruta manualmente';
+  } else {
+    box.style.display = '';
+    btn.textContent = '✕ Cerrar ruta manual';
+    document.getElementById('review-ruta-confirm').focus();
+  }
+}
+
+// ── Escanear desde el paso de revisión ───────────────────
+function escanearDesdeReview(forzarManual = false) {
+  let ruta = '';
+
+  if (forzarManual) {
+    // El usuario escribió la ruta manualmente
+    ruta = document.getElementById('review-ruta-confirm').value.trim();
+    if (!ruta) {
+      showAlert('Escribe la ruta completa de la carpeta para continuar.');
+      document.getElementById('review-ruta-confirm').focus();
+      return;
+    }
+  } else if (rutaReview) {
+    // Ruta detectada automáticamente (Electron / path conocido)
+    ruta = rutaReview;
+  } else {
+    // Sin ruta automática → abrir campo manual
+    toggleManualPath(true);
+    showAlert('No se pudo detectar la ruta automáticamente. Escríbela manualmente.', 'warn');
+    return;
+  }
+
+  document.getElementById('input-ruta').value = ruta;
+  agregarYEscanear();
+}
+
+function usarRutaMasiva() {
+  const ruta = document.getElementById('review-ruta-masiva').value.trim();
+  if (!ruta) {
+    showAlert('Escribe la ruta completa de la carpeta para continuar.');
+    document.getElementById('review-ruta-masiva').focus();
+    return;
+  }
+  document.getElementById('input-ruta').value = ruta;
+  agregarYEscanear();
+}
+
+// ── Drag & Drop ───────────────────────────────────────────
 const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+
+dropZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
 dropZone.addEventListener('drop', async e => {
   e.preventDefault();
   dropZone.classList.remove('drag-over');
-  const items = e.dataTransfer.files;
-  if (items.length === 0) return;
-  let rutaDetectada = '';
-  for (const file of items) {
-    if (file.path) { rutaDetectada = file.path.replace(/[\\/][^\\/]*$/, ''); break; }
-  }
-  if (rutaDetectada) {
-    document.getElementById('input-ruta').value = rutaDetectada;
+
+  const dtFiles = Array.from(e.dataTransfer.files || []);
+  const items   = Array.from(e.dataTransfer.items  || []);
+
+  // ① Entorno Electron / NW.js: file.path disponible
+  if (dtFiles.length > 0 && dtFiles[0].path) {
+    // Puede ser un archivo suelto o una carpeta; en ambos casos tomamos el directorio
+    const ruta = dtFiles[0].path.replace(/[\\/][^\\/]*$/, '');
+    document.getElementById('input-ruta').value = ruta;
+    logTerminal(`📁 Ruta detectada automáticamente: ${ruta}`, 'ok');
     agregarYEscanear();
-  } else {
-    const base = getBasePath();
-    if (base) {
-      let carpetaRelativa = '';
-      if (items[0].webkitRelativePath) {
-        const partes = items[0].webkitRelativePath.split('/');
-        if (partes.length > 1) carpetaRelativa = partes[0];
-      }
-      if (carpetaRelativa) {
-        document.getElementById('input-ruta').value = base + '\\' + carpetaRelativa;
-        agregarYEscanear();
-      } else {
-        showAlert('No se pudo obtener la ruta automáticamente.');
-      }
-    } else {
-      showAlert('Arrastrar no revela la ruta completa. Configura una "Carpeta base".');
-    }
+    return;
   }
+
+  // ② FileSystem Entry API (Chrome/Edge en browser normal)
+  const entries = items
+    .filter(i => i.webkitGetAsEntry)
+    .map(i => i.webkitGetAsEntry())
+    .filter(Boolean);
+
+  let archivosDetectados = [];
+  let carpetaRaiz = '';
+  let rutaDetectadaDrop = '';
+
+  if (entries.length > 0) {
+    if (entries[0].isDirectory) carpetaRaiz = entries[0].name;
+    logTerminal(`🔄 Leyendo archivos de la carpeta "${carpetaRaiz}"...`, 'info');
+    archivosDetectados = await leerEntries(entries);
+  } else if (dtFiles.length > 0) {
+    // ③ Fallback: archivos sueltos arrastrados directamente
+    archivosDetectados = dtFiles
+      .filter(f => {
+        const ext = f.name.split('.').pop().toLowerCase();
+        return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
+      })
+      .map(f => ({ nombre: f.name, tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel' }));
+  }
+
+  if (archivosDetectados.length === 0 && entries.length === 0 && dtFiles.length === 0) {
+    showAlert('No se detectaron archivos. Asegúrate de arrastrar una carpeta o archivos Excel/PDF.');
+    return;
+  }
+
+  mostrarReviewArchivos(archivosDetectados, carpetaRaiz, rutaDetectadaDrop);
 });
 
+// ── Selector de carpeta ───────────────────────────────────
 const folderInput = document.getElementById('folder-input');
-folderInput.addEventListener('change', function() {
-  const files = this.files;
-  if (files.length === 0) return;
-  let rootFolder = '';
-  if (files[0].webkitRelativePath) {
-    const partes = files[0].webkitRelativePath.split('/');
-    rootFolder = partes[0];
-  }
-  const base = getBasePath();
-  document.getElementById('input-ruta').value = (base && rootFolder) ? base + '\\' + rootFolder : rootFolder;
-  agregarYEscanear();
-});
-dropZone.addEventListener('click', (e) => { if (e.target.tagName !== 'INPUT') folderInput.click(); });
+folderInput.addEventListener('change', function () {
+  const files = Array.from(this.files);
+  this.value = ''; // Reset para poder re-seleccionar la misma carpeta
 
+  if (files.length === 0) return;
+
+  // Entorno Electron: file.path disponible → flujo directo
+  if (files[0].path) {
+    const webkitRoot = files[0].webkitRelativePath ? files[0].webkitRelativePath.split('/')[0] : '';
+    let ruta = '';
+    if (webkitRoot) {
+      // Construir ruta padre: quitar la carpeta raíz del path del primer archivo
+      const idx = files[0].path.replace(/\\/g, '/').lastIndexOf('/' + webkitRoot + '/');
+      if (idx >= 0) ruta = files[0].path.slice(0, idx + webkitRoot.length + 1).replace(/\//g, '\\');
+    }
+    if (!ruta) ruta = files[0].path.replace(/[\\/][^\\/]*$/, '');
+    document.getElementById('input-ruta').value = ruta;
+    logTerminal(`📁 Ruta detectada automáticamente: ${ruta}`, 'ok');
+    agregarYEscanear();
+    return;
+  }
+
+  // Browser normal: mostrar revisión de archivos
+  const archivosValidos = files
+    .filter(f => {
+      const ext = f.name.split('.').pop().toLowerCase();
+      return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
+    })
+    .map(f => ({
+      nombre: f.name,
+      tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel'
+    }));
+
+  let carpetaRaiz = '';
+  if (files[0].webkitRelativePath) {
+    carpetaRaiz = files[0].webkitRelativePath.split('/')[0];
+  }
+
+  mostrarReviewArchivos(archivosValidos, carpetaRaiz);
+});
+
+// ── Selector de archivos individuales ────────────────────
+const filesInput = document.getElementById('files-input');
+filesInput.addEventListener('change', function () {
+  const files = Array.from(this.files);
+  this.value = '';
+
+  if (files.length === 0) return;
+
+  // Entorno Electron: usar path directamente
+  if (files[0].path) {
+    const ruta = files[0].path.replace(/[\\/][^\\/]*$/, '');
+    document.getElementById('input-ruta').value = ruta;
+    logTerminal(`📁 Ruta detectada automáticamente: ${ruta}`, 'ok');
+    agregarYEscanear();
+    return;
+  }
+
+  const archivosValidos = files
+    .filter(f => {
+      const ext = f.name.split('.').pop().toLowerCase();
+      return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
+    })
+    .map(f => ({
+      nombre: f.name,
+      tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel'
+    }));
+
+  mostrarReviewArchivos(archivosValidos, '');
+});
+// ── Escanear ruta del servidor ────────────────────────────
 async function agregarYEscanear() {
   const ruta = document.getElementById('input-ruta').value.trim();
   if (!ruta) { showAlert('Ingresa una ruta de carpeta.'); return; }
+
+  // Validación básica de ruta local (Windows o red)
+  const esRutaValida = /^[A-Za-z]:\\|^\\\\/.test(ruta);  // empieza con C:\ o \\
+  if (!esRutaValida) {
+    showAlert('La ruta ingresada no parece una ruta local válida (ej. C:\\\\... o \\\\servidor\\...). Corrígela e intenta de nuevo.', 'warn');
+    document.getElementById('input-ruta').focus();
+    return;
+  }
+
   rutaActual = ruta;
   carpetas = [{ ruta, empleado: null, anio: null, subarbol: null }];
   logTerminal(`🔍 Escaneando: ${ruta}`, 'info');
+
   try {
-    const data = await api('/admin/escanear', { method:'POST', body:{ ruta } });
+    const data = await api('/admin/escanear', { method: 'POST', body: { ruta } });
     archivosEncontrados = data.total || 0;
     document.getElementById('scan-count').textContent = archivosEncontrados;
-    document.getElementById('scan-label').textContent = archivosEncontrados === 1 ? 'archivo encontrado' : 'archivos encontrados';
+    document.getElementById('scan-label').textContent =
+      archivosEncontrados === 1 ? 'archivo encontrado' : 'archivos encontrados';
     setState('scan');
     logTerminal(`📊 ${archivosEncontrados} archivos encontrados`, 'ok');
   } catch (e) {
@@ -484,6 +899,7 @@ async function agregarYEscanear() {
   }
 }
 
+// ── Iniciar importación ───────────────────────────────────
 async function iniciarImportacion() {
   if (carpetas.length === 0) { showAlert('Escanea una carpeta primero.'); return; }
   if (importando) return;
@@ -545,6 +961,7 @@ async function iniciarImportacion() {
   }
 }
 
+// ── Polling de progreso ───────────────────────────────────
 async function pollProgreso() {
   if (!importacionActualId) return;
   try {
@@ -553,7 +970,7 @@ async function pollProgreso() {
       const pct = prog.pct || Math.round((prog.actual / prog.total) * 100);
       document.getElementById('progress-fill').style.width = pct + '%';
       document.getElementById('progress-pct').textContent = pct + '%';
-      document.getElementById('progress-label').textContent = `Procesando archivos...`;
+      document.getElementById('progress-label').textContent = 'Procesando archivos...';
       document.getElementById('progress-sub').textContent = `${prog.actual} de ${prog.total} archivos procesados`;
       document.getElementById('live-total').textContent = prog.actual;
     } else if (prog && prog.total === 0) {
@@ -578,6 +995,7 @@ async function pollProgreso() {
   } catch (e) {}
 }
 
+// ── Mostrar resultados ────────────────────────────────────
 function formatDuracion(durStr) {
   if (!durStr) return '—';
   const seg = parseFloat(durStr.replace('s', ''));
@@ -585,33 +1003,33 @@ function formatDuracion(durStr) {
   const h = Math.floor(seg / 3600);
   const m = Math.floor((seg % 3600) / 60);
   const s = Math.floor(seg % 60);
-  if (h > 0) return `${h}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
-  if (m > 0) return `${m}m ${s.toString().padStart(2,'0')}s`;
+  if (h > 0) return `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+  if (m > 0) return `${m}m ${s.toString().padStart(2, '0')}s`;
   return `${s}s`;
 }
 
 function mostrarResultados(data) {
   lastImportData = data;
-  const total = data.total || 0;
-  const ok = data.exitosos || 0;
-  const err = data.fallidos || 0;
-  const noCerts = data.no_certs || 0;
-  const omitidos = data.omitidos || 0;
+  const total       = data.total     || 0;
+  const ok          = data.exitosos  || 0;
+  const err         = data.fallidos  || 0;
+  const noCerts     = data.no_certs  || 0;
+  const omitidos    = data.omitidos  || 0;
   const advertencias = noCerts + omitidos;
-  const pctOk = total > 0 ? Math.round((ok / total) * 100) : 0;
+  const pctOk       = total > 0 ? Math.round((ok / total) * 100) : 0;
 
   document.getElementById('res-total').textContent = total;
-  document.getElementById('res-ok').textContent = ok;
-  document.getElementById('res-warn').textContent = advertencias;
-  document.getElementById('res-err').textContent = err;
+  document.getElementById('res-ok').textContent    = ok;
+  document.getElementById('res-warn').textContent  = advertencias;
+  document.getElementById('res-err').textContent   = err;
   document.getElementById('results-time').textContent = `Duración: ${formatDuracion(data.duracion)}`;
-  document.getElementById('sum-carpeta').textContent = rutaActual || '—';
+  document.getElementById('sum-carpeta').textContent  = rutaActual || '—';
   document.getElementById('sum-duracion').textContent = formatDuracion(data.duracion);
 
   const detailDiv = document.getElementById('detail-list');
   let detalles = [];
-  if (omitidos > 0) detalles.push(`🟡 ${omitidos} archivo(s) ya estaban en la base de datos (omitidos por duplicados).`);
-  if (noCerts > 0) detalles.push(`🟠 ${noCerts} archivo(s) no son certificados válidos (falta número de informe o datos insuficientes).`);
+  if (omitidos > 0)  detalles.push(`🟡 ${omitidos} archivo(s) ya estaban en la base de datos (omitidos por duplicados).`);
+  if (noCerts > 0)   detalles.push(`🟠 ${noCerts} archivo(s) no son certificados válidos (falta número de informe o datos insuficientes).`);
   if (err > 0 && data.errores) {
     detalles.push(`🔴 ${err} archivo(s) con errores:`);
     data.errores.forEach(e => {
@@ -624,28 +1042,30 @@ function mostrarResultados(data) {
 
   const donut = document.getElementById('donut');
   donut.style.setProperty('--pct', pctOk);
-  document.getElementById('donut-val').textContent = pctOk + '%';
-  document.getElementById('leg-ok').textContent = ok;
-  document.getElementById('leg-warn').textContent = advertencias;
-  document.getElementById('leg-err').textContent = err;
+  document.getElementById('donut-val').textContent  = pctOk + '%';
+  document.getElementById('leg-ok').textContent     = ok;
+  document.getElementById('leg-warn').textContent   = advertencias;
+  document.getElementById('leg-err').textContent    = err;
 
-  document.getElementById('progress-fill').style.width = '100%';
-  document.getElementById('progress-pct').textContent = '100%';
+  document.getElementById('progress-fill').style.width  = '100%';
+  document.getElementById('progress-pct').textContent   = '100%';
   document.getElementById('progress-label').textContent = 'Completado';
-  document.getElementById('progress-sub').textContent = `${total} archivos procesados en total`;
-  document.getElementById('live-total').textContent = total;
+  document.getElementById('progress-sub').textContent   = `${total} archivos procesados en total`;
+  document.getElementById('live-total').textContent     = total;
 
   const fileListEl = document.getElementById('processing-file-list');
   const allFiles = [
-    ...(data.archivos_exitosos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'ok' })),
-    ...(data.archivos_omitidos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
-    ...(data.archivos_no_validos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
-    ...(data.errores || []).map(e => ({ name: (e.archivo || '').split(/[\\/]/).pop(), type: 'err' })),
+    ...(data.archivos_exitosos  || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'ok' })),
+    ...(data.archivos_omitidos  || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
+    ...(data.archivos_no_validos|| []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
+    ...(data.errores            || []).map(e => ({ name: (e.archivo || '').split(/[\\/]/).pop(), type: 'err' })),
   ];
   if (allFiles.length > 0) {
     fileListEl.innerHTML = allFiles.map(f => {
       const dot = f.type === 'ok' ? '#16a34a' : f.type === 'warn' ? '#d97706' : '#dc2626';
-      return `<div style="padding:3px 0;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;"><span style="color:${dot};font-size:10px;">●</span><span>${f.name}</span></div>`;
+      return `<div style="padding:3px 0;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;">
+        <span style="color:${dot};font-size:10px;">●</span><span>${f.name}</span>
+      </div>`;
     }).join('');
   }
 
@@ -654,16 +1074,17 @@ function mostrarResultados(data) {
   logTerminal(`   Total: ${total} | Éxitos: ${ok} | Advertencias: ${advertencias} | Errores: ${err}`, 'info');
 }
 
+// ── Modal de detalle de archivos ─────────────────────────
 function showFileList(type) {
   if (!lastImportData) return;
   const modal = document.getElementById('modal-overlay');
   const title = document.getElementById('modal-title');
-  const body = document.getElementById('modal-body');
+  const body  = document.getElementById('modal-body');
 
   let files = [];
   const typeLabels = { total: 'Todos los archivos', ok: 'Importados correctamente', warn: 'Advertencias', err: 'Errores' };
 
-  const extractName = (f) => typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
+  const extractName   = (f) => typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
   const extractReport = (f) => {
     const name = typeof f === 'string' ? f.split(/[\\/]/).pop() : (f.archivo || '').split(/[\\/]/).pop();
     const m = name.match(/(\d{3,}[-_]?\d*|\bINF[-_]?\d+)/i);
@@ -671,37 +1092,33 @@ function showFileList(type) {
   };
 
   if (type === 'total') {
-    (lastImportData.archivos_exitosos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'ok', badgeLabel: 'Éxito', reason: '' }));
-    (lastImportData.archivos_omitidos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Duplicado', reason: 'Ya existe en la base de datos' }));
+    (lastImportData.archivos_exitosos   || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'ok',   badgeLabel: 'Éxito',   reason: '' }));
+    (lastImportData.archivos_omitidos   || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Duplicado', reason: 'Ya existe en la base de datos' }));
     (lastImportData.archivos_no_validos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Sin datos', reason: 'Falta número de informe o datos insuficientes (<7 campos)' }));
-    (lastImportData.errores || []).forEach(e => files.push({ name: extractName(e), report: extractReport(e), badge: 'err', badgeLabel: 'Error', reason: e.error || 'Error desconocido' }));
+    (lastImportData.errores             || []).forEach(e => files.push({ name: extractName(e), report: extractReport(e), badge: 'err',  badgeLabel: 'Error',    reason: e.error || 'Error desconocido' }));
   } else if (type === 'ok') {
     (lastImportData.archivos_exitosos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'ok', badgeLabel: 'Éxito', reason: 'Importado correctamente' }));
   } else if (type === 'warn') {
-    (lastImportData.archivos_omitidos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Duplicado', reason: 'El archivo ya existe en la base de datos (duplicado)' }));
+    (lastImportData.archivos_omitidos   || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Duplicado',          reason: 'El archivo ya existe en la base de datos (duplicado)' }));
     (lastImportData.archivos_no_validos || []).forEach(f => files.push({ name: extractName(f), report: extractReport(f), badge: 'warn', badgeLabel: 'Datos insuficientes', reason: 'Falta número de informe o menos de 7 campos requeridos' }));
   } else if (type === 'err') {
     (lastImportData.errores || []).forEach(e => files.push({ name: extractName(e), report: extractReport(e), badge: 'err', badgeLabel: 'Error', reason: e.error || 'Error desconocido' }));
   }
 
   title.textContent = typeLabels[type] || 'Detalle';
-
   const badgeColors = { ok: 'badge-ok', warn: 'badge-warn', err: 'badge-err' };
 
   if (files.length === 0) {
     body.innerHTML = `<div class="modal-empty">✅ No hay archivos en esta categoría.</div>`;
   } else {
     const summaryText = type === 'warn'
-      ? `${files.filter(f=>f.badgeLabel==='Duplicado').length} duplicado(s), ${files.filter(f=>f.badgeLabel!=='Duplicado').length} con datos insuficientes`
+      ? `${files.filter(f => f.badgeLabel === 'Duplicado').length} duplicado(s), ${files.filter(f => f.badgeLabel !== 'Duplicado').length} con datos insuficientes`
       : `${files.length} archivo(s) en esta categoría`;
     body.innerHTML = `
       <div class="modal-summary">${summaryText}</div>
       <table>
         <thead><tr>
-          <th>#</th>
-          <th>Archivo / No. Informe</th>
-          <th>Estado</th>
-          <th>Motivo / Detalle</th>
+          <th>#</th><th>Archivo / No. Informe</th><th>Estado</th><th>Motivo / Detalle</th>
         </tr></thead>
         <tbody>
           ${files.map((f, i) => `<tr>
@@ -716,33 +1133,42 @@ function showFileList(type) {
         </tbody>
       </table>`;
   }
-
   modal.classList.add('open');
 }
 
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
+// ── Resetear todo ─────────────────────────────────────────
 function resetear() {
-  carpetas = []; errores = []; archivosEncontrados = 0; rutaActual = '';
-  document.getElementById('input-ruta').value = '';
+  carpetas = []; errores = []; archivosEncontrados = 0; rutaActual = ''; rutaReview = '';
+  document.getElementById('input-ruta').value          = '';
+  document.getElementById('review-ruta-confirm').value = '';
+  document.getElementById('review-ruta-masiva').value  = '';
+  document.getElementById('review-manual-box').style.display = 'none';
   setState('empty');
-  document.getElementById('drawer-log').innerHTML = '<div class="log-entry log-dim">Terminal lista.</div>';
+  document.getElementById('drawer-log').innerHTML =
+    '<div class="log-entry log-dim">Terminal lista.</div>';
 }
 
+// ── Historial en terminal ─────────────────────────────────
 async function cargarHistorial() {
   toggleDrawer();
   try {
     const data = await api('/admin/importaciones');
     if (data && data.length > 0) {
       logSepTerminal();
-      logTerminal('📋 Últimas importaciones:', 'info');
-      data.slice(0,5).forEach(imp => {
-        logTerminal(`${new Date(imp.iniciado_en).toLocaleDateString()} — ${imp.carpeta_origen || '?'} — ✅${imp.exitosos} ❌${imp.fallidos}`, 'dim');
+      logTerminal('📋   Últimas importaciones:', 'info');
+      data.slice(0, 5).forEach(imp => {
+        logTerminal(
+          `${new Date(imp.iniciado_en).toLocaleDateString()} — ${imp.carpeta_origen || '?'} — ✅${imp.exitosos} ❌${imp.fallidos}`,
+          'dim'
+        );
       });
     }
   } catch (e) {}
 }
 
+// ── Inicializar ───────────────────────────────────────────
 setState('empty');
 </script>
 </body>
