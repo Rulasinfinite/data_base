@@ -6,42 +6,12 @@
   <title>SIDEC — Certificados</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Navbar con logo SIDEC */
     .navbar-brand svg { display:block; }
 
-    /* Panel de búsqueda avanzada */
-    .search-panel {
-      background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 16px;
-    }
-    .search-panel-header {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--gray-100);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .search-panel-title {
-      font-size: 14px; font-weight: 600; color: var(--gray-800);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .search-grid {
-      padding: 16px 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-    }
-    .search-grid-wide {
-      grid-column: span 2;
-    }
-    .search-actions {
-      padding: 12px 20px;
-      border-top: 1px solid var(--gray-100);
-      display: flex; gap: 8px; align-items: center; justify-content: flex-end;
-    }
+    /* ══ Stats (3 columnas) ══ */
+    .stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
 
-    /* Badge magnitud por área */
+    /* ══ Badge magnitud ══ */
     .mag-DIMENSIONAL    { background:#eff4ff; color:#1a56db; }
     .mag-ELÉCTRICA      { background:#fef3c7; color:#92400e; }
     .mag-TEMPERATURA    { background:#fce7f3; color:#9d174d; }
@@ -57,13 +27,210 @@
     .mag-DENSIDAD       { background:#f0fdfa; color:#134e4a; }
     .mag-QUÍMICA        { background:#fefce8; color:#713f12; }
 
-    /* Resultados rápidos del total */
+    /* ══ Panel de búsqueda ══ */
+    .search-panel {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    /* Barra principal */
+    .search-main-row {
+      padding: 16px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .search-main-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-main-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      pointer-events: none;
+      display: flex;
+    }
+    .search-main-input {
+      width: 100%;
+      padding: 11px 16px 11px 42px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+      outline: none;
+    }
+    .search-main-input:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+    }
+    .search-main-input::placeholder { color: var(--gray-400); }
+    .btn-buscar-main {
+      padding: 11px 24px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-buscar-main:hover  { background: #1d4ed8; }
+    .btn-buscar-main:active { transform: scale(0.98); }
+    .btn-buscar-main:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* Filtros rápidos */
+    .quick-filters-row {
+      padding: 14px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .quick-filters-row .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--gray-500);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    /* Toggle filtros avanzados */
+    .advanced-toggle-row {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .btn-toggle-advanced {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--primary);
+      cursor: pointer;
+      font-family: inherit;
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+    .btn-toggle-advanced:hover { color: #1d4ed8; }
+    .btn-toggle-advanced svg {
+      transition: transform 0.2s;
+    }
+    .btn-toggle-advanced.open svg { transform: rotate(180deg); }
+
+    .btn-limpiar-link {
+      background: none;
+      border: none;
+      font-size: 12px;
+      color: var(--gray-400);
+      cursor: pointer;
+      font-family: inherit;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .btn-limpiar-link:hover { color: var(--gray-700); background: var(--gray-100); }
+
+    /* Filtros avanzados (colapsable) */
+    .advanced-filters {
+      display: none;
+      padding: 0 20px 16px;
+      border-top: 1px dashed var(--gray-200);
+      animation: slideDown 0.2s ease;
+    }
+    .advanced-filters.open { display: block; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .advanced-filters-grid {
+      padding-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .advanced-filters-grid .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--gray-500);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    /* Chips de filtros activos */
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 20px 12px;
+    }
+    .filter-chips:empty { display: none; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--primary-light, #eff6ff);
+      color: var(--primary);
+      border: 1px solid rgba(37,99,235,0.2);
+      border-radius: 20px;
+      padding: 3px 10px 3px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      animation: chipIn 0.15s ease;
+    }
+    @keyframes chipIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+    .chip-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      opacity: 0.7;
+      transition: opacity 0.1s;
+      font-family: inherit;
+    }
+    .chip-remove:hover { opacity: 1; }
+
+    /* Barra de resultados */
     .result-bar {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 10px 20px;
       background: var(--gray-50);
       border-bottom: 1px solid var(--gray-100);
-      font-size: 13px; color: var(--gray-500);
+      font-size: 13px;
+      color: var(--gray-500);
     }
   </style>
 </head>
@@ -73,7 +240,7 @@
 
 <div class="page">
 
-  <!-- Stats -->
+  <!-- Stats (sin "Última emisión") -->
   <div class="stats-grid" id="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Total certificados</div>
@@ -90,74 +257,48 @@
       <div class="stat-value" id="stat-anios">—</div>
       <div class="stat-sub" id="stat-rango">—</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Última emisión</div>
-      <div class="stat-value" style="font-size:16px" id="stat-ultimo">—</div>
-      <div class="stat-sub" id="stat-ultimo-cliente">—</div>
-    </div>
   </div>
 
-  <!-- Panel de búsqueda avanzada -->
+  <!-- Panel de búsqueda mejorado -->
   <div class="search-panel">
-    <div class="search-panel-header">
-      <div class="search-panel-title">
-        Búsqueda de certificados
+
+    <!-- ① Barra principal -->
+    <div class="search-main-row">
+      <div class="search-main-wrap">
+        <span class="search-main-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </span>
+        <input class="search-main-input" type="text" id="q"
+               placeholder="Buscar por No. informe, cliente, No. serie, identificación, modelo, marca…"
+               autocomplete="off">
       </div>
-      <span id="busqueda-activa" style="font-size:12px;color:var(--primary);display:none">
-        Filtros activos
-      </span>
+      <button class="btn-buscar-main" id="btn-buscar" onclick="buscar(1)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        Buscar
+      </button>
     </div>
 
-    <div class="search-grid">
-      <!-- Búsqueda general -->
-      <div class="search-grid-wide" style="grid-column: 1 / -1">
-        <label class="form-label">Búsqueda general</label>
-        <div style="position:relative">
-          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400)"></span>
-          <input class="form-control" type="text" id="q" style="padding-left:36px"
-                placeholder="No. informe, cliente, No. serie, identificación, modelo, marca...">
-        </div>
-      </div>
-      <!-- Agregar justo después del div "Búsqueda general" -->
+    <!-- ② Filtros rápidos (siempre visibles) -->
+    <div class="quick-filters-row">
       <div>
-        <label class="form-label">No. Informe</label>
-        <input class="form-control" type="text" id="filtro-informe"
-              placeholder="Ej: LMD-...">
+        <label class="form-label" for="filtro-cliente">Cliente</label>
+        <input class="form-control" type="text" id="filtro-cliente" placeholder="Nombre del cliente"
+               onkeydown="if(event.key==='Enter') buscar(1)">
       </div>
-      <!-- Cliente específico -->
       <div>
-        <label class="form-label">Cliente</label>
-        <input class="form-control" type="text" id="filtro-cliente"
-               placeholder="Nombre del cliente">
+        <label class="form-label" for="filtro-serie">No. de serie</label>
+        <input class="form-control" type="text" id="filtro-serie" placeholder="Número de serie"
+               onkeydown="if(event.key==='Enter') buscar(1)">
       </div>
-
-      <!-- No. de serie -->
       <div>
-        <label class="form-label">No. de serie</label>
-        <input class="form-control" type="text" id="filtro-serie"
-               placeholder="Número de serie">
-      </div>
-
-      <!-- Identificación -->
-      <div>
-        <label class="form-label">Identificación</label>
-        <input class="form-control" type="text" id="filtro-id"
-               placeholder="ID del instrumento">
-      </div>
-
-      <!-- Marca -->
-      <div>
-        <label class="form-label">Marca</label>
-        <input class="form-control" type="text" id="filtro-marca"
-               placeholder="Marca del instrumento">
-      </div>
-
-      <!-- Magnitud evaluada (TODAS las áreas SIDEC) -->
-      <div>
-        <label class="form-label">Magnitud / Área</label>
+        <label class="form-label" for="filtro-magnitud">Magnitud / Área</label>
         <select class="form-control" id="filtro-magnitud">
           <option value="">Todas las áreas</option>
-        <optgroup label="En operación">
+          <optgroup label="En operación">
             <option value="DIMENSIONAL">Dimensional</option>
             <option value="ELÉCTRICA">Eléctrica</option>
             <option value="PRESIÓN">Presión</option>
@@ -174,47 +315,71 @@
           </optgroup>
         </select>
       </div>
-
-      <!-- Año -->
       <div>
-        <label class="form-label">Año de emisión</label>
+        <label class="form-label" for="filtro-anio">Año</label>
         <select class="form-control" id="filtro-anio">
           <option value="">Todos los años</option>
         </select>
       </div>
-
-      <!-- Rango de fechas -->
-      <div>
-        <label class="form-label">Emisión desde</label>
-        <input class="form-control" type="date" id="filtro-desde">
-      </div>
-      <div>
-        <label class="form-label">Emisión hasta</label>
-        <input class="form-control" type="date" id="filtro-hasta">
-      </div>
-
-      <!-- Ordenar por -->
-      <div>
-        <label class="form-label">Ordenar por</label>
-        <select class="form-control" id="filtro-orden">
-          <option value="fecha_emision DESC">Emisión (más reciente)</option>
-          <option value="fecha_emision ASC">Emisión (más antigua)</option>
-          <option value="nombre_cliente ASC">Cliente (A-Z)</option>
-          <option value="numero_informe ASC">No. Informe</option>
-          <option value="marca ASC">Marca</option>
-        </select>
-      </div>
-
     </div>
 
-    <div class="search-actions">
-      <button class="btn btn-outline" onclick="limpiarFiltros()">Limpiar filtros</button>
-      <button class="btn btn-primary" onclick="buscar(1)" id="btn-buscar"
-              style="padding:8px 24px">
-        Buscar
+    <!-- ③ Chips de filtros activos -->
+    <div class="filter-chips" id="filter-chips"></div>
+
+    <!-- ④ Toggle de filtros avanzados -->
+    <div class="advanced-toggle-row">
+      <button class="btn-toggle-advanced" id="btn-toggle-adv" onclick="toggleAdvanced()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+        </svg>
+        Más filtros
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
       </button>
+      <button class="btn-limpiar-link" onclick="limpiarFiltros()">Limpiar todo</button>
     </div>
-  </div>
+
+    <!-- ⑤ Filtros avanzados (colapsables) -->
+    <div class="advanced-filters" id="advanced-filters">
+      <div class="advanced-filters-grid">
+        <div>
+          <label class="form-label" for="filtro-informe">No. Informe</label>
+          <input class="form-control" type="text" id="filtro-informe" placeholder="Ej: LMD-…"
+                 onkeydown="if(event.key==='Enter') buscar(1)">
+        </div>
+        <div>
+          <label class="form-label" for="filtro-id">Identificación</label>
+          <input class="form-control" type="text" id="filtro-id" placeholder="ID del instrumento"
+                 onkeydown="if(event.key==='Enter') buscar(1)">
+        </div>
+        <div>
+          <label class="form-label" for="filtro-marca">Marca</label>
+          <input class="form-control" type="text" id="filtro-marca" placeholder="Marca del instrumento"
+                 onkeydown="if(event.key==='Enter') buscar(1)">
+        </div>
+        <div>
+          <label class="form-label" for="filtro-desde">Calibración desde</label>
+          <input class="form-control" type="date" id="filtro-desde">
+        </div>
+        <div>
+          <label class="form-label" for="filtro-hasta">Calibración hasta</label>
+          <input class="form-control" type="date" id="filtro-hasta">
+        </div>
+        <div>
+          <label class="form-label" for="filtro-orden">Ordenar por</label>
+          <select class="form-control" id="filtro-orden">
+            <option value="fecha_emision DESC">Calibración (más reciente)</option>
+            <option value="fecha_emision ASC">Calibración (más antigua)</option>
+            <option value="nombre_cliente ASC">Cliente (A-Z)</option>
+            <option value="numero_informe ASC">No. Informe</option>
+            <option value="marca ASC">Marca</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /search-panel -->
 
   <!-- Tabla de resultados -->
   <div class="card">
@@ -225,7 +390,7 @@
 
     <div id="tabla-container">
       <div class="empty-state" style="padding:60px 24px">
-        <div style="font-size:40px;margin-bottom:12px"></div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
         <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Puedes buscar por informe, cliente, serie o dejar todo vacío para ver todos.</p>
       </div>
@@ -244,11 +409,64 @@
 (async function() {
   if (!(await Auth.requireLogin())) return;
   renderNavbar('inicio');
-  // el resto del código de la página (cargarStats, etc.) va aquí
 })();
 
   let paginaActual = 1;
   const LIMITE = 50;
+
+  // ── Toggle filtros avanzados ────────────────────────────
+  function toggleAdvanced() {
+    const panel = document.getElementById('advanced-filters');
+    const btn   = document.getElementById('btn-toggle-adv');
+    const isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    btn.querySelector('svg:last-child').style.transform = isOpen ? 'rotate(180deg)' : '';
+    // Actualizar texto del botón
+    const label = btn.querySelector('svg:last-child').previousSibling;
+    btn.childNodes[2].textContent = isOpen ? ' Menos filtros ' : ' Más filtros ';
+  }
+
+  // ── Chips de filtros activos ────────────────────────────
+  const CHIP_LABELS = {
+    q:               'Búsqueda',
+    'filtro-informe':'No. Informe',
+    'filtro-cliente':'Cliente',
+    'filtro-serie':  'No. Serie',
+    'filtro-id':     'Identificación',
+    'filtro-marca':  'Marca',
+    'filtro-magnitud':'Magnitud',
+    'filtro-anio':   'Año',
+    'filtro-desde':  'Desde',
+    'filtro-hasta':  'Hasta',
+  };
+
+  function actualizarChips() {
+    const container = document.getElementById('filter-chips');
+    container.innerHTML = '';
+    Object.entries(CHIP_LABELS).forEach(([id, label]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const val = el.value?.trim();
+      if (!val) return;
+      // Obtener texto legible para selects
+      let display = val;
+      if (el.tagName === 'SELECT') {
+        display = el.options[el.selectedIndex]?.text || val;
+      }
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.innerHTML = `<span style="color:var(--gray-500);font-size:11px;">${label}:</span> ${display}
+        <button class="chip-remove" title="Quitar filtro" onclick="quitarChip('${id}')">×</button>`;
+      container.appendChild(chip);
+    });
+  }
+
+  function quitarChip(id) {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+    actualizarChips();
+    buscar(1);
+  }
 
   // ── Stats ───────────────────────────────────────────────
   async function cargarStats() {
@@ -269,10 +487,6 @@
         document.getElementById('stat-rango').textContent =
           `${Math.min(...years)} – ${Math.max(...years)}`;
       }
-      if (data.por_anio.length > 0) {
-        document.getElementById('stat-ultimo').textContent =
-          formatFecha(data.por_anio[0].ultima_emision);
-      }
 
       // Llenar select de años
       const sel = document.getElementById('filtro-anio');
@@ -290,7 +504,7 @@
     paginaActual = pagina;
     const btn = document.getElementById('btn-buscar');
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>';
+    btn.innerHTML = '<span class="spinner"></span> Buscando…';
     const t0 = Date.now();
 
     const params = new URLSearchParams();
@@ -298,23 +512,21 @@
       const v = document.getElementById(id)?.value?.trim();
       if (v) params.set(k, v);
     };
-    add('q',        'q');
-    add('numero_informe', 'filtro-informe');
-    add('cliente',  'filtro-cliente');
-    add('serie',    'filtro-serie');
-    add('identificacion', 'filtro-id');
-    add('marca',    'filtro-marca');
-    add('magnitud', 'filtro-magnitud');
-    add('anio',     'filtro-anio');
-    add('desde',    'filtro-desde');
-    add('hasta',    'filtro-hasta');
-    add('orden',    'filtro-orden');
+    add('q',             'q');
+    add('numero_informe','filtro-informe');
+    add('cliente',       'filtro-cliente');
+    add('serie',         'filtro-serie');
+    add('identificacion','filtro-id');
+    add('marca',         'filtro-marca');
+    add('magnitud',      'filtro-magnitud');
+    add('anio',          'filtro-anio');
+    add('desde',         'filtro-desde');
+    add('hasta',         'filtro-hasta');
+    add('orden',         'filtro-orden');
     params.set('pagina', pagina);
     params.set('limite', LIMITE);
 
-    // Indicar filtros activos
-    const tieneFiltos = [...params.keys()].some(k => !['pagina','limite','orden'].includes(k));
-    document.getElementById('busqueda-activa').style.display = tieneFiltos ? 'inline' : 'none';
+    actualizarChips();
 
     try {
       const data = await api('/certificados?' + params.toString());
@@ -325,7 +537,7 @@
         `<div class="alert alert-error" style="margin:20px">${e.message}</div>`;
     } finally {
       btn.disabled = false;
-      btn.innerHTML = 'Buscar';
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Buscar`;
     }
   }
 
@@ -340,7 +552,7 @@
     if (data.datos.length === 0) {
       document.getElementById('tabla-container').innerHTML = `
         <div class="empty-state" style="padding:48px">
-          <div style="font-size:36px;margin-bottom:12px"></div>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           <p>No se encontraron certificados con esos criterios.</p>
           <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Intenta con términos más generales.</p>
         </div>`;
@@ -380,7 +592,7 @@
               <th>No. Serie</th>
               <th>Identificación</th>
               <th>Magnitud</th>
-              <th>Emisión</th>
+              <th>Fecha de calibración</th>
               <th>Año</th>
             </tr>
           </thead>
@@ -418,21 +630,22 @@
   }
 
   function limpiarFiltros() {
-    ['q','filtro-informe','filtro-cliente','filtro-serie','filtro-id','filtro-marca','filtro-desde','filtro-hasta'].forEach(id => {
+    ['q','filtro-informe','filtro-cliente','filtro-serie','filtro-id',
+     'filtro-marca','filtro-desde','filtro-hasta'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
     document.getElementById('filtro-magnitud').value = '';
-    document.getElementById('filtro-anio').value = '';
-    document.getElementById('filtro-orden').value = 'fecha_emision DESC';
+    document.getElementById('filtro-anio').value     = '';
+    document.getElementById('filtro-orden').value    = 'fecha_emision DESC';
+    document.getElementById('filter-chips').innerHTML = '';
     document.getElementById('tabla-container').innerHTML = `
       <div class="empty-state" style="padding:60px 24px">
-        <div style="font-size:40px;margin-bottom:12px"></div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
       </div>`;
-    document.getElementById('result-bar').style.display = 'none';
-    document.getElementById('paginacion').style.display = 'none';
-    document.getElementById('busqueda-activa').style.display = 'none';
+    document.getElementById('result-bar').style.display  = 'none';
+    document.getElementById('paginacion').style.display  = 'none';
   }
 
   function verDetalle(id) {

@@ -49,6 +49,7 @@
     .page-header h1 { font-size: 22px; font-weight: 700; color: var(--gray-800); }
     .page-header p  { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
 
+    /* ── Botones ── */
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 9px 18px; border-radius: 9px; font-size: 13px; font-weight: 500;
@@ -63,19 +64,27 @@
     .btn-ghost:hover { background: var(--gray-100); color: var(--gray-700); }
     .btn-danger { background: var(--danger-light); color: var(--danger); border: 1px solid #fca5a5; }
     .btn-danger:hover { background: #fee2e2; }
+    .btn-danger-solid { background: var(--danger); color: white; border: none; }
+    .btn-danger-solid:hover { background: #b91c1c; }
     .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 6px; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+    /* ── Stats ── */
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
     .stat-card {
       background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
       padding: 18px 20px; display: flex; align-items: center; gap: 14px;
       box-shadow: var(--shadow-sm);
     }
-    .stat-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .stat-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; flex-shrink: 0; color: var(--gray-600);
+    }
     .stat-val  { font-size: 24px; font-weight: 700; color: var(--gray-800); line-height: 1; }
     .stat-lbl  { font-size: 12px; color: var(--gray-500); margin-top: 3px; font-weight: 500; }
 
+    /* ── Card principal ── */
     .main-card {
       background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
       box-shadow: var(--shadow-sm); overflow: hidden;
@@ -84,9 +93,10 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 24px; border-bottom: 1px solid var(--gray-100); gap: 12px; flex-wrap: wrap;
     }
-    .card-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+    .card-title    { font-size: 15px; font-weight: 600; color: var(--gray-800); }
     .card-subtitle { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
 
+    /* ── Buscador ── */
     .search-wrap { position: relative; }
     .search-wrap input {
       padding: 8px 12px 8px 34px; border: 1px solid var(--gray-200); border-radius: 8px;
@@ -94,8 +104,9 @@
       transition: border-color var(--transition);
     }
     .search-wrap input:focus { border-color: var(--primary); }
-    .search-wrap .icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--gray-400); }
 
+    /* ── Tabla ── */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead th {
@@ -111,20 +122,25 @@
       width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center;
       justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;
     }
-    .user-cell { display: flex; align-items: center; gap: 10px; }
-    .user-name { font-weight: 600; color: var(--gray-800); font-size: 13px; }
+    .user-cell  { display: flex; align-items: center; gap: 10px; }
+    .user-name  { font-weight: 600; color: var(--gray-800); font-size: 13px; }
     .user-email { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
 
+    /* ── Badges ── */
     .badge {
       display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px;
       border-radius: 20px; font-size: 11px; font-weight: 600;
     }
-    .badge-active  { background: var(--success-light); color: var(--success); }
-    .badge-inactive{ background: var(--gray-100);      color: var(--gray-500); }
-    .badge-admin   { background: #faf5ff; color: #7c3aed; }
+    .badge-active   { background: var(--success-light); color: var(--success); }
+    .badge-inactive { background: var(--gray-100);      color: var(--gray-500); }
+    .badge-admin    { background: #faf5ff;               color: #7c3aed; }
+    .badge-calidad  { background: #f0fdf4;               color: #15803d; }
+    .badge-reportes { background: #fffbeb;               color: #92400e; }
+    .badge-certs    { background: #eff6ff;               color: #1d4ed8; }
 
-    .actions-cell { display: flex; gap: 6px; }
+    .actions-cell { display: flex; gap: 4px; justify-content: flex-end; }
 
+    /* ── Modales ── */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 1000;
       display: none; align-items: center; justify-content: center; padding: 20px;
@@ -132,55 +148,80 @@
     }
     .modal-overlay.open { display: flex; }
     .modal {
-      background: white; border-radius: var(--radius); width: 100%; max-width: 580px;
-      max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+      background: white; border-radius: var(--radius); width: 100%; max-width: 600px;
+      max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg);
       animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     @keyframes modalIn { from { opacity:0; transform:scale(0.94) translateY(10px); } to { opacity:1; transform:none; } }
     .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: flex-start; justify-content: space-between;
       padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-100);
     }
     .modal-header h2 { font-size: 16px; font-weight: 700; color: var(--gray-800); }
     .modal-header p  { font-size: 12px; color: var(--gray-400); margin-top: 3px; }
-    .modal-close { background: none; border: 1px solid var(--gray-200); border-radius: 7px; padding: 5px 10px; cursor: pointer; color: var(--gray-500); font-size: 14px; transition: all var(--transition); }
+    .modal-close {
+      background: none; border: 1px solid var(--gray-200); border-radius: 7px;
+      padding: 5px 10px; cursor: pointer; color: var(--gray-500); font-size: 14px;
+      transition: all var(--transition); flex-shrink: 0; margin-left: 12px;
+    }
     .modal-close:hover { background: var(--gray-100); }
     .modal-body   { padding: 24px; }
     .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 10px; }
 
+    /* ── Formulario ── */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-full  { grid-column: 1 / -1; }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-label { font-size: 12px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-label {
+      font-size: 12px; font-weight: 600; color: var(--gray-600);
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
     .form-control {
       padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 8px;
       font-size: 13px; font-family: inherit; outline: none; color: var(--gray-800);
       transition: border-color var(--transition), box-shadow var(--transition); background: white;
     }
     .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    .form-hint { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+    .form-hint  { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
     .form-error { font-size: 11px; color: var(--danger); margin-top: 2px; display: none; }
     .form-control.error { border-color: var(--danger); }
 
-    .pass-gen {
+    /* ── Generador de contraseña ── */
+    .pass-gen { display: flex; align-items: center; gap: 8px; }
+    .pass-gen input {
+      flex: 1; font-family: monospace; font-size: 15px; letter-spacing: 2px;
+      font-weight: 600; color: var(--primary);
+    }
+
+    /* ── Panel de permisos del rol ── */
+    .perms-info {
+      background: var(--gray-50); border: 1px solid var(--gray-200);
+      border-radius: 8px; padding: 12px 14px; margin-top: 8px;
+    }
+    .perms-info-title { font-size: 11px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; margin-bottom: 8px; }
+    .perms-list { display: flex; flex-direction: column; gap: 8px; }
+    .perm-checkbox {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid var(--gray-200);
+      border-radius: 10px; background: white; color: var(--gray-700);
+    }
+    .perm-checkbox input {
+      margin-top: 4px;
+      border: 1px solid var(--gray-300);
+      width: 16px; height: 16px; accent-color: var(--primary);
+    }
+    .perm-checkbox span { font-size: 13px; line-height: 1.4; }
+    .perm-item {
       display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--gray-600);
     }
-    .pass-gen input { flex: 1; font-family: monospace; font-size: 15px; letter-spacing: 2px; font-weight: 600; color: var(--primary); }
-    .pass-gen .btn-regen { padding: 9px 12px; font-size: 16px; }
-
-    .perms-editable { display: flex; flex-direction: column; gap: 6px; }
-    .perm-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 10px; background: white; border: 1px solid var(--gray-200);
-      border-radius: 6px; cursor: pointer; transition: all var(--transition);
+    .perm-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
     }
-    .perm-toggle:hover { border-color: var(--gray-300); background: var(--gray-50); }
-    .perm-toggle input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; }
-    .perm-toggle label { font-size: 12px; color: var(--gray-700); cursor: pointer; flex: 1; margin-left: 8px; display: flex; align-items: center; gap: 6px; }
-    .perm-toggle label span { font-size: 14px; }
-    .perm-toggle.checked { border-color: var(--primary); background: var(--primary-light); }
-    .perm-toggle.checked label { color: var(--primary); font-weight: 500; }
+    .perm-dot.on  { background: var(--success); }
+    .perm-dot.off { background: var(--gray-300); }
+    .perm-item.off { color: var(--gray-400); }
 
+    /* ── Toast ── */
     .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
     .toast {
       display: flex; align-items: center; gap: 10px; padding: 12px 16px;
@@ -192,14 +233,89 @@
     .toast.error   { border-left-color: var(--danger); }
     @keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:none; } }
 
-    .empty-row td { text-align: center; padding: 48px 20px; color: var(--gray-400); font-size: 14px; }
-
-    .confirm-modal { max-width: 420px; }
-    .confirm-body { padding: 24px; text-align: center; }
-    .confirm-icon { font-size: 40px; margin-bottom: 12px; }
-    .confirm-title { font-size: 16px; font-weight: 700; color: var(--gray-800); margin-bottom: 8px; }
+    /* ── Modal confirm ── */
+    .confirm-modal { max-width: 440px; }
+    .confirm-body  { padding: 28px 24px 8px; }
+    .confirm-title { font-size: 16px; font-weight: 700; color: var(--gray-800); margin-bottom: 10px; }
     .confirm-text  { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
-    .confirm-footer { display: flex; gap: 10px; justify-content: center; padding: 0 24px 24px; }
+    .confirm-footer { display: flex; gap: 10px; justify-content: flex-end; padding: 16px 24px; border-top: 1px solid var(--gray-100); }
+    .confirm-step2-box {
+      background: var(--danger-light); border: 1px solid #fca5a5;
+      border-radius: 8px; padding: 14px; margin-top: 16px;
+    }
+    .confirm-step2-box p { font-size: 12px; color: #991b1b; margin-bottom: 8px; font-weight: 500; }
+    .confirm-step2-box input {
+      width: 100%; padding: 8px 10px; border: 1px solid #fca5a5; border-radius: 6px;
+      font-size: 13px; font-family: monospace; outline: none; color: var(--gray-800);
+      background: white;
+    }
+    .confirm-step2-box input:focus { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+
+    /* ── Panel de notificaciones ── */
+    .notif-btn {
+      position: relative; background: white; border: 1px solid var(--gray-200);
+      border-radius: 9px; padding: 8px 12px; cursor: pointer; display: flex;
+      align-items: center; gap: 6px; font-size: 13px; color: var(--gray-600);
+      font-family: inherit; transition: all var(--transition);
+    }
+    .notif-btn:hover { background: var(--gray-50); border-color: var(--gray-300); }
+    .notif-badge {
+      position: absolute; top: -5px; right: -5px;
+      background: var(--danger); color: white; border-radius: 50%;
+      width: 18px; height: 18px; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid white;
+    }
+    .notif-panel {
+      position: fixed; top: 70px; right: 24px; width: 380px; max-height: 480px;
+      background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      box-shadow: var(--shadow-lg); z-index: 900; display: none; flex-direction: column;
+      overflow: hidden; animation: modalIn 0.18s ease;
+    }
+    .notif-panel.open { display: flex; }
+    .notif-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--gray-100);
+    }
+    .notif-panel-title { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+    .notif-list { overflow-y: auto; flex: 1; }
+    .notif-item {
+      display: flex; gap: 10px; padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100); font-size: 12px;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item.unread { background: var(--primary-light); }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+    .notif-dot.pass   { background: var(--warning); }
+    .notif-dot.create { background: var(--success); }
+    .notif-dot.delete { background: var(--danger); }
+    .notif-dot.edit   { background: var(--primary); }
+    .notif-msg  { color: var(--gray-700); line-height: 1.5; flex: 1; }
+    .notif-time { color: var(--gray-400); font-size: 11px; margin-top: 2px; }
+    .notif-empty { padding: 32px 16px; text-align: center; color: var(--gray-400); font-size: 13px; }
+
+    /* ── Separador de sección ── */
+    .section-divider {
+      font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase;
+      letter-spacing: 0.06em; padding: 6px 0 4px; border-bottom: 1px solid var(--gray-100);
+      margin: 16px 0 12px; grid-column: 1 / -1;
+    }
+
+    /* ── Indicador de contraseña temporal ── */
+    .temp-pass-box {
+      background: var(--warning-light); border: 1px solid #fde68a;
+      border-radius: 8px; padding: 12px 14px;
+    }
+    .temp-pass-box .label { font-size: 11px; font-weight: 700; color: #92400e; text-transform: uppercase; margin-bottom: 6px; }
+    .temp-pass-box .pass-val {
+      font-family: monospace; font-size: 18px; font-weight: 700;
+      color: #92400e; letter-spacing: 2px; word-break: break-all;
+    }
+    .temp-pass-box .note { font-size: 11px; color: #a16207; margin-top: 6px; line-height: 1.5; }
+
+    /* ── Misc ── */
+    .empty-row td { text-align: center; padding: 48px 20px; color: var(--gray-400); font-size: 14px; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
 
     @media (max-width: 900px) {
       .stats-row { grid-template-columns: 1fr 1fr; }
@@ -209,7 +325,6 @@
       .page { padding: 16px; }
       .stats-row { grid-template-columns: 1fr; }
     }
-
     @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
     @keyframes spin { to { transform: rotate(360deg); } }
     .fadeIn { animation: fadeIn 0.2s ease; }
@@ -221,35 +336,79 @@
 
 <div class="page">
 
+  <!-- ── Encabezado ── -->
   <div class="page-header">
     <div>
-      <h1>👥 Administración de usuarios</h1>
-      <p>Gestiona los accesos y permisos del sistema SIDEC</p>
+      <h1>Administración de usuarios</h1>
+      <p>Gestiona los accesos, roles y permisos del sistema SIDEC</p>
     </div>
-    <button class="btn btn-primary" onclick="abrirModalCrear()">
-      ＋ Nuevo usuario
-    </button>
+    <div class="header-actions">
+      <!-- Campana de notificaciones -->
+      <button class="notif-btn" id="btn-notif" onclick="toggleNotifPanel()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        Notificaciones
+        <span class="notif-badge" id="notif-count" style="display:none">0</span>
+      </button>
+      <button class="btn btn-primary" onclick="abrirModalCrear()">
+        + Nuevo usuario
+      </button>
+    </div>
   </div>
 
-  <div class="stats-row" id="stats-row">
+  <!-- ── Panel de notificaciones ── -->
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-panel-header">
+      <span class="notif-panel-title">Notificaciones del sistema</span>
+      <button class="btn btn-ghost btn-sm" onclick="marcarTodasLeidas()">Marcar leídas</button>
+    </div>
+    <div class="notif-list" id="notif-list">
+      <div class="notif-empty">Sin notificaciones nuevas</div>
+    </div>
+  </div>
+
+  <!-- ── Estadísticas ── -->
+  <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon" style="background:#eff6ff;">👤</div>
+      <div class="stat-icon" style="background:#eff6ff;color:#1d4ed8;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
       <div><div class="stat-val" id="stat-total">—</div><div class="stat-lbl">Total usuarios</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#f0fdf4;">✅</div>
+      <div class="stat-icon" style="background:#f0fdf4;color:#15803d;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
       <div><div class="stat-val" id="stat-activos">—</div><div class="stat-lbl">Activos</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#faf5ff;">🔑</div>
+      <div class="stat-icon" style="background:#faf5ff;color:#7c3aed;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
       <div><div class="stat-val" id="stat-admins">—</div><div class="stat-lbl">Administradores</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon" style="background:#fffbeb;">🏢</div>
-      <div><div class="stat-val" id="stat-deptos">—</div><div class="stat-lbl">Departamentos</div></div>
+      <div class="stat-icon" style="background:#fffbeb;color:#d97706;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div><div class="stat-val" id="stat-deptos">—</div><div class="stat-lbl">Departamentos activos</div></div>
     </div>
   </div>
 
+  <!-- ── Tabla de usuarios ── -->
   <div class="main-card">
     <div class="card-header">
       <div>
@@ -258,9 +417,18 @@
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <div class="search-wrap">
-          <span class="icon"></span>
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
           <input type="text" id="search-input" placeholder="Buscar por nombre o usuario..." onkeyup="filtrarUsuarios()">
         </div>
+        <select id="filter-rol" class="form-control" style="width:160px;padding:8px 12px;font-size:13px;" onchange="filtrarUsuarios()">
+          <option value="">Todos los roles</option>
+          <option value="admin">Administrador</option>
+          <option value="calidad">Calidad</option>
+          <option value="reportes">Reportes</option>
+          <option value="certificaciones">Certificaciones</option>
+        </select>
         <select id="filter-depto" class="form-control" style="width:180px;padding:8px 12px;font-size:13px;" onchange="filtrarUsuarios()">
           <option value="">Todos los departamentos</option>
         </select>
@@ -270,13 +438,13 @@
       <table>
         <thead>
           <tr>
-            <th>Nombre</th>
+            <th>Nombre / Usuario</th>
             <th>Rol</th>
             <th>Departamento</th>
             <th>Estado</th>
             <th>Último acceso</th>
             <th>Creado</th>
-            <th style="text-align:right;width:150px;">Acciones</th>
+            <th style="text-align:right;width:180px;">Acciones</th>
           </tr>
         </thead>
         <tbody id="users-tbody">
@@ -286,9 +454,11 @@
     </div>
   </div>
 
-</div>
+</div><!-- /page -->
 
-<!-- Modal: Crear / Editar usuario -->
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: Crear / Editar usuario
+═══════════════════════════════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-usuario" onclick="if(event.target===this)cerrarModal()">
   <div class="modal">
     <div class="modal-header">
@@ -300,68 +470,167 @@
     </div>
     <div class="modal-body">
       <div class="form-grid">
+
+        <!-- Datos básicos -->
+        <div class="section-divider">Datos del usuario</div>
+
         <div class="form-group form-full">
           <label class="form-label">Nombre completo *</label>
-          <input type="text" id="f-nombre" class="form-control" placeholder="Juan Pérez" onchange="limpiarError('f-nombre')">
+          <input type="text" id="f-nombre" class="form-control" placeholder="Ej. María García López" oninput="limpiarError('f-nombre')">
           <div class="form-error" id="err-nombre">El nombre es requerido</div>
         </div>
+
         <div class="form-group form-full">
-          <label class="form-label">Usuario (nombre de acceso) *</label>
-          <input type="text" id="f-usuario" class="form-control" placeholder="juan.perez" onchange="limpiarError('f-usuario')">
-          <div class="form-hint">Sin espacios ni caracteres especiales</div>
+          <label class="form-label">Nombre de usuario (acceso) *</label>
+          <input type="text" id="f-usuario" class="form-control" placeholder="maria.garcia" oninput="limpiarError('f-usuario')">
+          <div class="form-hint">Sin espacios ni caracteres especiales. Mín. 3 caracteres.</div>
           <div class="form-error" id="err-usuario">Usuario requerido (mín. 3 caracteres)</div>
         </div>
-        <div class="form-group" id="pass-group-container">
-          <label class="form-label">Contraseña *</label>
-          <div class="pass-gen">
-            <input type="text" id="f-password" class="form-control" readonly style="font-family:monospace;">
-            <button type="button" class="btn btn-outline btn-sm btn-regen" onclick="generarPassword()" title="Generar nueva">🔄</button>
-            <button type="button" class="btn btn-outline btn-sm" onclick="copiarPassword()" title="Copiar">📋</button>
-          </div>
-        </div>
+
         <div class="form-group">
-          <label class="form-label">Rol *</label>
-          <select id="f-rol" class="form-control" onchange="limpiarError('f-rol')">
-            <option value="">-Seleccionar rol-</option>
+          <label class="form-label">Departamento *</label>
+          <select id="f-departamento" class="form-control" oninput="limpiarError('f-departamento')">
+            <option value="">— Seleccionar —</option>
+            <option value="atencion_cliente">Atención a cliente</option>
+            <option value="calidad">Calidad</option>
+            <option value="almacen">Almacén</option>
+            <option value="certificados">Certificados</option>
+          </select>
+          <div class="form-error" id="err-depto">El departamento es requerido</div>
+        </div>
+
+        <!-- Rol y permisos -->
+        <div class="section-divider">Rol y permisos</div>
+
+        <div class="form-group form-full">
+          <label class="form-label">Rol del usuario *</label>
+          <select id="f-rol" class="form-control" onchange="limpiarError('f-rol');actualizarInfoPermisos()">
+            <option value="">— Seleccionar rol —</option>
             <option value="certificaciones">Certificaciones</option>
             <option value="reportes">Reportes</option>
             <option value="calidad">Calidad</option>
             <option value="admin">Administrador</option>
           </select>
           <div class="form-error" id="err-rol">El rol es requerido</div>
+          <!-- Bloque de permisos dinámico -->
+          <div id="perms-info-box" style="display:none;" class="perms-info">
+            <div class="perms-info-title">Accesos otorgados con este rol</div>
+            <div class="perms-list" id="perms-list"></div>
+          </div>
         </div>
-        <div class="form-group form-full">
-          <label class="form-label">Departamento *</label>
-          <select id="f-departamento" class="form-control" onchange="limpiarError('f-departamento')">
-            <option value="">-Seleccionar departamento-</option>
-            <option value="asistencia_cliente">Atención al cliente</option>
-            <option value="calidad_certificados">Calidad</option>
-            <option value="laboratorio">Certificados</option>
-            <option value="direccion">Dirección</option>
-          </select>
-          <div class="form-error" id="err-depto">El departamento es requerido</div>
+
+        <!-- Contraseña (solo crear) -->
+        <div class="section-divider" id="pass-section-divider" style="display:none;">Contraseña inicial</div>
+
+        <div class="form-group form-full" id="pass-group-container" style="display:none;">
+          <label class="form-label">Contraseña temporal *</label>
+          <div class="pass-gen">
+            <input type="text" id="f-password" class="form-control" readonly style="font-family:monospace;letter-spacing:2px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="generarPassword()" title="Generar nueva contraseña">
+              Generar
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="copiarPassword()" title="Copiar al portapapeles">
+              Copiar
+            </button>
+          </div>
+          <div class="form-hint">
+            Esta contraseña es temporal. El usuario deberá cambiarla en su primer acceso.
+          </div>
         </div>
+
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
-      <button class="btn btn-primary" id="btn-guardar-usuario" onclick="guardarUsuario()">＋ Crear usuario</button>
+      <button class="btn btn-primary" id="btn-guardar-usuario" onclick="guardarUsuario()">Crear usuario</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Confirmar eliminación -->
-<div class="modal-overlay" id="modal-confirmar" onclick="if(event.target===this)cerrarConfirm()">
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: Restablecer contraseña — resultado
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-nueva-pass" onclick="if(event.target===this)cerrarModalNuevaPass()">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header">
+      <div>
+        <h2>Contraseña restablecida</h2>
+        <p id="nueva-pass-subtitulo">Nueva contraseña temporal generada</p>
+      </div>
+      <button class="modal-close" onclick="cerrarModalNuevaPass()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="temp-pass-box" style="margin-bottom:16px;">
+        <div class="label">Nueva contraseña temporal</div>
+        <div class="pass-val" id="nueva-pass-val">—</div>
+        <div class="note">
+          Comparte esta contraseña con el usuario de forma segura.
+          Se mostrara una sola vez y el usuario debera cambiarla en su proximo acceso.
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;"
+        onclick="copiarNuevaPass()">
+        Copiar contraseña y cerrar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: Confirmar eliminación — Paso 1
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-confirmar-paso1" onclick="if(event.target===this)cerrarConfirmPaso1()">
   <div class="modal confirm-modal">
+    <div class="modal-header">
+      <div>
+        <h2>Eliminar cuenta de usuario</h2>
+        <p>Esta acción es permanente y no se puede deshacer</p>
+      </div>
+      <button class="modal-close" onclick="cerrarConfirmPaso1()">✕</button>
+    </div>
     <div class="confirm-body">
-      <div class="confirm-title">¿Desactivar usuario?</div>
-      <div class="confirm-text" id="confirm-text">
-        Se desactivará el acceso del usuario inmediatamente.
+      <div class="confirm-text" id="confirm-text-paso1">
+        ¿Está seguro de que desea eliminar esta cuenta?
       </div>
     </div>
     <div class="confirm-footer">
-      <button class="btn btn-outline" onclick="cerrarConfirm()">Cancelar</button>
-      <button class="btn btn-danger" id="btn-confirmar-eliminar" onclick="confirmarEliminar()">Desactivar</button>
+      <button class="btn btn-outline" onclick="cerrarConfirmPaso1()">Cancelar</button>
+      <button class="btn btn-danger" onclick="avanzarConfirmPaso2()">Sí, continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL: Confirmar eliminación — Paso 2 (escribir usuario)
+═══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-confirmar-paso2">
+  <div class="modal confirm-modal">
+    <div class="modal-header">
+      <div>
+        <h2>Confirmacion final requerida</h2>
+        <p>Escriba el nombre de usuario para confirmar</p>
+      </div>
+      <button class="modal-close" onclick="cerrarConfirmPaso2()">✕</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-text">
+        Para eliminar definitivamente esta cuenta, escriba el nombre de usuario exacto en el campo de abajo.
+        Esta operacion notificara al administrador del sistema.
+      </div>
+      <div class="confirm-step2-box">
+        <p>Escriba el nombre de usuario: <strong id="confirm-usuario-hint"></strong></p>
+        <input type="text" id="confirm-usuario-input"
+          placeholder="Nombre de usuario..."
+          oninput="verificarConfirmUsuario()"
+          autocomplete="off">
+      </div>
+    </div>
+    <div class="confirm-footer">
+      <button class="btn btn-outline" onclick="cerrarConfirmPaso2()">Cancelar</button>
+      <button class="btn btn-danger-solid" id="btn-confirmar-eliminar-final"
+        onclick="confirmarEliminar()" disabled>
+        Eliminar cuenta permanentemente
+      </button>
     </div>
   </div>
 </div>
@@ -370,16 +639,69 @@
 
 <script src="app.js"></script>
 <script>
+// ══════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════
 if (!Auth.requireLogin()) throw new Error('not logged');
 renderNavbar('admin');
 
-const ROLES = ['certificaciones', 'reportes', 'calidad', 'admin'];
+// ── Constantes ──
+const DEPARTAMENTOS = {
+  atencion_cliente: 'Atención a cliente',
+  calidad:          'Calidad',
+  almacen:          'Almacén',
+  certificados:     'Certificados',
+};
 
-let usuarios = [];
-let modoEdicion = false;
-let usuarioEditandoId = null;
-let usuarioEliminandoId = null;
+const ROL_LABELS = {
+  certificaciones: 'Certificaciones',
+  reportes:        'Reportes',
+  calidad:         'Calidad',
+  admin:           'Administrador',
+};
 
+const ROL_PERMISOS = {
+  certificaciones: [
+    { key: 'certificados', texto: 'Ver y gestionar certificados', on: true },
+    { key: 'reportes', texto: 'Acceso a reportes', on: false },
+    { key: 'calidad', texto: 'Gestión de calidad', on: false },
+    { key: 'admin', texto: 'Administración del sistema', on: false },
+    { key: 'usuarios', texto: 'Gestión de usuarios', on: false },
+  ],
+  reportes: [
+    { key: 'certificados', texto: 'Ver y gestionar certificados', on: true },
+    { key: 'reportes', texto: 'Acceso a reportes', on: true },
+    { key: 'calidad', texto: 'Gestión de calidad', on: false },
+    { key: 'admin', texto: 'Administración del sistema', on: false },
+    { key: 'usuarios', texto: 'Gestión de usuarios', on: false },
+  ],
+  calidad: [
+    { key: 'certificados', texto: 'Ver y gestionar certificados', on: true },
+    { key: 'reportes', texto: 'Acceso a reportes', on: true },
+    { key: 'calidad', texto: 'Gestión de calidad', on: true },
+    { key: 'admin', texto: 'Administración del sistema', on: false },
+    { key: 'usuarios', texto: 'Gestión de usuarios', on: false },
+  ],
+  admin: [
+    { key: 'certificados', texto: 'Ver y gestionar certificados', on: true },
+    { key: 'reportes', texto: 'Acceso a reportes', on: true },
+    { key: 'calidad', texto: 'Gestión de calidad', on: true },
+    { key: 'admin', texto: 'Administración del sistema', on: true },
+    { key: 'usuarios', texto: 'Gestión de usuarios (crear, editar, eliminar)', on: true },
+  ],
+};
+
+// ── Estado ──
+let usuarios             = [];
+let modoEdicion          = false;
+let usuarioEditandoId    = null;
+let usuarioEliminandoId  = null;
+let notificaciones       = [];
+let nuevaPassActual      = '';
+
+// ══════════════════════════════════════════════════════════════
+//  CARGA INICIAL
+// ══════════════════════════════════════════════════════════════
 async function cargarUsuarios() {
   try {
     const data = await api('/usuarios');
@@ -390,10 +712,25 @@ async function cargarUsuarios() {
   } catch (e) {
     showToast('Error al cargar usuarios: ' + e.message, 'error');
     document.getElementById('users-tbody').innerHTML =
-      `<tr class="empty-row"><td colspan="7">Error al cargar usuarios.</td></tr>`;
+      `<tr class="empty-row"><td colspan="7">Error al cargar usuarios. Intente de nuevo.</td></tr>`;
   }
 }
 
+async function cargarSolicitudesReset() {
+  try {
+    const solicitudes = await api('/usuarios/reset-solicitudes');
+    solicitudes.forEach(solicitud => {
+      const key = `reset-${solicitud.id}`;
+      agregarNotificacion('pass', `Solicitud de nueva contraseña: ${solicitud.nombre || solicitud.usuario} (@${solicitud.usuario})`, key);
+    });
+  } catch (e) {
+    console.warn('No se pudo cargar solicitudes de recuperación:', e.message);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ESTADÍSTICAS
+// ══════════════════════════════════════════════════════════════
 function actualizarStats() {
   const activos = usuarios.filter(u => u.activo !== false).length;
   const admins  = usuarios.filter(u => u.rol === 'admin').length;
@@ -406,136 +743,146 @@ function actualizarStats() {
     `${usuarios.length} usuario${usuarios.length !== 1 ? 's' : ''} registrado${usuarios.length !== 1 ? 's' : ''}`;
 }
 
+// ══════════════════════════════════════════════════════════════
+//  FILTROS
+// ══════════════════════════════════════════════════════════════
 function llenarFiltroDepto() {
-  const select = document.getElementById('filter-depto');
-  const deptos = [...new Set(usuarios.map(u => u.departamento).filter(Boolean))];
+  const select  = document.getElementById('filter-depto');
+  const deptos  = [...new Set(usuarios.map(u => u.departamento).filter(Boolean))];
   const current = select.value;
   select.innerHTML = '<option value="">Todos los departamentos</option>';
   deptos.forEach(d => {
-    const etiquetas = {
-      'asistencia_cliente': '🎧 Atención al cliente',
-      'calidad_certificados': '📋 Calidad - Certificados',
-      'laboratorio': '🔬 Laboratorio',
-      'ingenieria': '⚙️ Ingeniería',
-      'direccion': '🏢 Dirección',
-      'sistemas': '💻 Sistemas / IT'
-    };
     const opt = document.createElement('option');
     opt.value = d;
-    opt.textContent = etiquetas[d] || d;
+    opt.textContent = DEPARTAMENTOS[d] || d;
     if (d === current) opt.selected = true;
     select.appendChild(opt);
   });
 }
 
+function filtrarUsuarios() {
+  const q     = document.getElementById('search-input').value.toLowerCase().trim();
+  const depto = document.getElementById('filter-depto').value;
+  const rol   = document.getElementById('filter-rol').value;
+  const filtrados = usuarios.filter(u => {
+    const matchQ = !q || (u.nombre||'').toLowerCase().includes(q) || (u.usuario||'').toLowerCase().includes(q);
+    const matchD = !depto || u.departamento === depto;
+    const matchR = !rol   || u.rol === rol;
+    return matchQ && matchD && matchR;
+  });
+  renderTabla(filtrados);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RENDER TABLA
+// ══════════════════════════════════════════════════════════════
 function renderTabla(lista) {
   const tbody = document.getElementById('users-tbody');
   if (!lista.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">👤 No se encontraron usuarios.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">No se encontraron usuarios con los filtros seleccionados.</td></tr>`;
     return;
   }
+
+  const rolBadge = {
+    admin:          'badge-admin',
+    calidad:        'badge-calidad',
+    reportes:       'badge-reportes',
+    certificaciones:'badge-certs',
+  };
+  const avatarColors = [
+    ['#dbeafe','#1d4ed8'],['#d1fae5','#065f46'],['#fef3c7','#92400e'],
+    ['#f3e8ff','#6b21a8'],['#fee2e2','#991b1b'],['#fce7f3','#9d174d'],
+  ];
+
   tbody.innerHTML = lista.map(u => {
     const initials = (u.nombre || '?').split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
-    const avatarColors = ['#dbeafe/#1d4ed8','#d1fae5/#065f46','#fef3c7/#92400e','#f3e8ff/#6b21a8','#fee2e2/#991b1b','#fce7f3/#9d174d'];
-    const ac = avatarColors[Math.abs(hashStr(u.nombre || '')) % avatarColors.length].split('/');
+    const ac       = avatarColors[Math.abs(hashStr(u.nombre || '')) % avatarColors.length];
+    const activo   = u.activo !== false;
     const ultimoAcceso = u.ultimo_acceso
       ? new Date(u.ultimo_acceso).toLocaleString('es-MX', { hour12: false })
       : 'Nunca';
-    const activo = u.activo !== false;
-    const rolLabels = { 'certificaciones': '📝 Certificaciones', 'reportes': '📊 Reportes', 'calidad': '✅ Calidad', 'admin': '🔑 Administrador' };
-    const deptoLabels = {
-      'asistencia_cliente': '🎧 Atención al cliente',
-      'calidad_certificados': '📋 Calidad - Certificados',
-      'laboratorio': '🔬 Laboratorio',
-      'ingenieria': '⚙️ Ingeniería',
-      'direccion': '🏢 Dirección',
-      'sistemas': '💻 Sistemas / IT'
-    };
+
     return `<tr class="fadeIn">
       <td>
         <div class="user-cell">
-          <div class="user-avatar" style="background:${ac[0]};color:${ac[1]}">${initials}</div>
+          <div class="user-avatar" style="background:${ac[0]};color:${ac[1]}">${escHtml(initials)}</div>
           <div>
             <div class="user-name">${escHtml(u.nombre)}</div>
             <div class="user-email">@${escHtml(u.usuario)}</div>
           </div>
         </div>
       </td>
-      <td><span class="badge ${u.rol === 'admin' ? 'badge-admin' : 'badge-inactive'}">${rolLabels[u.rol] || u.rol || 'sin rol'}</span></td>
-      <td>${deptoLabels[u.departamento] || u.departamento || '—'}</td>
-      <td><span class="badge ${activo ? 'badge-active' : 'badge-inactive'}">${activo ? '✅ Activo' : '🚫 Inactivo'}</span></td>
+      <td>
+        <span class="badge ${rolBadge[u.rol] || 'badge-inactive'}">
+          ${ROL_LABELS[u.rol] || u.rol || 'Sin rol'}
+        </span>
+      </td>
+      <td>${escHtml(DEPARTAMENTOS[u.departamento] || u.departamento || '—')}</td>
+      <td>
+        <span class="badge ${activo ? 'badge-active' : 'badge-inactive'}">
+          ${activo ? 'Activo' : 'Inactivo'}
+        </span>
+      </td>
       <td style="font-size:11px;color:var(--gray-400);">${ultimoAcceso}</td>
-      <td>${u.creado_en ? new Date(u.creado_en).toLocaleDateString('es-MX') : '—'}</td>
-      <td style="text-align:right;">
+      <td style="font-size:12px;color:var(--gray-500);">
+        ${u.creado_en ? new Date(u.creado_en).toLocaleDateString('es-MX') : '—'}
+      </td>
+      <td>
         <div class="actions-cell">
-          <button class="btn btn-sm btn-ghost" onclick="abrirModalEditar(${u.id})" title="Editar">✏️</button>
-          <button class="btn btn-sm btn-ghost" onclick="restablecerPassword(${u.id}, '${escHtml(u.nombre)}')" title="Restablecer contraseña">🔑</button>
-          <button class="btn btn-sm btn-ghost" onclick="toggleActivo(${u.id})" title="${activo ? 'Desactivar' : 'Activar'}">${activo ? '✓' : '○'}</button>
-          <button class="btn btn-sm btn-danger" onclick="abrirConfirmEliminar(${u.id})" title="Eliminar">🗑️</button>
+          <button class="btn btn-sm btn-outline" onclick="abrirModalEditar(${u.id})" title="Editar usuario">
+            Editar
+          </button>
+          <button class="btn btn-sm btn-outline" onclick="restablecerPassword(${u.id}, '${escHtml(u.nombre)}', '${escHtml(u.usuario)}')" title="Restablecer contrasena">
+            Clave
+          </button>
+          <button class="btn btn-sm btn-outline" onclick="toggleActivo(${u.id})" title="${activo ? 'Desactivar cuenta' : 'Activar cuenta'}"
+            style="${activo ? 'color:var(--warning)' : 'color:var(--success)'}">
+            ${activo ? 'Desactivar' : 'Activar'}
+          </button>
+          <button class="btn btn-sm btn-danger" onclick="abrirConfirmEliminar(${u.id})" title="Eliminar usuario">
+            Eliminar
+          </button>
         </div>
       </td>
     </tr>`;
   }).join('');
 }
 
-function filtrarUsuarios() {
-  const q     = document.getElementById('search-input').value.toLowerCase().trim();
-  const depto = document.getElementById('filter-depto').value;
-  const filtrados = usuarios.filter(u => {
-    const matchQ = !q ||
-      (u.nombre || '').toLowerCase().includes(q) ||
-      (u.usuario || '').toLowerCase().includes(q);
-    const matchD = !depto || u.departamento === depto;
-    return matchQ && matchD;
-  });
-  renderTabla(filtrados);
-}
-
-function generarPassword() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!';
-  let pass = '';
-  while (pass.length < 8) {
-    pass += chars[Math.floor(Math.random() * chars.length)];
-  }
-  document.getElementById('f-password').value = pass;
-}
-
-async function copiarPassword() {
-  const val = document.getElementById('f-password').value;
-  if (!val) { showToast('Genera una contraseña primero.', 'error'); return; }
-  await navigator.clipboard.writeText(val).catch(() => {});
-  showToast('Contraseña copiada al portapapeles.', 'success');
-}
-
+// ══════════════════════════════════════════════════════════════
+//  MODAL CREAR / EDITAR
+// ══════════════════════════════════════════════════════════════
 function abrirModalCrear() {
-  modoEdicion = false;
+  modoEdicion      = false;
   usuarioEditandoId = null;
   resetearFormulario();
   generarPassword();
-  document.getElementById('modal-titulo').textContent   = 'Nuevo usuario';
+  actualizarInfoPermisos();
+  document.getElementById('modal-titulo').textContent    = 'Nuevo usuario';
   document.getElementById('modal-subtitulo').textContent = 'Completa los datos para dar de alta al usuario';
-  document.getElementById('btn-guardar-usuario').textContent = '＋ Crear usuario';
-  document.getElementById('pass-group-container').style.display = '';
+  document.getElementById('btn-guardar-usuario').textContent = 'Crear usuario';
+  document.getElementById('pass-group-container').style.display   = '';
+  document.getElementById('pass-section-divider').style.display   = '';
   document.getElementById('modal-usuario').classList.add('open');
 }
 
 function abrirModalEditar(id) {
   const u = usuarios.find(x => x.id === id);
   if (!u) return;
-  modoEdicion = true;
+  modoEdicion      = true;
   usuarioEditandoId = id;
+  resetearFormulario();
 
-  document.getElementById('f-nombre').value       = u.nombre  || '';
-  document.getElementById('f-usuario').value      = u.usuario  || '';
-  document.getElementById('f-rol').value          = u.rol || '';
+  document.getElementById('f-nombre').value       = u.nombre       || '';
+  document.getElementById('f-usuario').value      = u.usuario      || '';
+  document.getElementById('f-rol').value          = u.rol          || '';
   document.getElementById('f-departamento').value = u.departamento || '';
-  document.getElementById('f-password').value     = '';
 
   document.getElementById('modal-titulo').textContent    = 'Editar usuario';
   document.getElementById('modal-subtitulo').textContent = `Modificando: ${u.nombre}`;
-  document.getElementById('btn-guardar-usuario').textContent = '💾 Guardar cambios';
-  document.getElementById('pass-group-container').style.display = 'none';
-
+  document.getElementById('btn-guardar-usuario').textContent = 'Guardar cambios';
+  document.getElementById('pass-group-container').style.display  = 'none';
+  document.getElementById('pass-section-divider').style.display  = 'none';
+  actualizarInfoPermisos(u.permisos || []);
   document.getElementById('modal-usuario').classList.add('open');
 }
 
@@ -544,20 +891,56 @@ function cerrarModal() {
 }
 
 function resetearFormulario() {
-  ['f-nombre','f-usuario','f-rol','f-departamento'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-password').value = '';
   ['f-nombre','f-usuario','f-rol','f-departamento'].forEach(id => {
-    document.getElementById(id).classList.remove('error');
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('error'); }
   });
+  document.getElementById('f-password').value = '';
   ['err-nombre','err-usuario','err-rol','err-depto'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
   });
+  document.getElementById('perms-info-box').style.display = 'none';
 }
 
 function limpiarError(fieldId) {
-  document.getElementById(fieldId).classList.remove('error');
-  const errEl = document.getElementById('err-' + fieldId.replace('f-',''));
+  const el = document.getElementById(fieldId);
+  if (el) el.classList.remove('error');
+  const map = { 'f-nombre':'err-nombre','f-usuario':'err-usuario','f-rol':'err-rol','f-departamento':'err-depto' };
+  const errEl = document.getElementById(map[fieldId]);
   if (errEl) errEl.style.display = 'none';
+}
+
+function obtenerPermisosSeleccionados() {
+  return Array.from(document.querySelectorAll('#perms-list input[type=checkbox]:checked')).map(checkbox => checkbox.value);
+}
+
+function obtenerPermisosPorRol(rol) {
+  return ROL_PERMISOS[rol]?.filter(p => p.on).map(p => p.key) || [];
+}
+
+function actualizarInfoPermisos(selectedPermisos = []) {
+  const rol = document.getElementById('f-rol').value;
+  const box = document.getElementById('perms-info-box');
+  const list = document.getElementById('perms-list');
+  if (!rol || !ROL_PERMISOS[rol]) { box.style.display = 'none'; return; }
+
+  const defaults = obtenerPermisosPorRol(rol);
+  const permisos = selectedPermisos.length ? selectedPermisos : defaults;
+  box.style.display = '';
+  list.innerHTML = ROL_PERMISOS[rol].map(item => {
+    const checked = permisos.includes(item.key) ? 'checked' : '';
+    return `
+      <label class="perm-checkbox">
+        <input type="checkbox" value="${escHtml(item.key)}" ${checked} onchange="actualizarPermisosSeleccionados()">
+        <span>${escHtml(item.texto)}</span>
+      </label>
+    `;
+  }).join('');
+}
+
+function actualizarPermisosSeleccionados() {
+  // This function exists so checkboxes can react if needed in the future.
 }
 
 async function guardarUsuario() {
@@ -566,16 +949,19 @@ async function guardarUsuario() {
   const rol      = document.getElementById('f-rol').value;
   const depto    = document.getElementById('f-departamento').value;
   const password = document.getElementById('f-password').value.trim();
+  let permisos   = obtenerPermisosSeleccionados();
+  if (!permisos.length) permisos = obtenerPermisosPorRol(rol);
 
   let valid = true;
-  if (!nombre) { showFieldError('f-nombre','err-nombre'); valid = false; }
-  if (!usuario || usuario.length < 3) { showFieldError('f-usuario','err-usuario'); valid = false; }
-  if (!rol) { showFieldError('f-rol','err-rol'); valid = false; }
-  if (!depto) { showFieldError('f-departamento','err-depto'); valid = false; }
+  if (!nombre)              { showFieldError('f-nombre','err-nombre'); valid = false; }
+  if (!usuario||usuario.length<3) { showFieldError('f-usuario','err-usuario'); valid = false; }
+  if (!rol)                 { showFieldError('f-rol','err-rol'); valid = false; }
+  if (!depto)               { showFieldError('f-departamento','err-depto'); valid = false; }
+  if (!modoEdicion && !password) { showToast('Genera una contraseña temporal antes de continuar.', 'error'); valid = false; }
   if (!valid) return;
 
-  const payload = { nombre, usuario, rol, departamento: depto };
-  if (password) payload.password = password;
+  const payload = { nombre, usuario, rol, departamento: depto, permisos };
+  if (!modoEdicion && password) payload.password = password;
 
   const btn = document.getElementById('btn-guardar-usuario');
   btn.disabled = true;
@@ -585,10 +971,12 @@ async function guardarUsuario() {
   try {
     if (modoEdicion) {
       await api(`/usuarios/${usuarioEditandoId}`, { method: 'PUT', body: payload });
-      showToast('✅ Usuario actualizado correctamente.', 'success');
+      agregarNotificacion('edit', `Usuario "${nombre}" fue modificado`);
+      showToast('Usuario actualizado correctamente.', 'success');
     } else {
       await api('/usuarios', { method: 'POST', body: payload });
-      showToast('✅ Usuario creado correctamente.', 'success');
+      agregarNotificacion('create', `Usuario "${nombre}" fue creado con rol ${ROL_LABELS[rol]}`);
+      showToast('Usuario creado correctamente.', 'success');
     }
     cerrarModal();
     await cargarUsuarios();
@@ -605,94 +993,218 @@ function showFieldError(fieldId, errId) {
   document.getElementById(errId).style.display = 'block';
 }
 
+// ══════════════════════════════════════════════════════════════
+//  RESTABLECER CONTRASEÑA
+// ══════════════════════════════════════════════════════════════
+async function restablecerPassword(id, nombre, usuarioLogin) {
+  const btn = event.currentTarget;
+  btn.disabled = true;
+  btn.textContent = '...';
+  try {
+    const res = await api(`/usuarios/${id}/reset-password`, { method: 'POST' });
+    const nuevaPass = res.nueva_password;
+
+    // Guardar globalmente para el botón de copiar
+    nuevaPassActual = nuevaPass;
+
+    // Mostrar en modal
+    document.getElementById('nueva-pass-subtitulo').textContent = `Para el usuario: ${nombre} (@${usuarioLogin})`;
+    document.getElementById('nueva-pass-val').textContent = nuevaPass;
+    document.getElementById('modal-nueva-pass').classList.add('open');
+
+    // Notificar al admin
+    agregarNotificacion('pass', `Contrasena restablecida para "${nombre}" (@${usuarioLogin})`);
+
+  } catch (e) {
+    showToast('Error al restablecer contrasena: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Clave';
+  }
+}
+
+function cerrarModalNuevaPass() {
+  document.getElementById('modal-nueva-pass').classList.remove('open');
+  nuevaPassActual = '';
+}
+
+function copiarNuevaPass() {
+  if (!nuevaPassActual) return;
+  navigator.clipboard.writeText(nuevaPassActual).catch(() => {});
+  cerrarModalNuevaPass();
+  showToast('Contrasena copiada al portapapeles.', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  ACTIVAR / DESACTIVAR
+// ══════════════════════════════════════════════════════════════
 async function toggleActivo(id) {
   const u = usuarios.find(x => x.id === id);
   if (!u) return;
-  const nuevoEstado = u.activo === false ? true : false;
+  const nuevoEstado = u.activo === false;
   try {
     await api(`/usuarios/${id}`, { method: 'PUT', body: { activo: nuevoEstado } });
-    showToast(nuevoEstado ? '✅ Usuario activado.' : '🚫 Usuario desactivado.', 'success');
+    agregarNotificacion(
+      nuevoEstado ? 'create' : 'delete',
+      `Cuenta de "${u.nombre}" fue ${nuevoEstado ? 'activada' : 'desactivada'}`
+    );
+    showToast(nuevoEstado ? 'Usuario activado.' : 'Usuario desactivado.', 'success');
     await cargarUsuarios();
   } catch (e) {
     showToast('Error: ' + e.message, 'error');
   }
 }
 
-async function restablecerPassword(id, nombre) {
-  const btn = event.target;
-  btn.disabled = true;
-  try {
-    const res = await api(`/usuarios/${id}/reset-password`, { method: 'POST' });
-    showToast('🔑 Contraseña restablecida.', 'success');
-    
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay open';
-    modal.innerHTML = `
-      <div class="modal" style="max-width:450px;">
-        <div class="modal-header">
-          <div>
-            <h2>🔑 Nueva contraseña</h2>
-            <p style="font-size:12px;color:var(--gray-400);margin-top:3px;">Para ${escHtml(nombre)}</p>
-          </div>
-          <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
-        </div>
-        <div class="modal-body">
-          <div style="background:var(--gray-50);padding:16px;border-radius:8px;margin-bottom:16px;">
-            <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;text-transform:uppercase;font-weight:600;">Nueva contraseña temporal:</div>
-            <div style="font-family:monospace;font-size:18px;font-weight:700;color:var(--primary);letter-spacing:2px;word-break:break-all;">${res.nueva_password}</div>
-          </div>
-          <div style="font-size:12px;color:var(--gray-500);line-height:1.6;margin-bottom:16px;">
-            ⚠️ <strong>Copia esta contraseña</strong>. El usuario debe cambiarla en el próximo acceso. Esta contraseña se mostrará una sola vez.
-          </div>
-          <button class="btn btn-primary" style="width:100%;" onclick="navigator.clipboard.writeText('${res.nueva_password}');this.closest('.modal-overlay').remove();showToast('✅ Contraseña copiada',  'success');">📋 Copiar y cerrar</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  } catch (e) {
-    showToast('Error: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-  }
-}
-
+// ══════════════════════════════════════════════════════════════
+//  ELIMINAR — DOBLE CONFIRMACIÓN
+// ══════════════════════════════════════════════════════════════
 function abrirConfirmEliminar(id) {
   const u = usuarios.find(x => x.id === id);
   if (!u) return;
   usuarioEliminandoId = id;
-  document.getElementById('confirm-text').textContent =
-    `¿Seguro que deseas desactivar a "${u.nombre}"? Perderá el acceso inmediatamente.`;
-  document.getElementById('modal-confirmar').classList.add('open');
+  document.getElementById('confirm-text-paso1').innerHTML =
+    `¿Está seguro de que desea eliminar definitivamente la cuenta de <strong>${escHtml(u.nombre)}</strong>?
+    <br><br>Esta acción <strong>no se puede deshacer</strong>. El usuario perderá todo acceso de forma permanente.`;
+  document.getElementById('modal-confirmar-paso1').classList.add('open');
 }
 
-function cerrarConfirm() {
-  document.getElementById('modal-confirmar').classList.remove('open');
+function cerrarConfirmPaso1() {
+  document.getElementById('modal-confirmar-paso1').classList.remove('open');
+  usuarioEliminandoId = null;
+}
+
+function avanzarConfirmPaso2() {
+  const u = usuarios.find(x => x.id === usuarioEliminandoId);
+  if (!u) return;
+  document.getElementById('modal-confirmar-paso1').classList.remove('open');
+  document.getElementById('confirm-usuario-hint').textContent = u.usuario;
+  document.getElementById('confirm-usuario-input').value = '';
+  document.getElementById('btn-confirmar-eliminar-final').disabled = true;
+  document.getElementById('modal-confirmar-paso2').classList.add('open');
+}
+
+function verificarConfirmUsuario() {
+  const u     = usuarios.find(x => x.id === usuarioEliminandoId);
+  const input = document.getElementById('confirm-usuario-input').value.trim();
+  const btn   = document.getElementById('btn-confirmar-eliminar-final');
+  btn.disabled = !u || input !== u.usuario;
+}
+
+function cerrarConfirmPaso2() {
+  document.getElementById('modal-confirmar-paso2').classList.remove('open');
+  document.getElementById('confirm-usuario-input').value = '';
   usuarioEliminandoId = null;
 }
 
 async function confirmarEliminar() {
   if (!usuarioEliminandoId) return;
-  const btn = document.getElementById('btn-confirmar-eliminar');
+  const u   = usuarios.find(x => x.id === usuarioEliminandoId);
+  const btn = document.getElementById('btn-confirmar-eliminar-final');
   btn.disabled = true;
+  btn.textContent = 'Eliminando...';
   try {
     await api(`/usuarios/${usuarioEliminandoId}`, { method: 'DELETE' });
-    showToast('🗑️ Usuario desactivado.', 'success');
-    cerrarConfirm();
+    agregarNotificacion('delete', `Cuenta de "${u ? u.nombre : 'usuario'}" fue eliminada permanentemente`);
+    showToast('Cuenta eliminada permanentemente.', 'success');
+    cerrarConfirmPaso2();
     await cargarUsuarios();
   } catch (e) {
-    showToast('Error: ' + e.message, 'error');
-  } finally {
+    showToast('Error al eliminar: ' + e.message, 'error');
     btn.disabled = false;
+    btn.textContent = 'Eliminar cuenta permanentemente';
   }
 }
 
+// ══════════════════════════════════════════════════════════════
+//  GENERADOR DE CONTRASEÑA
+// ══════════════════════════════════════════════════════════════
+function generarPassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!';
+  let pass = '';
+  while (pass.length < 10) {
+    pass += chars[Math.floor(Math.random() * chars.length)];
+  }
+  document.getElementById('f-password').value = pass;
+}
+
+async function copiarPassword() {
+  const val = document.getElementById('f-password').value;
+  if (!val) { showToast('Genera una contraseña primero.', 'error'); return; }
+  await navigator.clipboard.writeText(val).catch(() => {});
+  showToast('Contraseña copiada al portapapeles.', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NOTIFICACIONES
+// ══════════════════════════════════════════════════════════════
+function agregarNotificacion(tipo, mensaje) {
+  notificaciones.unshift({
+    id:      Date.now(),
+    tipo,
+    mensaje,
+    hora:    new Date().toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' }),
+    leida:   false,
+  });
+  renderNotificaciones();
+}
+
+function renderNotificaciones() {
+  const list   = document.getElementById('notif-list');
+  const badge  = document.getElementById('notif-count');
+  const noLeidas = notificaciones.filter(n => !n.leida).length;
+
+  if (noLeidas > 0) {
+    badge.style.display = 'flex';
+    badge.textContent   = noLeidas > 9 ? '9+' : noLeidas;
+  } else {
+    badge.style.display = 'none';
+  }
+
+  if (!notificaciones.length) {
+    list.innerHTML = `<div class="notif-empty">Sin notificaciones</div>`;
+    return;
+  }
+
+  list.innerHTML = notificaciones.slice(0, 30).map(n => `
+    <div class="notif-item ${n.leida ? '' : 'unread'}">
+      <div class="notif-dot ${n.tipo}"></div>
+      <div>
+        <div class="notif-msg">${escHtml(n.mensaje)}</div>
+        <div class="notif-time">${n.hora}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function marcarTodasLeidas() {
+  notificaciones.forEach(n => n.leida = true);
+  renderNotificaciones();
+}
+
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  panel.classList.toggle('open');
+}
+
+// Cerrar panel al hacer click fuera
+document.addEventListener('click', e => {
+  const panel  = document.getElementById('notif-panel');
+  const btnN   = document.getElementById('btn-notif');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && !btnN.contains(e.target)) {
+    panel.classList.remove('open');
+  }
+});
+
+// ══════════════════════════════════════════════════════════════
+//  UTILIDADES
+// ══════════════════════════════════════════════════════════════
 function showToast(msg, tipo = 'info') {
   const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
+  const toast     = document.createElement('div');
   toast.className = `toast ${tipo}`;
   toast.textContent = msg;
   container.appendChild(toast);
-  setTimeout(() => toast.remove(), 3800);
+  setTimeout(() => toast.remove(), 4000);
 }
 
 function escHtml(str) {
@@ -705,6 +1217,9 @@ function hashStr(str) {
   return h;
 }
 
+// ══════════════════════════════════════════════════════════════
+//  ARRANQUE
+// ══════════════════════════════════════════════════════════════
 cargarUsuarios();
 </script>
 </body>

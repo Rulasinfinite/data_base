@@ -40,18 +40,7 @@ const uploadStorage = multer.diskStorage({
     cb(null, nombre);
   },
 });
-
-function fileFilter(req, file, cb) {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (['.xlsx', '.xls', '.pdf'].includes(ext)) cb(null, true);
-  else cb(null, false); // ignorar archivos no válidos sin error
-}
-
-const upload = multer({
-  storage: uploadStorage,
-  fileFilter,
-  limits: { fileSize: 50 * 1024 * 1024, files: 1000 }, // 50 MB por archivo, máx 1000 archivos
-});
+const upload = multer({ storage: uploadStorage });
 
 // ============================================================
 // POST /api/admin/escanear
@@ -517,5 +506,17 @@ function construirSubarbol(ruta, anioFiltro) {
     }).filter(Boolean);
   } catch { return []; }
 }
-
+// POST /api/admin/usuarios/:id/reset-password
+router.post('/usuarios/:id/reset-password', requiereRol('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const nuevaPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-2);
+    const hash = await bcrypt.hash(nuevaPassword, 10);
+    await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [hash, id]);
+    res.json({ mensaje: 'Contraseña restablecida.', nuevaPassword });
+  } catch (err) {
+    console.error('Error reset password:', err);
+    res.status(500).json({ error: 'Error al restablecer contraseña.' });
+  }
+});
 module.exports = router;
