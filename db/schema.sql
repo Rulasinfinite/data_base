@@ -3,6 +3,8 @@
 -- Base de datos: sidec_db | Server: sidecmexico
 -- Schema con clientes normalizados, archivos adjuntos,
 -- estado del certificado y fecha de vencimiento manual.
+-- MODIFICADO: se ampliaron longitudes de columnas para evitar
+-- errores "valor demasiado largo para tipo character varying".
 -- ============================================================
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
@@ -38,28 +40,28 @@ CREATE TABLE IF NOT EXISTS clientes (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS certificados (
     id                      BIGSERIAL PRIMARY KEY,
-    numero_informe          VARCHAR(50)  NOT NULL,
+    numero_informe          VARCHAR(100) NOT NULL,   -- 50 -> 100
     anio_emision            SMALLINT     NOT NULL,
     cliente_id              INTEGER REFERENCES clientes(id),
-    descripcion_instrumento VARCHAR(255),
+    descripcion_instrumento TEXT,                    -- VARCHAR(255) -> TEXT
     alcance                 TEXT,
-    numero_serie            VARCHAR(100),
-    identificacion          VARCHAR(100),
-    modelo                  VARCHAR(100),
-    marca                   VARCHAR(100),
-    magnitud_evaluada       VARCHAR(100),
+    numero_serie            VARCHAR(200),            -- 100 -> 200
+    identificacion          VARCHAR(200),            -- 100 -> 200
+    modelo                  VARCHAR(200),            -- 100 -> 200
+    marca                   VARCHAR(200),            -- 100 -> 200
+    magnitud_evaluada       VARCHAR(200),            -- 100 -> 200
     resultado_calibracion   TEXT,
     incertidumbre           TEXT,
-    temperatura             VARCHAR(50),
-    humedad_relativa        VARCHAR(50),
+    temperatura             VARCHAR(200),            -- 50 -> 200
+    humedad_relativa        VARCHAR(200),            -- 50 -> 200
     fecha_recepcion         DATE,
     fecha_calibracion       DATE,
     fecha_emision           DATE,
-    fecha_vencimiento       DATE,                     -- se asigna manualmente
+    fecha_vencimiento       DATE,
     estado                  VARCHAR(20) DEFAULT 'vigente'
                             CHECK (estado IN ('vigente','anulado','provisional','vencido')),
     metodo_utilizado        TEXT,
-    lugar_calibracion       VARCHAR(255),
+    lugar_calibracion       TEXT,                    -- VARCHAR(255) -> TEXT
     calibrado_por           VARCHAR(255),
     aprobado_por            VARCHAR(255),
     ruta_archivo_origen     TEXT,

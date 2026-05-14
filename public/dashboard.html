@@ -101,7 +101,7 @@
   <div class="search-panel">
     <div class="search-panel-header">
       <div class="search-panel-title">
-        🔍 Búsqueda de certificados
+        Búsqueda de certificados
       </div>
       <span id="busqueda-activa" style="font-size:12px;color:var(--primary);display:none">
         Filtros activos
@@ -113,9 +113,9 @@
       <div class="search-grid-wide" style="grid-column: 1 / -1">
         <label class="form-label">Búsqueda general</label>
         <div style="position:relative">
-          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400)">🔍</span>
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400)"></span>
           <input class="form-control" type="text" id="q" style="padding-left:36px"
-                 placeholder="No. informe, cliente, No. serie, identificación, modelo, marca...">
+                placeholder="No. informe, cliente, No. serie, identificación, modelo, marca...">
         </div>
       </div>
       <!-- Agregar justo después del div "Búsqueda general" -->
@@ -225,7 +225,7 @@
 
     <div id="tabla-container">
       <div class="empty-state" style="padding:60px 24px">
-        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <div style="font-size:40px;margin-bottom:12px"></div>
         <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
         <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Puedes buscar por informe, cliente, serie o dejar todo vacío para ver todos.</p>
       </div>
@@ -241,8 +241,11 @@
 
 <script src="app.js"></script>
 <script>
-  if (!Auth.requireLogin()) throw new Error('not logged');
+(async function() {
+  if (!(await Auth.requireLogin())) return;
   renderNavbar('inicio');
+  // el resto del código de la página (cargarStats, etc.) va aquí
+})();
 
   let paginaActual = 1;
   const LIMITE = 50;
@@ -337,7 +340,7 @@
     if (data.datos.length === 0) {
       document.getElementById('tabla-container').innerHTML = `
         <div class="empty-state" style="padding:48px">
-          <div style="font-size:36px;margin-bottom:12px">🔍</div>
+          <div style="font-size:36px;margin-bottom:12px"></div>
           <p>No se encontraron certificados con esos criterios.</p>
           <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Intenta con términos más generales.</p>
         </div>`;
@@ -424,7 +427,7 @@
     document.getElementById('filtro-orden').value = 'fecha_emision DESC';
     document.getElementById('tabla-container').innerHTML = `
       <div class="empty-state" style="padding:60px 24px">
-        <div style="font-size:40px;margin-bottom:12px">📋</div>
+        <div style="font-size:40px;margin-bottom:12px"></div>
         <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
       </div>`;
     document.getElementById('result-bar').style.display = 'none';

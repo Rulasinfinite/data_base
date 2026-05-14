@@ -1,6 +1,5 @@
 // public/app.js — Utilidades globales SIDEC v2
 
-// ── Tema (claro / oscuro) ─────────────────────────────────
 const Theme = {
   key: 'sidec_theme',
   get()  { return localStorage.getItem(this.key) || 'light'; },
@@ -10,7 +9,6 @@ const Theme = {
 };
 Theme.init();
 
-// ── Auth ──────────────────────────────────────────────────
 const Auth = {
   getToken()  { return localStorage.getItem('sidec_token'); },
   getUser()   { try { return JSON.parse(localStorage.getItem('sidec_user')); } catch { return null; } },
@@ -18,9 +16,27 @@ const Auth = {
     localStorage.setItem('sidec_token', token);
     localStorage.setItem('sidec_user', JSON.stringify(usuario));
   },
-  clear() { localStorage.removeItem('sidec_token'); localStorage.removeItem('sidec_user'); },
+  clear() { 
+    localStorage.removeItem('sidec_token'); 
+    localStorage.removeItem('sidec_user'); 
+  },
   isLoggedIn()  { return !!this.getToken(); },
-  requireLogin(){ if (!this.isLoggedIn()) { window.location.href = '/login.html'; return false; } return true; },
+  
+  async requireLogin() {
+    if (!this.isLoggedIn()) {
+      window.location.replace('/login.html');
+      return false;
+    }
+    try {
+      await api('/usuarios/me');
+      return true;
+    } catch (e) {
+      this.clear();
+      window.location.replace('/login.html');
+      return false;
+    }
+  },
+  
   hasRole(rolMinimo) {
     const niveles = { certificaciones:1, reportes:2, calidad:3, admin:4 };
     const u = this.getUser();
@@ -28,7 +44,6 @@ const Auth = {
   },
 };
 
-// ── API helper ────────────────────────────────────────────
 async function api(path, options = {}) {
   const token = Auth.getToken();
   const res = await fetch('/api' + path, {
@@ -43,7 +58,7 @@ async function api(path, options = {}) {
   if (res.status === 401) {
     Auth.clear();
     if (!window.location.pathname.endsWith('/login.html') && !window.location.pathname.endsWith('/login')) {
-      window.location.href = '/login.html';
+      window.location.replace('/login.html');
       return;
     }
   }
@@ -52,11 +67,9 @@ async function api(path, options = {}) {
   if (!res.ok || data?.error) {
     throw new Error(data?.error || 'Error en la solicitud');
   }
-
-  return data; // ✅ CORRECCIÓN: faltaba este return
+  return data;
 }
 
-// ── Navbar ────────────────────────────────────────────────
 function renderNavbar(paginaActual = '') {
   const usuario = Auth.getUser();
   if (!usuario) return;
@@ -100,9 +113,11 @@ function renderNavbar(paginaActual = '') {
   `;
 }
 
-function logout() { Auth.clear(); window.location.href = '/login.html'; }
+function logout() { 
+  Auth.clear(); 
+  window.location.replace('/login.html'); 
+}
 
-// ── Utilidades ────────────────────────────────────────────
 function formatFecha(fecha) {
   if (!fecha) return '—';
   const d = new Date(fecha);

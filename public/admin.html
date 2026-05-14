@@ -42,7 +42,6 @@
 
     .page { padding: 28px 36px; max-width: 1360px; margin: 0 auto; }
 
-    /* ── Page header ── */
     .page-header {
       display: flex; align-items: flex-start; justify-content: space-between;
       margin-bottom: 28px; gap: 16px; flex-wrap: wrap;
@@ -67,7 +66,6 @@
     .btn-sm { padding: 5px 11px; font-size: 12px; border-radius: 6px; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-    /* ── Stats row ── */
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
     .stat-card {
       background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
@@ -78,7 +76,6 @@
     .stat-val  { font-size: 24px; font-weight: 700; color: var(--gray-800); line-height: 1; }
     .stat-lbl  { font-size: 12px; color: var(--gray-500); margin-top: 3px; font-weight: 500; }
 
-    /* ── Main card ── */
     .main-card {
       background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
       box-shadow: var(--shadow-sm); overflow: hidden;
@@ -90,7 +87,6 @@
     .card-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
     .card-subtitle { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
 
-    /* ── Search bar ── */
     .search-wrap { position: relative; }
     .search-wrap input {
       padding: 8px 12px 8px 34px; border: 1px solid var(--gray-200); border-radius: 8px;
@@ -100,7 +96,6 @@
     .search-wrap input:focus { border-color: var(--primary); }
     .search-wrap .icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; pointer-events: none; }
 
-    /* ── Table ── */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead th {
@@ -120,7 +115,6 @@
     .user-name { font-weight: 600; color: var(--gray-800); font-size: 13px; }
     .user-email { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
 
-    /* ── Badges ── */
     .badge {
       display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px;
       border-radius: 20px; font-size: 11px; font-weight: 600;
@@ -129,30 +123,8 @@
     .badge-inactive{ background: var(--gray-100);      color: var(--gray-500); }
     .badge-admin   { background: #faf5ff; color: #7c3aed; }
 
-    /* ── Permisos chips ── */
-    .perms-row { display: flex; flex-wrap: wrap; gap: 4px; }
-    .perm-chip {
-      padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600;
-      letter-spacing: 0.03em; text-transform: uppercase;
-    }
-    .perm-ver      { background: #dbeafe; color: #1d4ed8; }
-    .perm-importar { background: #d1fae5; color: #065f46; }
-    .perm-editar   { background: #fef3c7; color: #92400e; }
-    .perm-imprimir { background: #f3e8ff; color: #6b21a8; }
-    .perm-admin    { background: #fee2e2; color: #991b1b; }
-
-    /* ── Password cell ── */
-    .pass-cell { display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 12px; }
-    .pass-dots { color: var(--gray-400); letter-spacing: 2px; font-size: 16px; }
-    .pass-text { color: var(--gray-700); background: var(--gray-100); padding: 2px 8px; border-radius: 5px; display: none; }
-    .pass-cell.revealed .pass-dots { display: none; }
-    .pass-cell.revealed .pass-text { display: block; }
-    .btn-eye { background: none; border: 1px solid var(--gray-200); border-radius: 5px; padding: 3px 7px; cursor: pointer; font-size: 12px; color: var(--gray-500); transition: all var(--transition); }
-    .btn-eye:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
-
     .actions-cell { display: flex; gap: 6px; }
 
-    /* ── Modal overlay ── */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 1000;
       display: none; align-items: center; justify-content: center; padding: 20px;
@@ -176,7 +148,6 @@
     .modal-body   { padding: 24px; }
     .modal-footer { padding: 16px 24px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 10px; }
 
-    /* ── Form ── */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-full  { grid-column: 1 / -1; }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
@@ -191,22 +162,12 @@
     .form-error { font-size: 11px; color: var(--danger); margin-top: 2px; display: none; }
     .form-control.error { border-color: var(--danger); }
 
-    /* ── Password generator ── */
     .pass-gen {
       display: flex; align-items: center; gap: 8px;
     }
     .pass-gen input { flex: 1; font-family: monospace; font-size: 15px; letter-spacing: 2px; font-weight: 600; color: var(--primary); }
     .pass-gen .btn-regen { padding: 9px 12px; font-size: 16px; }
 
-    /* ── Departamento + permisos ── */
-    .depto-select { position: relative; }
-    .perms-preview {
-      margin-top: 10px; padding: 12px 14px; background: var(--gray-50);
-      border: 1px solid var(--gray-200); border-radius: 8px; display: none;
-    }
-    .perms-preview.visible { display: block; }
-    .perms-preview-title { font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
-    .perms-preview-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
     .perms-editable { display: flex; flex-direction: column; gap: 6px; }
     .perm-toggle {
       display: flex; align-items: center; justify-content: space-between;
@@ -220,10 +181,6 @@
     .perm-toggle.checked { border-color: var(--primary); background: var(--primary-light); }
     .perm-toggle.checked label { color: var(--primary); font-weight: 500; }
 
-    /* ── Departamento badges en tabla ── */
-    .depto-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 6px; font-size: 12px; font-weight: 500; }
-
-    /* ── Toast ── */
     .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
     .toast {
       display: flex; align-items: center; gap: 10px; padding: 12px 16px;
@@ -235,10 +192,8 @@
     .toast.error   { border-left-color: var(--danger); }
     @keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:none; } }
 
-    /* ── Empty state ── */
     .empty-row td { text-align: center; padding: 48px 20px; color: var(--gray-400); font-size: 14px; }
 
-    /* ── Confirm dialog ── */
     .confirm-modal { max-width: 420px; }
     .confirm-body { padding: 24px; text-align: center; }
     .confirm-icon { font-size: 40px; margin-bottom: 12px; }
@@ -246,11 +201,6 @@
     .confirm-text  { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
     .confirm-footer { display: flex; gap: 10px; justify-content: center; padding: 0 24px 24px; }
 
-    /* ── Section divider in modal ── */
-    .section-divider { border: none; border-top: 1px solid var(--gray-100); margin: 16px 0; }
-    .section-label { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; margin-top: 16px; }
-
-    /* ── Responsive ── */
     @media (max-width: 900px) {
       .stats-row { grid-template-columns: 1fr 1fr; }
       .form-grid  { grid-template-columns: 1fr; }
@@ -261,6 +211,7 @@
     }
 
     @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .fadeIn { animation: fadeIn 0.2s ease; }
   </style>
 </head>
@@ -270,18 +221,16 @@
 
 <div class="page">
 
-  <!-- ── Page header ── -->
   <div class="page-header">
     <div>
       <h1>👥 Administración de usuarios</h1>
-      <p>Gestiona los accesos y permisos del sistema SIDEC por departamento</p>
+      <p>Gestiona los accesos y permisos del sistema SIDEC</p>
     </div>
     <button class="btn btn-primary" onclick="abrirModalCrear()">
       ＋ Nuevo usuario
     </button>
   </div>
 
-  <!-- ── Stats ── -->
   <div class="stats-row" id="stats-row">
     <div class="stat-card">
       <div class="stat-icon" style="background:#eff6ff;">👤</div>
@@ -301,7 +250,6 @@
     </div>
   </div>
 
-  <!-- ── Users table ── -->
   <div class="main-card">
     <div class="card-header">
       <div>
@@ -310,25 +258,25 @@
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <div class="search-wrap">
-          <span class="icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Buscar usuario..." oninput="filtrarUsuarios()">
+          <span class="icon"></span>
+          <input type="text" id="search-input" placeholder="Buscar por nombre o usuario..." onkeyup="filtrarUsuarios()">
         </div>
-        <select id="filter-depto" class="form-control" style="width:auto;padding:8px 12px;font-size:13px;" onchange="filtrarUsuarios()">
+        <select id="filter-depto" class="form-control" style="width:180px;padding:8px 12px;font-size:13px;" onchange="filtrarUsuarios()">
           <option value="">Todos los departamentos</option>
         </select>
       </div>
     </div>
     <div class="table-wrap">
-      <table id="users-table">
+      <table>
         <thead>
           <tr>
-            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Rol</th>
             <th>Departamento</th>
-            <th>Contraseña</th>
-            <th>Permisos</th>
             <th>Estado</th>
             <th>Último acceso</th>
-            <th>Acciones</th>
+            <th>Creado</th>
+            <th style="text-align:right;width:150px;">Acciones</th>
           </tr>
         </thead>
         <tbody id="users-tbody">
@@ -338,11 +286,9 @@
     </div>
   </div>
 
-</div><!-- /page -->
+</div>
 
-<!-- ═══════════════════════════════════════
-     MODAL: Crear / Editar usuario
-════════════════════════════════════════ -->
+<!-- Modal: Crear / Editar usuario -->
 <div class="modal-overlay" id="modal-usuario" onclick="if(event.target===this)cerrarModal()">
   <div class="modal">
     <div class="modal-header">
@@ -354,121 +300,72 @@
     </div>
     <div class="modal-body">
       <div class="form-grid">
-
-        <!-- Nombre -->
-        <div class="form-group">
-          <label class="form-label">Nombre completo</label>
-          <input type="text" id="f-nombre" class="form-control" placeholder="Ej: Ana García López"
-                 oninput="limpiarError('f-nombre')">
-          <span class="form-error" id="err-nombre">El nombre es requerido.</span>
-        </div>
-
-        <!-- Email -->
-        <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input type="email" id="f-email" class="form-control" placeholder="usuario@empresa.com"
-                 oninput="limpiarError('f-email')">
-          <span class="form-error" id="err-email">Ingresa un correo válido.</span>
-        </div>
-
-        <!-- Contraseña -->
         <div class="form-group form-full">
-          <label class="form-label">Contraseña inicial (8 dígitos)</label>
+          <label class="form-label">Nombre completo *</label>
+          <input type="text" id="f-nombre" class="form-control" placeholder="Juan Pérez" onchange="limpiarError('f-nombre')">
+          <div class="form-error" id="err-nombre">El nombre es requerido</div>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Usuario (nombre de acceso) *</label>
+          <input type="text" id="f-usuario" class="form-control" placeholder="juan.perez" onchange="limpiarError('f-usuario')">
+          <div class="form-hint">Sin espacios ni caracteres especiales</div>
+          <div class="form-error" id="err-usuario">Usuario requerido (mín. 3 caracteres)</div>
+        </div>
+        <div class="form-group" id="pass-group-container">
+          <label class="form-label">Contraseña *</label>
           <div class="pass-gen">
-            <input type="text" id="f-password" class="form-control" readonly
-                   placeholder="Genera una contraseña...">
-            <button class="btn btn-outline btn-regen" title="Generar nueva contraseña" onclick="generarPassword()">🔄</button>
-            <button class="btn btn-outline" style="font-size:13px;" onclick="copiarPassword()">📋 Copiar</button>
+            <input type="text" id="f-password" class="form-control" readonly style="font-family:monospace;">
+            <button type="button" class="btn btn-outline btn-sm btn-regen" onclick="generarPassword()" title="Generar nueva">🔄</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="copiarPassword()" title="Copiar">📋</button>
           </div>
-          <span class="form-hint">El usuario podrá cambiarla después. El admin siempre podrá verla.</span>
         </div>
-
-        <!-- Departamento -->
-        <div class="form-group form-full">
-          <label class="form-label">Departamento</label>
-          <select id="f-departamento" class="form-control" onchange="actualizarPermisos()">
-            <option value="">— Selecciona un departamento —</option>
-            <option value="asistencia_cliente">🎧 Atención al cliente</option>
-            <option value="calidad_certificados">📋 Calidad - Certificados</option>
-            <option value="laboratorio">🔬 Laboratorio</option>
-            <option value="ingenieria">⚙️ Ingeniería</option>
-            <option value="direccion">🏢 Dirección</option>
-            <option value="sistemas">💻 Sistemas / IT</option>
+        <div class="form-group">
+          <label class="form-label">Rol *</label>
+          <select id="f-rol" class="form-control" onchange="limpiarError('f-rol')">
+            <option value="">-Seleccionar rol-</option>
+            <option value="certificaciones">Certificaciones</option>
+            <option value="reportes">Reportes</option>
+            <option value="calidad">Calidad</option>
+            <option value="admin">Administrador</option>
           </select>
-          <span class="form-error" id="err-depto">Selecciona un departamento.</span>
+          <div class="form-error" id="err-rol">El rol es requerido</div>
         </div>
-
-        <!-- Permisos -->
-        <div class="form-group form-full" id="perms-section" style="display:none;">
-          <div class="section-label">Permisos asignados</div>
-          <div class="perms-editable">
-
-            <label class="perm-toggle" id="pt-ver" onclick="togglePerm(this)">
-              <input type="checkbox" id="perm-ver" value="ver" onchange="syncToggle('pt-ver','perm-ver')">
-              <label for="perm-ver"><span>🔍</span> Ver certificados — Buscar y consultar</label>
-            </label>
-
-            <label class="perm-toggle" id="pt-imprimir" onclick="togglePerm(this)">
-              <input type="checkbox" id="perm-imprimir" value="imprimir" onchange="syncToggle('pt-imprimir','perm-imprimir')">
-              <label for="perm-imprimir"><span>🖨️</span> Imprimir / Exportar certificados</label>
-            </label>
-
-            <label class="perm-toggle" id="pt-editar" onclick="togglePerm(this)">
-              <input type="checkbox" id="perm-editar" value="editar" onchange="syncToggle('pt-editar','perm-editar')">
-              <label for="perm-editar"><span>✏️</span> Editar información de certificados</label>
-            </label>
-
-            <label class="perm-toggle" id="pt-importar" onclick="togglePerm(this)">
-              <input type="checkbox" id="perm-importar" value="importar" onchange="syncToggle('pt-importar','perm-importar')">
-              <label for="perm-importar"><span>📥</span> Importar archivos Excel / PDF</label>
-            </label>
-
-            <label class="perm-toggle" id="pt-admin" onclick="togglePerm(this)">
-              <input type="checkbox" id="perm-admin" value="admin" onchange="syncToggle('pt-admin','perm-admin')">
-              <label for="perm-admin"><span>⚙️</span> Administración del sistema (todos los permisos)</label>
-            </label>
-
-          </div>
-          <span class="form-hint" style="margin-top:8px;">Los permisos se pueden personalizar manualmente aunque se asignen por departamento.</span>
-        </div>
-
-        <!-- Notas -->
         <div class="form-group form-full">
-          <label class="form-label">Notas (opcional)</label>
-          <input type="text" id="f-notas" class="form-control" placeholder="Ej: Turno matutino, extensión 125...">
+          <label class="form-label">Departamento *</label>
+          <select id="f-departamento" class="form-control" onchange="limpiarError('f-departamento')">
+            <option value="">-Seleccionar departamento-</option>
+            <option value="asistencia_cliente">Atención al cliente</option>
+            <option value="calidad_certificados">Calidad</option>
+            <option value="laboratorio">Certificados</option>
+            <option value="direccion">Dirección</option>
+          </select>
+          <div class="form-error" id="err-depto">El departamento es requerido</div>
         </div>
-
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
-      <button class="btn btn-primary" id="btn-guardar-usuario" onclick="guardarUsuario()">
-        ＋ Crear usuario
-      </button>
+      <button class="btn btn-primary" id="btn-guardar-usuario" onclick="guardarUsuario()">＋ Crear usuario</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     MODAL: Confirmar eliminación
-════════════════════════════════════════ -->
+<!-- Modal: Confirmar eliminación -->
 <div class="modal-overlay" id="modal-confirmar" onclick="if(event.target===this)cerrarConfirm()">
   <div class="modal confirm-modal">
     <div class="confirm-body">
-      <div class="confirm-icon">🗑️</div>
-      <div class="confirm-title">¿Eliminar usuario?</div>
+      <div class="confirm-title">¿Desactivar usuario?</div>
       <div class="confirm-text" id="confirm-text">
-        Esta acción no se puede deshacer. El usuario perderá acceso inmediatamente.
+        Se desactivará el acceso del usuario inmediatamente.
       </div>
     </div>
     <div class="confirm-footer">
       <button class="btn btn-outline" onclick="cerrarConfirm()">Cancelar</button>
-      <button class="btn btn-danger" id="btn-confirmar-eliminar" onclick="confirmarEliminar()">Eliminar</button>
+      <button class="btn btn-danger" id="btn-confirmar-eliminar" onclick="confirmarEliminar()">Desactivar</button>
     </div>
   </div>
 </div>
 
-<!-- ── Toasts ── -->
 <div class="toast-container" id="toast-container"></div>
 
 <script src="app.js"></script>
@@ -476,64 +373,16 @@
 if (!Auth.requireLogin()) throw new Error('not logged');
 renderNavbar('admin');
 
-// ══════════════════════════════════════════
-//  Config de departamentos → permisos
-// ══════════════════════════════════════════
-const DEPTO_CONFIG = {
-  asistencia_cliente: {
-    label: '🎧 Atención al cliente',
-    color: '#dbeafe', textColor: '#1d4ed8',
-    permisos: ['ver'],
-  },
-  calidad_certificados: {
-    label: '📋 Calidad - Certificados',
-    color: '#d1fae5', textColor: '#065f46',
-    permisos: ['ver', 'imprimir', 'editar', 'importar'],
-  },
-  laboratorio: {
-    label: '🔬 Laboratorio',
-    color: '#fef3c7', textColor: '#92400e',
-    permisos: ['ver', 'imprimir'],
-  },
-  ingenieria: {
-    label: '⚙️ Ingeniería',
-    color: '#fce7f3', textColor: '#9d174d',
-    permisos: ['ver', 'imprimir', 'editar'],
-  },
-  direccion: {
-    label: '🏢 Dirección',
-    color: '#f3e8ff', textColor: '#6b21a8',
-    permisos: ['ver', 'imprimir', 'editar', 'importar', 'admin'],
-  },
-  sistemas: {
-    label: '💻 Sistemas / IT',
-    color: '#fee2e2', textColor: '#991b1b',
-    permisos: ['ver', 'imprimir', 'editar', 'importar', 'admin'],
-  },
-};
+const ROLES = ['certificaciones', 'reportes', 'calidad', 'admin'];
 
-const PERM_LABELS = {
-  ver:      { label: 'Ver',      class: 'perm-ver'      },
-  imprimir: { label: 'Imprimir', class: 'perm-imprimir' },
-  editar:   { label: 'Editar',   class: 'perm-editar'   },
-  importar: { label: 'Importar', class: 'perm-importar' },
-  admin:    { label: 'Admin',    class: 'perm-admin'    },
-};
-
-// ══════════════════════════════════════════
-//  Estado global
-// ══════════════════════════════════════════
 let usuarios = [];
 let modoEdicion = false;
 let usuarioEditandoId = null;
 let usuarioEliminandoId = null;
 
-// ══════════════════════════════════════════
-//  Carga inicial
-// ══════════════════════════════════════════
 async function cargarUsuarios() {
   try {
-    const data = await api('/admin/usuarios');
+    const data = await api('/usuarios');
     usuarios = data || [];
     renderTabla(usuarios);
     actualizarStats();
@@ -541,13 +390,13 @@ async function cargarUsuarios() {
   } catch (e) {
     showToast('Error al cargar usuarios: ' + e.message, 'error');
     document.getElementById('users-tbody').innerHTML =
-      `<tr class="empty-row"><td colspan="7">⚠️ No se pudieron cargar los usuarios.</td></tr>`;
+      `<tr class="empty-row"><td colspan="7">Error al cargar usuarios.</td></tr>`;
   }
 }
 
 function actualizarStats() {
   const activos = usuarios.filter(u => u.activo !== false).length;
-  const admins  = usuarios.filter(u => Array.isArray(u.permisos) && u.permisos.includes('admin')).length;
+  const admins  = usuarios.filter(u => u.rol === 'admin').length;
   const deptos  = new Set(usuarios.map(u => u.departamento).filter(Boolean)).size;
   document.getElementById('stat-total').textContent   = usuarios.length;
   document.getElementById('stat-activos').textContent = activos;
@@ -563,18 +412,22 @@ function llenarFiltroDepto() {
   const current = select.value;
   select.innerHTML = '<option value="">Todos los departamentos</option>';
   deptos.forEach(d => {
-    const cfg = DEPTO_CONFIG[d];
+    const etiquetas = {
+      'asistencia_cliente': '🎧 Atención al cliente',
+      'calidad_certificados': '📋 Calidad - Certificados',
+      'laboratorio': '🔬 Laboratorio',
+      'ingenieria': '⚙️ Ingeniería',
+      'direccion': '🏢 Dirección',
+      'sistemas': '💻 Sistemas / IT'
+    };
     const opt = document.createElement('option');
     opt.value = d;
-    opt.textContent = cfg ? cfg.label.replace(/^.\s/, '') : d;
+    opt.textContent = etiquetas[d] || d;
     if (d === current) opt.selected = true;
     select.appendChild(opt);
   });
 }
 
-// ══════════════════════════════════════════
-//  Renderizar tabla
-// ══════════════════════════════════════════
 function renderTabla(lista) {
   const tbody = document.getElementById('users-tbody');
   if (!lista.length) {
@@ -582,84 +435,62 @@ function renderTabla(lista) {
     return;
   }
   tbody.innerHTML = lista.map(u => {
-    const cfg = DEPTO_CONFIG[u.departamento] || { label: u.departamento || '—', color: '#f3f4f6', textColor: '#374151' };
-    const permisos = Array.isArray(u.permisos) ? u.permisos : [];
     const initials = (u.nombre || '?').split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase();
     const avatarColors = ['#dbeafe/#1d4ed8','#d1fae5/#065f46','#fef3c7/#92400e','#f3e8ff/#6b21a8','#fee2e2/#991b1b','#fce7f3/#9d174d'];
     const ac = avatarColors[Math.abs(hashStr(u.nombre || '')) % avatarColors.length].split('/');
     const ultimoAcceso = u.ultimo_acceso
-      ? new Date(u.ultimo_acceso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+      ? new Date(u.ultimo_acceso).toLocaleString('es-MX', { hour12: false })
       : 'Nunca';
     const activo = u.activo !== false;
+    const rolLabels = { 'certificaciones': '📝 Certificaciones', 'reportes': '📊 Reportes', 'calidad': '✅ Calidad', 'admin': '🔑 Administrador' };
+    const deptoLabels = {
+      'asistencia_cliente': '🎧 Atención al cliente',
+      'calidad_certificados': '📋 Calidad - Certificados',
+      'laboratorio': '🔬 Laboratorio',
+      'ingenieria': '⚙️ Ingeniería',
+      'direccion': '🏢 Dirección',
+      'sistemas': '💻 Sistemas / IT'
+    };
     return `<tr class="fadeIn">
       <td>
         <div class="user-cell">
-          <div class="user-avatar" style="background:${ac[0]};color:${ac[1]};">${initials}</div>
+          <div class="user-avatar" style="background:${ac[0]};color:${ac[1]}">${initials}</div>
           <div>
             <div class="user-name">${escHtml(u.nombre)}</div>
-            <div class="user-email">${escHtml(u.email || '—')}</div>
+            <div class="user-email">@${escHtml(u.usuario)}</div>
           </div>
         </div>
       </td>
-      <td>
-        <span class="depto-badge" style="background:${cfg.color};color:${cfg.textColor};">
-          ${escHtml(cfg.label)}
-        </span>
-      </td>
-      <td>
-        <div class="pass-cell" id="pass-cell-${u.id}">
-          <span class="pass-dots">••••••••</span>
-          <span class="pass-text">${escHtml(u.password_plain || u.password || '—')}</span>
-          <button class="btn-eye" onclick="togglePassword(${u.id})" title="Mostrar/ocultar contraseña">👁</button>
-        </div>
-      </td>
-      <td>
-        <div class="perms-row">
-          ${permisos.map(p => {
-            const pc = PERM_LABELS[p];
-            return pc ? `<span class="perm-chip ${pc.class}">${pc.label}</span>` : '';
-          }).join('')}
-          ${permisos.length === 0 ? '<span style="color:var(--gray-400);font-size:12px;">Sin permisos</span>' : ''}
-        </div>
-      </td>
-      <td>
-        <span class="badge ${activo ? 'badge-active' : 'badge-inactive'}">
-          ${activo ? '● Activo' : '● Inactivo'}
-        </span>
-      </td>
-      <td style="font-size:12px;color:var(--gray-500);">${ultimoAcceso}</td>
-      <td>
+      <td><span class="badge ${u.rol === 'admin' ? 'badge-admin' : 'badge-inactive'}">${rolLabels[u.rol] || u.rol || 'sin rol'}</span></td>
+      <td>${deptoLabels[u.departamento] || u.departamento || '—'}</td>
+      <td><span class="badge ${activo ? 'badge-active' : 'badge-inactive'}">${activo ? '✅ Activo' : '🚫 Inactivo'}</span></td>
+      <td style="font-size:11px;color:var(--gray-400);">${ultimoAcceso}</td>
+      <td>${u.creado_en ? new Date(u.creado_en).toLocaleDateString('es-MX') : '—'}</td>
+      <td style="text-align:right;">
         <div class="actions-cell">
-          <button class="btn btn-outline btn-sm" onclick="abrirModalEditar(${u.id})" title="Editar">✏️</button>
-          <button class="btn btn-outline btn-sm" onclick="toggleActivo(${u.id})" title="${activo ? 'Desactivar' : 'Activar'}">
-            ${activo ? '🚫' : '✅'}
-          </button>
-          <button class="btn btn-danger btn-sm" onclick="abrirConfirmEliminar(${u.id})" title="Eliminar">🗑️</button>
+          <button class="btn btn-sm btn-ghost" onclick="abrirModalEditar(${u.id})" title="Editar">✏️</button>
+          <button class="btn btn-sm btn-ghost" onclick="restablecerPassword(${u.id}, '${escHtml(u.nombre)}')" title="Restablecer contraseña">🔑</button>
+          <button class="btn btn-sm btn-ghost" onclick="toggleActivo(${u.id})" title="${activo ? 'Desactivar' : 'Activar'}">${activo ? '✓' : '○'}</button>
+          <button class="btn btn-sm btn-danger" onclick="abrirConfirmEliminar(${u.id})" title="Eliminar">🗑️</button>
         </div>
       </td>
     </tr>`;
   }).join('');
 }
 
-// ══════════════════════════════════════════
-//  Filtrar
-// ══════════════════════════════════════════
 function filtrarUsuarios() {
   const q     = document.getElementById('search-input').value.toLowerCase().trim();
   const depto = document.getElementById('filter-depto').value;
   const filtrados = usuarios.filter(u => {
     const matchQ = !q ||
       (u.nombre || '').toLowerCase().includes(q) ||
-      (u.email  || '').toLowerCase().includes(q);
+      (u.usuario || '').toLowerCase().includes(q);
     const matchD = !depto || u.departamento === depto;
     return matchQ && matchD;
   });
   renderTabla(filtrados);
 }
 
-// ══════════════════════════════════════════
-//  Contraseñas
-// ══════════════════════════════════════════
 function generarPassword() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!';
   let pass = '';
@@ -676,59 +507,6 @@ async function copiarPassword() {
   showToast('Contraseña copiada al portapapeles.', 'success');
 }
 
-function togglePassword(id) {
-  const cell = document.getElementById(`pass-cell-${id}`);
-  cell.classList.toggle('revealed');
-}
-
-// ══════════════════════════════════════════
-//  Permisos modal
-// ══════════════════════════════════════════
-function actualizarPermisos() {
-  const depto = document.getElementById('f-departamento').value;
-  const section = document.getElementById('perms-section');
-
-  if (!depto) { section.style.display = 'none'; return; }
-  section.style.display = '';
-
-  const cfg = DEPTO_CONFIG[depto];
-  const permsDefecto = cfg ? cfg.permisos : [];
-
-  ['ver','imprimir','editar','importar','admin'].forEach(p => {
-    const cb = document.getElementById(`perm-${p}`);
-    const pt = document.getElementById(`pt-${p}`);
-    cb.checked = permsDefecto.includes(p);
-    pt.classList.toggle('checked', cb.checked);
-  });
-}
-
-function togglePerm(toggle) {
-  // El click ya activa el checkbox internamente — solo sincronizamos el estilo
-  setTimeout(() => {
-    ['ver','imprimir','editar','importar','admin'].forEach(p => {
-      const cb = document.getElementById(`perm-${p}`);
-      const pt = document.getElementById(`pt-${p}`);
-      if (pt && cb) pt.classList.toggle('checked', cb.checked);
-    });
-  }, 0);
-}
-
-function syncToggle(ptId, cbId) {
-  const cb = document.getElementById(cbId);
-  const pt = document.getElementById(ptId);
-  if (pt && cb) pt.classList.toggle('checked', cb.checked);
-}
-
-function getPermisos() {
-  return ['ver','imprimir','editar','importar','admin'].filter(p => {
-    const cb = document.getElementById(`perm-${p}`);
-    return cb && cb.checked;
-  });
-}
-
-// ══════════════════════════════════════════
-//  Modal crear / editar
-// ══════════════════════════════════════════
 function abrirModalCrear() {
   modoEdicion = false;
   usuarioEditandoId = null;
@@ -737,7 +515,7 @@ function abrirModalCrear() {
   document.getElementById('modal-titulo').textContent   = 'Nuevo usuario';
   document.getElementById('modal-subtitulo').textContent = 'Completa los datos para dar de alta al usuario';
   document.getElementById('btn-guardar-usuario').textContent = '＋ Crear usuario';
-  document.getElementById('f-password').closest('.form-group').style.display = '';
+  document.getElementById('pass-group-container').style.display = '';
   document.getElementById('modal-usuario').classList.add('open');
 }
 
@@ -747,27 +525,16 @@ function abrirModalEditar(id) {
   modoEdicion = true;
   usuarioEditandoId = id;
 
-  document.getElementById('f-nombre').value      = u.nombre  || '';
-  document.getElementById('f-email').value       = u.usario   || '';
+  document.getElementById('f-nombre').value       = u.nombre  || '';
+  document.getElementById('f-usuario').value      = u.usuario  || '';
+  document.getElementById('f-rol').value          = u.rol || '';
   document.getElementById('f-departamento').value = u.departamento || '';
-  document.getElementById('f-notas').value       = u.notas   || '';
-  document.getElementById('f-password').value    = u.password_plain || u.password || '';
+  document.getElementById('f-password').value     = '';
 
   document.getElementById('modal-titulo').textContent    = 'Editar usuario';
   document.getElementById('modal-subtitulo').textContent = `Modificando: ${u.nombre}`;
   document.getElementById('btn-guardar-usuario').textContent = '💾 Guardar cambios';
-
-  // Mostrar sección permisos con valores actuales
-  if (u.departamento) {
-    document.getElementById('perms-section').style.display = '';
-    const perms = Array.isArray(u.permisos) ? u.permisos : [];
-    ['ver','imprimir','editar','importar','admin'].forEach(p => {
-      const cb = document.getElementById(`perm-${p}`);
-      const pt = document.getElementById(`pt-${p}`);
-      cb.checked = perms.includes(p);
-      pt.classList.toggle('checked', cb.checked);
-    });
-  }
+  document.getElementById('pass-group-container').style.display = 'none';
 
   document.getElementById('modal-usuario').classList.add('open');
 }
@@ -777,13 +544,12 @@ function cerrarModal() {
 }
 
 function resetearFormulario() {
-  ['f-nombre','f-email','f-notas'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-departamento').value = '';
-  document.getElementById('perms-section').style.display = 'none';
-  ['f-nombre','f-email','f-departamento'].forEach(id => {
+  ['f-nombre','f-usuario','f-rol','f-departamento'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-password').value = '';
+  ['f-nombre','f-usuario','f-rol','f-departamento'].forEach(id => {
     document.getElementById(id).classList.remove('error');
   });
-  ['err-nombre','err-email','err-depto'].forEach(id => {
+  ['err-nombre','err-usuario','err-rol','err-depto'].forEach(id => {
     document.getElementById(id).style.display = 'none';
   });
 }
@@ -794,24 +560,22 @@ function limpiarError(fieldId) {
   if (errEl) errEl.style.display = 'none';
 }
 
-// ══════════════════════════════════════════
-//  Guardar usuario
-// ══════════════════════════════════════════
 async function guardarUsuario() {
   const nombre   = document.getElementById('f-nombre').value.trim();
-  const email    = document.getElementById('f-email').value.trim();
+  const usuario  = document.getElementById('f-usuario').value.trim();
+  const rol      = document.getElementById('f-rol').value;
   const depto    = document.getElementById('f-departamento').value;
   const password = document.getElementById('f-password').value.trim();
-  const notas    = document.getElementById('f-notas').value.trim();
 
   let valid = true;
   if (!nombre) { showFieldError('f-nombre','err-nombre'); valid = false; }
-  if (!email || !email.includes('@')) { showFieldError('f-email','err-email'); valid = false; }
+  if (!usuario || usuario.length < 3) { showFieldError('f-usuario','err-usuario'); valid = false; }
+  if (!rol) { showFieldError('f-rol','err-rol'); valid = false; }
   if (!depto) { showFieldError('f-departamento','err-depto'); valid = false; }
   if (!valid) return;
 
-  const permisos = getPermisos();
-  const payload = { nombre, email, departamento: depto, password, permisos, notas };
+  const payload = { nombre, usuario, rol, departamento: depto };
+  if (password) payload.password = password;
 
   const btn = document.getElementById('btn-guardar-usuario');
   btn.disabled = true;
@@ -820,10 +584,10 @@ async function guardarUsuario() {
 
   try {
     if (modoEdicion) {
-      await api(`/admin/usuarios/${usuarioEditandoId}`, { method: 'PUT', body: payload });
+      await api(`/usuarios/${usuarioEditandoId}`, { method: 'PUT', body: payload });
       showToast('✅ Usuario actualizado correctamente.', 'success');
     } else {
-      await api('/admin/usuarios', { method: 'POST', body: payload });
+      await api('/usuarios', { method: 'POST', body: payload });
       showToast('✅ Usuario creado correctamente.', 'success');
     }
     cerrarModal();
@@ -841,15 +605,12 @@ function showFieldError(fieldId, errId) {
   document.getElementById(errId).style.display = 'block';
 }
 
-// ══════════════════════════════════════════
-//  Activar / desactivar
-// ══════════════════════════════════════════
 async function toggleActivo(id) {
   const u = usuarios.find(x => x.id === id);
   if (!u) return;
   const nuevoEstado = u.activo === false ? true : false;
   try {
-    await api(`/admin/usuarios/${id}`, { method: 'PUT', body: { activo: nuevoEstado } });
+    await api(`/usuarios/${id}`, { method: 'PUT', body: { activo: nuevoEstado } });
     showToast(nuevoEstado ? '✅ Usuario activado.' : '🚫 Usuario desactivado.', 'success');
     await cargarUsuarios();
   } catch (e) {
@@ -857,15 +618,50 @@ async function toggleActivo(id) {
   }
 }
 
-// ══════════════════════════════════════════
-//  Eliminar usuario
-// ══════════════════════════════════════════
+async function restablecerPassword(id, nombre) {
+  const btn = event.target;
+  btn.disabled = true;
+  try {
+    const res = await api(`/usuarios/${id}/reset-password`, { method: 'POST' });
+    showToast('🔑 Contraseña restablecida.', 'success');
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay open';
+    modal.innerHTML = `
+      <div class="modal" style="max-width:450px;">
+        <div class="modal-header">
+          <div>
+            <h2>🔑 Nueva contraseña</h2>
+            <p style="font-size:12px;color:var(--gray-400);margin-top:3px;">Para ${escHtml(nombre)}</p>
+          </div>
+          <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="background:var(--gray-50);padding:16px;border-radius:8px;margin-bottom:16px;">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:6px;text-transform:uppercase;font-weight:600;">Nueva contraseña temporal:</div>
+            <div style="font-family:monospace;font-size:18px;font-weight:700;color:var(--primary);letter-spacing:2px;word-break:break-all;">${res.nueva_password}</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray-500);line-height:1.6;margin-bottom:16px;">
+            ⚠️ <strong>Copia esta contraseña</strong>. El usuario debe cambiarla en el próximo acceso. Esta contraseña se mostrará una sola vez.
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="navigator.clipboard.writeText('${res.nueva_password}');this.closest('.modal-overlay').remove();showToast('✅ Contraseña copiada',  'success');">📋 Copiar y cerrar</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  } catch (e) {
+    showToast('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 function abrirConfirmEliminar(id) {
   const u = usuarios.find(x => x.id === id);
   if (!u) return;
   usuarioEliminandoId = id;
   document.getElementById('confirm-text').textContent =
-    `¿Seguro que deseas eliminar a "${u.nombre}"? Perderá el acceso inmediatamente.`;
+    `¿Seguro que deseas desactivar a "${u.nombre}"? Perderá el acceso inmediatamente.`;
   document.getElementById('modal-confirmar').classList.add('open');
 }
 
@@ -879,8 +675,8 @@ async function confirmarEliminar() {
   const btn = document.getElementById('btn-confirmar-eliminar');
   btn.disabled = true;
   try {
-    await api(`/admin/usuarios/${usuarioEliminandoId}`, { method: 'DELETE' });
-    showToast('🗑️ Usuario eliminado.', 'success');
+    await api(`/usuarios/${usuarioEliminandoId}`, { method: 'DELETE' });
+    showToast('🗑️ Usuario desactivado.', 'success');
     cerrarConfirm();
     await cargarUsuarios();
   } catch (e) {
@@ -890,9 +686,6 @@ async function confirmarEliminar() {
   }
 }
 
-// ══════════════════════════════════════════
-//  Toast
-// ══════════════════════════════════════════
 function showToast(msg, tipo = 'info') {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
@@ -902,9 +695,6 @@ function showToast(msg, tipo = 'info') {
   setTimeout(() => toast.remove(), 3800);
 }
 
-// ══════════════════════════════════════════
-//  Helpers
-// ══════════════════════════════════════════
 function escHtml(str) {
   return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -915,16 +705,6 @@ function hashStr(str) {
   return h;
 }
 
-// ══════════════════════════════════════════
-//  Spinner CSS inline
-// ══════════════════════════════════════════
-const styleEl = document.createElement('style');
-styleEl.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
-document.head.appendChild(styleEl);
-
-// ══════════════════════════════════════════
-//  Init
-// ══════════════════════════════════════════
 cargarUsuarios();
 </script>
 </body>

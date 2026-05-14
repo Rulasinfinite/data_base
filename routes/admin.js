@@ -7,6 +7,9 @@ const router  = express.Router();
 const { spawn } = require('child_process');
 const path  = require('path');
 const fs    = require('fs');
+const os    = require('os');
+const crypto = require('crypto');
+const multer = require('multer');
 const pool  = require('../config/db');
 const { verificarToken, requiereRol } = require('../config/auth');
 
@@ -20,6 +23,35 @@ const PYTHON_EXE   = path.join(PROJECT_ROOT, 'venv', 'Scripts', 'python.exe');
 
 // ── Almacenamiento temporal de progreso (en memoria) ─────
 const progresos = {};
+
+// ── Multer: almacenamiento temporal para archivos individuales ──
+// Cada request crea su propio subdirectorio temporal.
+const uploadStorage = multer.diskStorage({
+  destination(req, file, cb) {
+    if (!req._tmpDir) {
+      req._tmpDir = path.join(os.tmpdir(), `sidec_${crypto.randomBytes(8).toString('hex')}`);
+      fs.mkdirSync(req._tmpDir, { recursive: true });
+    }
+    cb(null, req._tmpDir);
+  },
+  filename(req, file, cb) {
+    // Multer recibe el nombre en latin1; convertimos a UTF-8 para preservar tildes y ñ.
+    const nombre = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    cb(null, nombre);
+  },
+});
+
+function fileFilter(req, file, cb) {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (['.xlsx', '.xls', '.pdf'].includes(ext)) cb(null, true);
+  else cb(null, false); // ignorar archivos no válidos sin error
+}
+
+const upload = multer({
+  storage: uploadStorage,
+  fileFilter,
+  limits: { fileSize: 50 * 1024 * 1024, files: 1000 }, // 50 MB por archivo, máx 1000 archivos
+});
 
 // ============================================================
 // POST /api/admin/escanear
@@ -97,8 +129,98 @@ router.post('/importar/reservar', async (req, res) => {
 });
 
 // ============================================================
-// POST /api/admin/importar
+// POST /api/admin/importar/upload
+// Recibe archivos individuales (multipart), los guarda en un dir
+// temporal, ejecuta Python sobre ese dir y devuelve resultados.
 // ============================================================
+router.post('/importar/upload',
+  upload.array('archivos', 500),   // máx 500 archivos por llamada
+  async (req, res) => {
+    const tmpDir = req._tmpDir;
+
+    if (!tmpDir || !req.files || req.files.length === 0) {
+      if (tmpDir) fs.rmSync(tmpDir, { recursive: true, force: true });
+      return res.status(400).json({ error: 'No se recibieron archivos.' });
+    }
+
+    logInfo(`[upload] ${req.files.length} archivos recibidos en ${tmpDir}`);
+
+    let importacion_id = null;
+    try {
+      const result = await pool.query(
+        `INSERT INTO importaciones (usuario_id, carpeta_origen, estado)
+         VALUES ($1, $2, 'en_proceso') RETURNING id`,
+        [req.usuario.id, `[upload directo: ${req.files.length} archivos]`]
+      );
+      importacion_id = result.rows[0].id;
+      progresos[importacion_id] = { actual: 0, total: 0, pct: 0, archivo_actual: null };
+    } catch (e) {
+      console.warn('[upload] No se pudo registrar en BD:', e.message);
+    }
+
+    const inicio = Date.now();
+    try {
+      const args = ['--json-output', '--carpeta', tmpDir];
+      const resultado = await ejecutarPython(args, importacion_id);
+
+      const d = resultado.jsonData || {};
+      const duracion = ((Date.now() - inicio) / 1000).toFixed(1) + 's';
+      const erroresTotal = (d.errores || []).slice(0, 100);
+
+      if (importacion_id) {
+        await pool.query(
+          `UPDATE importaciones SET
+             total_archivos=$1, exitosos=$2, fallidos=$3,
+             omitidos=$4, errores=$5, finalizado_en=NOW(), estado=$6
+           WHERE id=$7`,
+          [
+            d.total    || 0,
+            d.exitosos || 0,
+            d.fallidos || 0,
+            d.omitidos || 0,
+            JSON.stringify(erroresTotal),
+            (d.fallidos || 0) > 0 ? 'con_errores' : 'completado',
+            importacion_id,
+          ]
+        );
+        delete progresos[importacion_id];
+      }
+
+      res.json({
+        importacion_id,
+        total:               d.total              || 0,
+        exitosos:            d.exitosos           || 0,
+        fallidos:            d.fallidos           || 0,
+        no_certs:            d.no_certificados    || 0,
+        omitidos:            d.omitidos           || 0,
+        duracion,
+        errores:             erroresTotal,
+        archivos_exitosos:   d.archivos_exitosos  || [],
+        archivos_omitidos:   d.archivos_omitidos  || [],
+        archivos_no_validos: d.archivos_no_validos|| [],
+      });
+
+    } catch (e) {
+      console.error('[upload] Error:', e.message);
+      if (importacion_id) {
+        await pool.query(
+          `UPDATE importaciones SET estado='con_errores', finalizado_en=NOW() WHERE id=$1`,
+          [importacion_id]
+        ).catch(() => {});
+        delete progresos[importacion_id];
+      }
+      res.status(500).json({ error: e.message });
+    } finally {
+      // Limpiar carpeta temporal siempre, sin importar el resultado
+      try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+    }
+  }
+);
+
+// Helper de log para el nuevo endpoint
+function logInfo(msg) { console.log(msg); }
+
+
 router.post('/importar', async (req, res) => {
   const {
     carpetas       = [],

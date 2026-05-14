@@ -62,6 +62,61 @@
       color: var(--text3);
       margin-top: 4px;
     }
+    .ranking-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .ranking-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text);
+      border-left: 3px solid var(--primary);
+      padding-left: 10px;
+    }
+    .ranking-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .ranking-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .ranking-list li:last-child { border-bottom: none; }
+    .ranking-number {
+      font-weight: 600;
+      color: var(--primary);
+      margin-right: 8px;
+    }
+    .ranking-name { flex: 1; color: var(--text2); }
+    .ranking-count { font-weight: 500; color: var(--text); }
+    .badge-worst {
+      background: var(--warning-bg);
+      color: var(--warning);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .refresh-btn {
+      background: var(--primary-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .refresh-btn:hover { background: var(--primary); color: white; }
     @media (max-width: 768px) {
       .charts-grid { grid-template-columns: 1fr; }
       .stats-mini { flex-direction: column; }
@@ -73,11 +128,14 @@
 <nav class="navbar" id="navbar"></nav>
 
 <div class="page">
-  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
     <div>
-      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">📊 Reportes</h1>
-      <p style="font-size:13px;color:var(--gray-500);margin-top:4px;">Estadísticas del sistema de calibración</p>
+      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">Reportes</h1>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:6px;" id="last-update">Última actualización: —</p>
     </div>
+    <button class="refresh-btn" id="refresh-btn" onclick="cargarTodosLosDatos()">
+      🔄 Actualizar ahora
+    </button>
   </div>
 
   <!-- Mini estadísticas -->
@@ -92,40 +150,64 @@
     </div>
     <div class="mini-card">
       <div class="val" id="mini-clientes">—</div>
-      <div class="lbl">Clientes únicos (global)</div>
+      <div class="lbl">Clientes únicos</div>
     </div>
     <div class="mini-card">
       <div class="val" id="mini-marcas">—</div>
-      <div class="lbl">Marcas únicas (global)</div>
+      <div class="lbl">Marcas únicas</div>
+    </div>
+    <div class="mini-card">
+      <div class="val" id="mini-promedio">—</div>
+      <div class="lbl">Promedio por cliente</div>
     </div>
   </div>
 
-  <!-- Gráfico principal de barras -->
+  <!-- Tarjetas de cliente destacado y marcas -->
+  <div class="charts-grid" style="margin-bottom:20px;">
+    <div class="chart-card">
+      <h3>Empresa con más servicios contratados</h3>
+      <div id="top-cliente" style="text-align:center; padding:10px;">Cargando...</div>
+    </div>
+    <div class="chart-card">
+      <h3>Empresa con menos servicios contratados</h3>
+      <div id="worst-cliente" style="text-align:center; padding:10px;">Cargando...</div>
+    </div>
+  </div>
+
+  <!-- Gráficos: barras (años) + pastel (clientes) -->
   <div class="charts-grid">
-    <div class="chart-card" style="grid-column: 1 / -1;">
-      <h3>📈 Certificados emitidos por año</h3>
+    <div class="chart-card">
+      <h3>Certificados emitidos por año</h3>
       <div class="chart-container">
         <canvas id="chart-anios"></canvas>
       </div>
     </div>
+    <div class="chart-card">
+      <h3>Distribución de servicios por empresa</h3>
+      <div class="chart-container">
+        <canvas id="chart-pie"></canvas>
+      </div>
+      <p style="font-size:11px; color:var(--text3); margin-top:8px; text-align:center;">Visualización de empresas que más servicios han contratado</p>
+    </div>
   </div>
 
-  <!-- Tabla por año -->
+  <!-- Ranking de marcas -->
+  <div class="ranking-card" style="margin-bottom:20px;">
+    <div class="ranking-title">Marcas más utilizadas</div>
+    <ul class="ranking-list" id="marcas-list">
+      <li>Cargando...</li>
+    </ul>
+  </div>
+
+  <!-- Tabla por año (existente) -->
   <div class="table-card">
     <div class="card-header">
-      <span class="card-title">📋 Detalle por año</span>
+      <span class="card-title">Detalle por año</span>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
-          <tr>
-            <th>Año</th>
-            <th>Certificados</th>
-            <th>Clientes</th>
-            <th>Marcas</th>
-            <th>Primera emisión</th>
-            <th>Última emisión</th>
-          </tr>
+          <tr><th>Año</th><th>Certificados</th><th>Clientes</th><th>Marcas</th><th>Primera emisión</th><th>Última emisión</th></tr>
         </thead>
         <tbody id="tabla-anios">
           <tr class="empty-row"><td colspan="6">Cargando...</td></tr>
@@ -133,12 +215,13 @@
       </table>
     </div>
   </div>
-
+  <div style="font-size:11px; color:var(--text4); margin-top:12px; text-align:center;">
+    ℹ️ Los datos se actualizan al cargar la página y cada que se sube un nuevo certificado. Sistema configurado para validación automática diaria. Usa "Actualizar ahora" para refresh manual.
+  </div>
 </div>
 
 <script src="app.js"></script>
 <script>
-  // ── Control de acceso: solo roles "reportes", "calidad" o "admin" ──
   if (!Auth.requireLogin()) throw new Error('not logged');
   if (!Auth.hasRole('reportes')) {
     window.location.href = '/dashboard.html';
@@ -146,42 +229,97 @@
   }
   renderNavbar('reportes');
 
-  let chartInstance = null;
+  let chartBar = null;
+  let chartPie = null;
 
-  async function cargarDatos() {
+  // Función principal que carga todos los datos desde los endpoints
+  async function cargarTodosLosDatos() {
     try {
-      const data = await api('/certificados/stats/resumen');
-      actualizarMiniStats(data);
-      construirGrafico(data.por_anio);
-      construirTabla(data.por_anio);
+      // Mostrar estado de carga en los elementos clave
+      document.getElementById('top-cliente').innerHTML = 'Cargando...';
+      document.getElementById('worst-cliente').innerHTML = 'Cargando...';
+      document.getElementById('marcas-list').innerHTML = '<li>Cargando...</li>';
+
+      // 1. Estadísticas generales (totales, años, etc.)
+      const general = await api('/certificados/stats/general');
+      document.getElementById('mini-total').textContent = general.total_global.toLocaleString('es-MX');
+      document.getElementById('mini-anios').textContent = general.total_anios;
+      document.getElementById('mini-clientes').textContent = general.total_clientes_unicos.toLocaleString();
+      document.getElementById('mini-marcas').textContent = general.total_marcas_unicas.toLocaleString();
+      // Calcular promedio de certificados por cliente
+      const promedioPorCliente = (general.total_global / general.total_clientes_unicos).toFixed(1);
+      document.getElementById('mini-promedio').textContent = promedioPorCliente;
+
+      // Actualizar timestamp de última actualización
+      const ahora = new Date();
+      const horaFormato = ahora.toLocaleString('es-MX');
+      document.getElementById('last-update').textContent = `Última actualización: ${horaFormato}`;
+
+      // 2. Top clientes (para gráfica de pastel y para el "más")
+      const topClientes = await api('/certificados/stats/top-clientes?limite=5');
+      if (topClientes.length) {
+        // Cliente con más certificados
+        const mejor = topClientes[0];
+        document.getElementById('top-cliente').innerHTML = `
+          <div style="font-size:18px; font-weight:700;">${mejor.nombre_cliente}</div>
+          <div style="font-size:24px; color:var(--primary); margin:8px 0;">${mejor.cantidad} certificados</div>
+          <div style="font-size:12px; color:var(--text3);">Año de referencia: ${mejor.anio_referencia || 'varios años'}</div>
+        `;
+      } else {
+        document.getElementById('top-cliente').innerHTML = 'No hay datos';
+      }
+
+      // 3. Cliente con menos certificados (excluyendo cero)
+      const worstData = await api('/certificados/stats/worst-cliente');
+      if (worstData && worstData.nombre_cliente) {
+        document.getElementById('worst-cliente').innerHTML = `
+          <div style="font-size:18px; font-weight:700;">${worstData.nombre_cliente}</div>
+          <div style="font-size:24px; color:var(--warning); margin:8px 0;">${worstData.cantidad} certificados</div>
+          <div class="badge-worst" style="display:inline-block;">Menor actividad</div>
+        `;
+      } else {
+        document.getElementById('worst-cliente').innerHTML = 'No hay datos suficientes';
+      }
+
+      // 4. Marcas populares
+      const marcas = await api('/certificados/stats/marcas-populares?limite=5');
+      const marcasList = document.getElementById('marcas-list');
+      if (marcas.length) {
+        marcasList.innerHTML = marcas.map((m, idx) => `
+          <li>
+            <span><span class="ranking-number">${idx+1}</span> <span class="ranking-name">${m.marca || 'Sin marca'}</span></span>
+            <span class="ranking-count">${m.cantidad} certificados</span>
+          </li>
+        `).join('');
+      } else {
+        marcasList.innerHTML = '<li>No hay marcas registradas</li>';
+      }
+
+      // 5. Gráfico de barras por año (usando resumen por año)
+      const resumen = await api('/certificados/stats/resumen');
+      construirGraficoBarras(resumen.por_anio);
+      construirTablaAnios(resumen.por_anio);
+
+      // 6. Gráfico de pastel con top clientes + "Otros"
+      const todosClientes = await api('/certificados/stats/distribucion-clientes');
+      construirGraficoPastel(todosClientes);
+
     } catch (e) {
+      console.error('Error cargando datos:', e);
       showAlert('Error al cargar estadísticas: ' + e.message, 'error');
-      document.getElementById('tabla-anios').innerHTML =
-        '<tr class="empty-row"><td colspan="6">Error al cargar datos</td></tr>';
+      document.getElementById('top-cliente').innerHTML = 'Error al cargar';
+      document.getElementById('worst-cliente').innerHTML = 'Error';
+      document.getElementById('marcas-list').innerHTML = '<li>Error</li>';
     }
   }
 
-  function actualizarMiniStats(data) {
-    document.getElementById('mini-total').textContent = data.total_global.toLocaleString('es-MX');
-    document.getElementById('mini-anios').textContent = data.por_anio.length;
-
-    // Clientes y marcas únicos globales (necesitamos calcularlos a través de los datos por año)
-    // Pero no tenemos esos totales únicos directamente, los sumamos de cada año? No es único.
-    // Podemos hacer una consulta extra, pero por simplicidad usamos el año más reciente como referencia.
-    // Mostraremos "—" o una nota.
-    const ultimo = data.por_anio[0] || {};
-    document.getElementById('mini-clientes').textContent = ultimo.total_clientes ? parseInt(ultimo.total_clientes).toLocaleString() : '—';
-    document.getElementById('mini-marcas').textContent = ultimo.total_marcas ? parseInt(ultimo.total_marcas).toLocaleString() : '—';
-  }
-
-  function construirGrafico(porAnio) {
+  function construirGraficoBarras(porAnio) {
+    if (!porAnio || porAnio.length === 0) return;
     const años = porAnio.map(r => r.anio_emision).reverse();
     const cantidades = porAnio.map(r => parseInt(r.total_certificados)).reverse();
-
     const ctx = document.getElementById('chart-anios').getContext('2d');
-    if (chartInstance) chartInstance.destroy();
-
-    chartInstance = new Chart(ctx, {
+    if (chartBar) chartBar.destroy();
+    chartBar = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: años,
@@ -197,27 +335,42 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => ` ${ctx.raw.toLocaleString()} certificados` } } },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      }
+    });
+  }
+
+  function construirGraficoPastel(distribucion) {
+    if (!distribucion || distribucion.length === 0) return;
+    const labels = distribucion.map(d => d.nombre_cliente);
+    const data = distribucion.map(d => d.cantidad);
+    const ctx = document.getElementById('chart-pie').getContext('2d');
+    if (chartPie) chartPie.destroy();
+    chartPie = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: ['#1a56db', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#e5e7eb'],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ` ${ctx.raw.toLocaleString()} certificados`
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: { precision: 0 }
-          }
+          legend: { position: 'right', labels: { font: { size: 10 }, boxWidth: 10 } },
+          tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} certificados (${((ctx.raw / ctx.dataset.data.reduce((a,b)=>a+b,0))*100).toFixed(1)}%)` } }
         }
       }
     });
   }
 
-  function construirTabla(porAnio) {
+  function construirTablaAnios(porAnio) {
     const tbody = document.getElementById('tabla-anios');
-    if (porAnio.length === 0) {
+    if (!porAnio || porAnio.length === 0) {
       tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Sin datos</td></tr>';
       return;
     }
@@ -240,7 +393,8 @@
     setTimeout(() => { container.innerHTML = ''; }, 5000);
   }
 
-  cargarDatos();
+  // Cargar datos al inicio y permitir recarga manual
+  cargarTodosLosDatos();
 </script>
 </body>
 </html>

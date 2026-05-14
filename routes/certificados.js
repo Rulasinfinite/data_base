@@ -135,6 +135,148 @@ router.get('/', async (req, res) => {
 });
 
 // ============================================================
+// ESTADÍSTICAS Y REPORTES (DEBEN IR ANTES DE /:id)
+// ============================================================
+
+// GET /api/certificados/stats/general
+router.get('/stats/general', async (req, res) => {
+  try {
+    const totalGlobal = await pool.query('SELECT COUNT(*) as total FROM certificados WHERE activo = TRUE');
+    const anios = await pool.query('SELECT COUNT(DISTINCT anio_emision) as anios FROM certificados WHERE activo = TRUE');
+    const clientesUnicos = await pool.query('SELECT COUNT(DISTINCT cliente_id) as total FROM certificados WHERE activo = TRUE');
+    const marcasUnicas = await pool.query('SELECT COUNT(DISTINCT marca) as total FROM certificados WHERE marca IS NOT NULL AND marca != \'\' AND activo = TRUE');
+    res.json({
+      total_global: parseInt(totalGlobal.rows[0].total),
+      total_anios: parseInt(anios.rows[0].anios),
+      total_clientes_unicos: parseInt(clientesUnicos.rows[0].total),
+      total_marcas_unicas: parseInt(marcasUnicas.rows[0].total)
+    });
+  } catch (err) {
+    console.error('Error en stats/general:', err);
+    res.status(500).json({ error: 'Error al obtener estadísticas generales.' });
+  }
+});
+
+// GET /api/certificados/stats/top-clientes?limite=5
+router.get('/stats/top-clientes', async (req, res) => {
+  try {
+    const limite = parseInt(req.query.limite) || 5;
+    const result = await pool.query(`
+      SELECT 
+        cl.nombre AS nombre_cliente,
+        COUNT(c.id) AS cantidad,
+        MIN(c.anio_emision) AS anio_desde,
+        MAX(c.anio_emision) AS anio_hasta
+      FROM certificados c
+      JOIN clientes cl ON cl.id = c.cliente_id
+      WHERE c.activo = TRUE
+      GROUP BY cl.id, cl.nombre
+      ORDER BY cantidad DESC
+      LIMIT $1
+    `, [limite]);
+    res.json(result.rows.map(r => ({
+      nombre_cliente: r.nombre_cliente,
+      cantidad: parseInt(r.cantidad),
+      anio_referencia: r.anio_desde === r.anio_hasta ? r.anio_desde : `${r.anio_desde} - ${r.anio_hasta}`
+    })));
+  } catch (err) {
+    console.error('Error en stats/top-clientes:', err);
+    res.status(500).json({ error: 'Error al obtener top clientes.' });
+  }
+});
+
+// GET /api/certificados/stats/worst-cliente
+router.get('/stats/worst-cliente', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        cl.nombre AS nombre_cliente,
+        COUNT(c.id) AS cantidad
+      FROM certificados c
+      JOIN clientes cl ON cl.id = c.cliente_id
+      WHERE c.activo = TRUE
+      GROUP BY cl.id, cl.nombre
+      ORDER BY cantidad ASC
+      LIMIT 1
+    `);
+    if (result.rows.length === 0) return res.json(null);
+    res.json({
+      nombre_cliente: result.rows[0].nombre_cliente,
+      cantidad: parseInt(result.rows[0].cantidad)
+    });
+  } catch (err) {
+    console.error('Error en stats/worst-cliente:', err);
+    res.status(500).json({ error: 'Error al obtener cliente con menos certificados.' });
+  }
+});
+
+// GET /api/certificados/stats/marcas-populares?limite=5
+router.get('/stats/marcas-populares', async (req, res) => {
+  try {
+    const limite = parseInt(req.query.limite) || 5;
+    const result = await pool.query(`
+      SELECT 
+        marca,
+        COUNT(*) AS cantidad
+      FROM certificados
+      WHERE activo = TRUE AND marca IS NOT NULL AND marca != ''
+      GROUP BY marca
+      ORDER BY cantidad DESC
+      LIMIT $1
+    `, [limite]);
+    res.json(result.rows.map(r => ({ marca: r.marca, cantidad: parseInt(r.cantidad) })));
+  } catch (err) {
+    console.error('Error en stats/marcas-populares:', err);
+    res.status(500).json({ error: 'Error al obtener marcas populares.' });
+  }
+});
+
+// GET /api/certificados/stats/distribucion-clientes
+router.get('/stats/distribucion-clientes', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        cl.nombre AS nombre_cliente,
+        COUNT(c.id) AS cantidad
+      FROM certificados c
+      JOIN clientes cl ON cl.id = c.cliente_id
+      WHERE c.activo = TRUE
+      GROUP BY cl.id, cl.nombre
+      ORDER BY cantidad DESC
+      LIMIT 6
+    `);
+    let items = result.rows.map(r => ({ nombre_cliente: r.nombre_cliente, cantidad: parseInt(r.cantidad) }));
+    // Si hay exactamente 6, el último se convierte en "Otros"
+    if (items.length === 6) {
+      const otros = items.slice(5).reduce((sum, i) => sum + i.cantidad, 0);
+      items = items.slice(0,5);
+      items.push({ nombre_cliente: 'Otros', cantidad: otros });
+    }
+    res.json(items);
+  } catch (err) {
+    console.error('Error en stats/distribucion-clientes:', err);
+    res.status(500).json({ error: 'Error al obtener distribución de clientes.' });
+  }
+});
+
+// GET /api/certificados/stats/resumen
+router.get('/stats/resumen', async (req, res) => {
+  try {
+    const resumen = await pool.query('SELECT * FROM resumen_por_anio');
+    const totalGlobal = await pool.query(
+      'SELECT COUNT(*) as total FROM certificados WHERE activo = TRUE'
+    );
+    res.json({
+      total_global: parseInt(totalGlobal.rows[0].total),
+      por_anio: resumen.rows,
+    });
+  } catch (err) {
+    console.error('Error al obtener resumen:', err);
+    res.status(500).json({ error: 'Error al obtener estadísticas.' });
+  }
+});
+
+// ============================================================
 // GET /api/certificados/:id
 // ============================================================
 router.get('/:id', async (req, res) => {
@@ -253,25 +395,6 @@ router.get('/:id/auditoria', async (req, res) => {
     res.json(result.rows);
   } catch(e) {
     res.status(500).json({ error: 'Error al obtener auditoría.' });
-  }
-});
-
-// ============================================================
-// GET /api/certificados/stats/resumen
-// ============================================================
-router.get('/stats/resumen', async (req, res) => {
-  try {
-    const resumen = await pool.query('SELECT * FROM resumen_por_anio');
-    const totalGlobal = await pool.query(
-      'SELECT COUNT(*) as total FROM certificados WHERE activo = TRUE'
-    );
-    res.json({
-      total_global: parseInt(totalGlobal.rows[0].total),
-      por_anio: resumen.rows,
-    });
-  } catch (err) {
-    console.error('Error al obtener resumen:', err);
-    res.status(500).json({ error: 'Error al obtener estadísticas.' });
   }
 });
 

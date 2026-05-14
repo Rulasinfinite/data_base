@@ -351,12 +351,12 @@
           <button class="select-btn" onclick="document.getElementById('folder-input').click()">
             <span class="sb-icon">🗂️</span>
             <span class="sb-label">Seleccionar carpeta</span>
-            <span class="sb-hint">Hasta 50 archivos</span>
+            <span class="sb-hint">Hasta 1000 archivos</span>
           </button>
           <button class="select-btn" onclick="document.getElementById('files-input').click()">
             <span class="sb-icon">📄</span>
             <span class="sb-label">Seleccionar archivos</span>
-            <span class="sb-hint">Excel / PDF individuales</span>
+            <span class="sb-hint">Excel individuales</span>
           </button>
         </div>
 
@@ -472,10 +472,10 @@
         </div>
         <div class="instruction-text" id="results-instruction">Haz clic en las tarjetas para ver la lista de archivos</div>
         <div class="results-grid">
-          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint">🔍 Toca para ver lista</div></div>
-          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint">🔍 Toca para ver cuáles</div></div>
-          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint">🔍 Toca para ver motivos</div></div>
-          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint">🔍 Toca para ver detalles</div></div>
+          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint"> Toca para ver lista</div></div>
+          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint"> Toca para ver cuáles</div></div>
+          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint"> Toca para ver motivos</div></div>
+          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint"> Toca para ver detalles</div></div>
         </div>
         <div class="detail-list" id="detail-list" style="display:none;"></div>
         <div class="donut-wrap">
@@ -536,11 +536,14 @@ renderNavbar('importar');
 // ── Estado global ──────────────────────────────────────────
 let carpetas = [], errores = [], importando = false;
 let rutaActual = '', archivosEncontrados = 0;
+// Archivos individuales seleccionados por el usuario (objetos File reales).
+// null = modo carpeta/ruta; array = modo archivos individuales.
+let archivosSeleccionados = null;
 let lastImportData = null;
 let importacionActualId = null, intervaloProgreso = null;
 const _archivosYaMostrados = new Set();
 
-const LIMITE_ARCHIVOS = 3000;
+const LIMITE_ARCHIVOS = 1000;
 let rutaReview = ''; // Ruta detectada automáticamente en el paso de revisión
 
 // ── Helpers UI ────────────────────────────────────────────
@@ -589,22 +592,27 @@ async function leerEntries(entries) {
         entry.file(f => {
           const ext = f.name.split('.').pop().toLowerCase();
           if (['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$')) {
-            archivos.push({ nombre: f.name, tipo: ext === 'pdf' ? 'pdf' : 'excel' });
+            // Guardamos el objeto File real para poder subirlo sin necesitar ruta del servidor
+            archivos.push({ nombre: f.name, tipo: ext === 'pdf' ? 'pdf' : 'excel', file: f });
           }
           resolve();
         }, resolve);
       });
     } else if (entry.isDirectory) {
       const reader = entry.createReader();
-      // readEntries puede retornar <100 por lote; para nuestro límite de 51 es suficiente
+      // readEntries devuelve máx. 100 por llamada; hay que iterar hasta que devuelva array vacío
       await new Promise(resolve => {
-        reader.readEntries(async subEntries => {
-          for (const sub of subEntries) {
-            if (archivos.length >= MAX_CHECK) break;
-            await procesarEntry(sub);
-          }
-          resolve();
-        }, resolve);
+        const readBatch = () => {
+          reader.readEntries(async subEntries => {
+            if (subEntries.length === 0) { resolve(); return; }
+            for (const sub of subEntries) {
+              if (archivos.length >= MAX_CHECK) break;
+              await procesarEntry(sub);
+            }
+            if (archivos.length < MAX_CHECK) readBatch(); else resolve();
+          }, resolve);
+        };
+        readBatch();
       });
     }
   }
@@ -650,7 +658,7 @@ function mostrarReviewArchivos(archivos, carpetaRaiz = '', rutaCompleta = '') {
     const listEl = document.getElementById('review-file-list');
     if (archivosValidos.length === 0) {
       listEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--gray-400);font-size:13px;">
-        ⚠️ No se encontraron archivos Excel (.xlsx/.xls) ni PDF en la selección.
+        ⚠️ No se encontraron archivos Excel (.xlsx/.xls).
       </div>`;
     } else {
       listEl.innerHTML = archivosValidos.map((f, i) => {
@@ -703,6 +711,17 @@ function toggleManualPath(forceOpen = false) {
 
 // ── Escanear desde el paso de revisión ───────────────────
 function escanearDesdeReview(forzarManual = false) {
+  // ── Modo archivos individuales: ya tenemos los File objects, no se necesita ruta ──
+  if (archivosSeleccionados !== null && !forzarManual) {
+    archivosEncontrados = archivosSeleccionados.length;
+    document.getElementById('scan-count').textContent = archivosEncontrados;
+    document.getElementById('scan-label').textContent =
+      archivosEncontrados === 1 ? 'archivo seleccionado' : 'archivos seleccionados';
+    setState('scan');
+    logTerminal(`📊 ${archivosEncontrados} archivos individuales listos para importar.`, 'ok');
+    return;
+  }
+
   let ruta = '';
 
   if (forzarManual) {
@@ -717,9 +736,9 @@ function escanearDesdeReview(forzarManual = false) {
     // Ruta detectada automáticamente (Electron / path conocido)
     ruta = rutaReview;
   } else {
-    // Sin ruta automática → abrir campo manual
+    // Browser normal sin ruta: abrir campo manual silenciosamente, sin alerta.
+    // El mismo campo explica qué escribir.
     toggleManualPath(true);
-    showAlert('No se pudo detectar la ruta automáticamente. Escríbela manualmente.', 'warn');
     return;
   }
 
@@ -778,14 +797,20 @@ dropZone.addEventListener('drop', async e => {
     if (entries[0].isDirectory) carpetaRaiz = entries[0].name;
     logTerminal(`🔄 Leyendo archivos de la carpeta "${carpetaRaiz}"...`, 'info');
     archivosDetectados = await leerEntries(entries);
+    // Extraer File objects reales → upload directo sin necesitar ruta del servidor
+    const fileObjs = archivosDetectados.map(a => a.file).filter(Boolean);
+    archivosSeleccionados = fileObjs.length > 0 ? fileObjs : null;
   } else if (dtFiles.length > 0) {
-    // ③ Fallback: archivos sueltos arrastrados directamente
-    archivosDetectados = dtFiles
-      .filter(f => {
-        const ext = f.name.split('.').pop().toLowerCase();
-        return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
-      })
-      .map(f => ({ nombre: f.name, tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel' }));
+    // ③ Fallback: archivos sueltos arrastrados directamente → guardar File objects reales
+    const validos = dtFiles.filter(f => {
+      const ext = f.name.split('.').pop().toLowerCase();
+      return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
+    });
+    archivosSeleccionados = validos; // guardar para subir al servidor
+    archivosDetectados = validos.map(f => ({
+      nombre: f.name,
+      tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel'
+    }));
   }
 
   if (archivosDetectados.length === 0 && entries.length === 0 && dtFiles.length === 0) {
@@ -820,23 +845,25 @@ folderInput.addEventListener('change', function () {
     return;
   }
 
-  // Browser normal: mostrar revisión de archivos
-  const archivosValidos = files
-    .filter(f => {
-      const ext = f.name.split('.').pop().toLowerCase();
-      return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
-    })
-    .map(f => ({
-      nombre: f.name,
-      tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel'
-    }));
+  // Browser normal: el browser nos da los File objects reales → subir directamente sin necesitar ruta
+  const validos = files.filter(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
+  });
+
+  archivosSeleccionados = validos; // File objects reales para upload directo
+
+  const archivosParaMostrar = validos.map(f => ({
+    nombre: f.name,
+    tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel'
+  }));
 
   let carpetaRaiz = '';
-  if (files[0].webkitRelativePath) {
+  if (files[0] && files[0].webkitRelativePath) {
     carpetaRaiz = files[0].webkitRelativePath.split('/')[0];
   }
 
-  mostrarReviewArchivos(archivosValidos, carpetaRaiz);
+  mostrarReviewArchivos(archivosParaMostrar, carpetaRaiz);
 });
 
 // ── Selector de archivos individuales ────────────────────
@@ -865,6 +892,12 @@ filesInput.addEventListener('change', function () {
       nombre: f.name,
       tipo: f.name.split('.').pop().toLowerCase() === 'pdf' ? 'pdf' : 'excel'
     }));
+
+  // Guardar los objetos File reales para subirlos directamente al servidor
+  archivosSeleccionados = files.filter(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    return ['xlsx', 'xls', 'pdf'].includes(ext) && !f.name.startsWith('~$');
+  });
 
   mostrarReviewArchivos(archivosValidos, '');
 });
@@ -899,8 +932,134 @@ async function agregarYEscanear() {
   }
 }
 
+// ── Subir archivos individuales e importar ────────────────
+async function subirEImportar() {
+  if (!archivosSeleccionados || archivosSeleccionados.length === 0) {
+    console.warn('[subirEImportar] archivosSeleccionados está vacío o null — abortando.');
+    return;
+  }
+  if (importando) return;
+  importando = true;
+  errores = [];
+  _archivosYaMostrados.clear();
+
+  const totalEnviar      = archivosSeleccionados.length;
+  const archivosACopiar  = [...archivosSeleccionados];
+
+  // ── Obtener token ─────────────────────────────────────────
+  let token = '';
+  try {
+    token = (typeof Auth !== 'undefined' && typeof Auth.getToken === 'function')
+      ? Auth.getToken()
+      : (localStorage.getItem('token') || localStorage.getItem('sidec_token') || '');
+  } catch { token = ''; }
+
+  const authHeader = token ? { 'Authorization': 'Bearer ' + token } : {};
+
+  // ── Verificar que el endpoint existe antes de cambiar estado ─
+  try {
+    const check = await fetch('/api/admin/verificar-python', {
+      method: 'GET', headers: authHeader
+    });
+    // Si llegamos aquí, el servidor responde → OK para continuar
+    if (check.status === 401 || check.status === 403) {
+      throw new Error('No autorizado (sesión caducada). Recarga la página.');
+    }
+  } catch (checkErr) {
+    if (checkErr.message.includes('autorizado') || checkErr.message.includes('sesión')) {
+      mostrarErrorScan('❌ ' + checkErr.message);
+      importando = false; return;
+    }
+    // No bloquear si el check falla por otro motivo (red, etc.)
+  }
+
+  setState('processing');
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-pct').textContent  = '0%';
+  document.getElementById('progress-label').textContent = 'Subiendo archivos...';
+  document.getElementById('progress-sub').textContent   =
+    `Enviando ${totalEnviar} archivo(s) al servidor...`;
+  document.getElementById('live-total').textContent = '0';
+  document.getElementById('live-ok').textContent    = '0';
+  document.getElementById('live-err').textContent   = '0';
+  document.getElementById('processing-file-list').innerHTML =
+    '<div style="color:#9ca3af;font-style:italic;padding:4px 0;">⏳ Enviando archivos al servidor...</div>';
+
+  logTerminal(`▶ Subiendo ${totalEnviar} archivo(s) individual(es)...`, 'info');
+  logSepTerminal();
+
+  try {
+    const formData = new FormData();
+    for (const f of archivosACopiar) formData.append('archivos', f);
+
+    document.getElementById('progress-label').textContent = 'Procesando archivos...';
+    document.getElementById('progress-sub').textContent   = 'Python está procesando los archivos...';
+
+    const resp = await fetch('/api/admin/importar/upload', {
+      method: 'POST',
+      headers: authHeader,      // sin Content-Type → el browser lo pone con boundary automático
+      body: formData,
+    });
+
+    if (!resp.ok) {
+      let msg = `Error HTTP ${resp.status}`;
+      try { const j = await resp.json(); msg = j.error || j.message || msg; } catch {}
+      throw new Error(msg);
+    }
+
+    const data = await resp.json();
+    lastImportData = data;
+    rutaActual = `[${totalEnviar} archivo(s) individual(es)]`;
+    archivosSeleccionados = null;
+    mostrarResultados(data);
+
+  } catch (e) {
+    console.error('[subirEImportar] Error:', e);
+    logTerminal(`❌ Error al importar: ${e.message}`, 'err');
+    // Abrir sección de terminal para que el usuario vea el detalle
+    const termSection = document.getElementById('terminal-section');
+    if (termSection) termSection.style.display = '';
+    // Volver a scan con mensaje de error visible en el panel
+    archivosEncontrados = totalEnviar;
+    setState('scan');
+    document.getElementById('scan-count').textContent = totalEnviar;
+    document.getElementById('scan-label').textContent =
+      totalEnviar === 1 ? 'archivo seleccionado' : 'archivos seleccionados';
+    mostrarErrorScan('❌ ' + e.message + ' — revisa "Detalles técnicos" ↗');
+  } finally {
+    importando = false;
+  }
+}
+
+// ── Mostrar error inline en el panel scan ────────────────
+function mostrarErrorScan(msg) {
+  let errEl = document.getElementById('scan-error-inline');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.id = 'scan-error-inline';
+    errEl.style.cssText =
+      'margin-top:12px;padding:10px 14px;background:#fef2f2;border:1px solid #fca5a5;' +
+      'border-radius:8px;color:#991b1b;font-size:13px;text-align:center;';
+    const scanState = document.getElementById('state-scan');
+    scanState.appendChild(errEl);
+  }
+  errEl.textContent = msg;
+  errEl.style.display = '';
+  // Auto-ocultar al cancelar o reintentar
+  ['btn-iniciar-import'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => { errEl.style.display = 'none'; }, { once: true });
+  });
+}
+
 // ── Iniciar importación ───────────────────────────────────
 async function iniciarImportacion() {
+  // ── Modo archivos individuales: subir los File objects directamente ──
+  if (archivosSeleccionados !== null) {
+    await subirEImportar();
+    return;
+  }
+
   if (carpetas.length === 0) { showAlert('Escanea una carpeta primero.'); return; }
   if (importando) return;
   importando = true; errores = [];
@@ -1141,6 +1300,9 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
 // ── Resetear todo ─────────────────────────────────────────
 function resetear() {
   carpetas = []; errores = []; archivosEncontrados = 0; rutaActual = ''; rutaReview = '';
+  archivosSeleccionados = null;
+  const errEl = document.getElementById('scan-error-inline');
+  if (errEl) errEl.style.display = 'none';
   document.getElementById('input-ruta').value          = '';
   document.getElementById('review-ruta-confirm').value = '';
   document.getElementById('review-ruta-masiva').value  = '';
