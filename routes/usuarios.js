@@ -21,12 +21,31 @@ async function ensureResetRequestsTable() {
     )
   `);
 }
+async function ensureNotasTable() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS notas (
+      id          SERIAL PRIMARY KEY,
+      usuario_id  INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+      titulo      VARCHAR(255) NOT NULL,
+      contenido   TEXT,
+      creada_en   TIMESTAMPTZ DEFAULT NOW(),
+      actualizada_en TIMESTAMPTZ DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_notas_usuario ON notas (usuario_id);
+  `);
+}
+
 async function ensureUserSchema() {
   if (schemaReady) return;
   await ensurePermisosColumn();
   await ensureResetRequestsTable();
+  await ensureNotasTable();
   schemaReady = true;
 }
+
+// ============================================================
+// RUTAS DE AUTENTICACIÓN
+// ============================================================
 
 // POST /api/usuarios/login
 router.post('/login', async (req, res) => {
@@ -64,6 +83,10 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ============================================================
+// RUTAS ESPECÍFICAS (deben venir ANTES de /:id)
+// ============================================================
+
 // GET /api/usuarios/me
 router.get('/me', verificarToken, (req, res) => {
   res.json(req.usuario);
@@ -73,6 +96,246 @@ router.get('/me', verificarToken, (req, res) => {
 router.get('/perfil', verificarToken, (req, res) => {
   res.json(req.usuario);
 });
+
+// POST /api/usuarios/solicitar-reset
+router.post('/solicitar-reset', async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { usuario } = req.body;
+    if (!usuario) {
+      return res.status(400).json({ error: 'Nombre de usuario es requerido.' });
+    }
+    const username = usuario.trim();
+    const userResult = await pool.query('SELECT id, nombre FROM usuarios WHERE usuario = $1 AND activo = TRUE', [username]);
+    const usuarioId = userResult.rows.length ? userResult.rows[0].id : null;
+    const nombre = userResult.rows.length ? userResult.rows[0].nombre : null;
+
+    await pool.query(
+      `INSERT INTO password_reset_requests (usuario_id, usuario, nombre, estado)
+       VALUES ($1, $2, $3, 'pendiente')`,
+      [usuarioId, username, nombre]
+    );
+
+    res.json({ mensaje: 'Solicitud de recuperación enviada.' });
+  } catch (err) {
+    console.error('Error en solicitud de recuperación:', err);
+    res.status(500).json({ error: 'No se pudo registrar la solicitud.' });
+  }
+});
+
+// POST /api/usuarios/cambiar-password
+router.post('/cambiar-password', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { password_actual, password_nuevo } = req.body;
+    if (!password_actual || !password_nuevo) {
+      return res.status(400).json({ error: 'Contraseña actual y nueva son requeridas.' });
+    }
+    if (password_nuevo.length < 8) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+    }
+
+    const userResult = await pool.query('SELECT password_hash FROM usuarios WHERE id = $1', [req.usuario.id]);
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    const passwordOk = await bcrypt.compare(password_actual, userResult.rows[0].password_hash);
+    if (!passwordOk) {
+      return res.status(401).json({ error: 'La contraseña actual es incorrecta.' });
+    }
+
+    const hash = await bcrypt.hash(password_nuevo, 10);
+    await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [hash, req.usuario.id]);
+    res.json({ mensaje: 'Contraseña actualizada correctamente.' });
+  } catch (err) {
+    console.error('Error al cambiar contraseña:', err);
+    res.status(500).json({ error: 'Error al cambiar la contraseña.' });
+  }
+});
+
+// GET /api/usuarios/reset-solicitudes (solo admin)
+router.get('/reset-solicitudes', verificarToken, requiereRol('admin'), async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const result = await pool.query(
+      `SELECT id, usuario_id, usuario, nombre, estado, solicitado_en
+       FROM password_reset_requests
+       WHERE estado = 'pendiente'
+       ORDER BY solicitado_en DESC
+       LIMIT 50`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener solicitudes de recuperación:', err);
+    res.status(500).json({ error: 'Error al obtener solicitudes de recuperación.' });
+  }
+});
+
+// POST /api/usuarios/reset-solicitudes/:id/aprobar (solo admin)
+router.post('/reset-solicitudes/:id/aprobar', verificarToken, requiereRol('admin'), async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    
+    const solicitud = await pool.query(
+      'SELECT usuario_id, usuario FROM password_reset_requests WHERE id = $1',
+      [id]
+    );
+    if (solicitud.rows.length === 0) {
+      return res.status(404).json({ error: 'Solicitud no encontrada.' });
+    }
+    
+    const usuario_id = solicitud.rows[0].usuario_id;
+    const username = solicitud.rows[0].usuario;
+    
+    // Generar contraseña temporal
+    const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!';
+    let nuevaPassword = '';
+    while (nuevaPassword.length < 10) {
+      nuevaPassword += caracteres[Math.floor(Math.random() * caracteres.length)];
+    }
+
+    // Actualizar contraseña del usuario
+    const hash = await bcrypt.hash(nuevaPassword, 10);
+    await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [hash, usuario_id]);
+    
+    // Marcar solicitud como procesada
+    await pool.query(
+      "UPDATE password_reset_requests SET estado = 'procesado' WHERE id = $1",
+      [id]
+    );
+    
+    res.json({ 
+      mensaje: 'Solicitud aprobada. Se generó una contraseña temporal.', 
+      usuario: username,
+      nueva_password: nuevaPassword
+    });
+  } catch (err) {
+    console.error('Error al aprobar solicitud:', err);
+    res.status(500).json({ error: 'Error al aprobar solicitud.' });
+  }
+});
+
+// DELETE /api/usuarios/reset-solicitudes/:id (solo admin)
+router.delete('/reset-solicitudes/:id', verificarToken, requiereRol('admin'), async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    
+    await pool.query('DELETE FROM password_reset_requests WHERE id = $1', [id]);
+    res.json({ mensaje: 'Solicitud eliminada.' });
+  } catch (err) {
+    console.error('Error al eliminar solicitud:', err);
+    res.status(500).json({ error: 'Error al eliminar solicitud.' });
+  }
+});
+
+// ============================================================
+// ENDPOINTS DE NOTAS (apuntes de usuario)
+// ============================================================
+
+// GET /api/usuarios/notas
+router.get('/notas', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const result = await pool.query(
+      `SELECT id, titulo, contenido, creada_en, actualizada_en 
+       FROM notas 
+       WHERE usuario_id = $1 
+       ORDER BY actualizada_en DESC`,
+      [req.usuario.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener notas:', err);
+    res.status(500).json({ error: 'Error al obtener notas.' });
+  }
+});
+
+// POST /api/usuarios/notas
+router.post('/notas', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { titulo, contenido } = req.body;
+    if (!titulo) {
+      return res.status(400).json({ error: 'El título es requerido.' });
+    }
+    const result = await pool.query(
+      `INSERT INTO notas (usuario_id, titulo, contenido) 
+       VALUES ($1, $2, $3) 
+       RETURNING id, titulo, contenido, creada_en, actualizada_en`,
+      [req.usuario.id, titulo, contenido || '']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al crear nota:', err);
+    res.status(500).json({ error: 'Error al crear nota.' });
+  }
+});
+
+// PUT /api/usuarios/notas/:id
+router.put('/notas/:id', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    const { titulo, contenido } = req.body;
+    
+    const checkResult = await pool.query(
+      'SELECT usuario_id FROM notas WHERE id = $1',
+      [id]
+    );
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Nota no encontrada.' });
+    }
+    if (checkResult.rows[0].usuario_id !== req.usuario.id) {
+      return res.status(403).json({ error: 'No tienes permiso para editar esta nota.' });
+    }
+    
+    const result = await pool.query(
+      `UPDATE notas 
+       SET titulo = COALESCE($1, titulo), 
+           contenido = COALESCE($2, contenido),
+           actualizada_en = NOW()
+       WHERE id = $3 AND usuario_id = $4
+       RETURNING id, titulo, contenido, creada_en, actualizada_en`,
+      [titulo, contenido, id, req.usuario.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al actualizar nota:', err);
+    res.status(500).json({ error: 'Error al actualizar nota.' });
+  }
+});
+
+// DELETE /api/usuarios/notas/:id
+router.delete('/notas/:id', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    
+    const checkResult = await pool.query(
+      'SELECT usuario_id FROM notas WHERE id = $1',
+      [id]
+    );
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Nota no encontrada.' });
+    }
+    if (checkResult.rows[0].usuario_id !== req.usuario.id) {
+      return res.status(403).json({ error: 'No tienes permiso para eliminar esta nota.' });
+    }
+    
+    await pool.query('DELETE FROM notas WHERE id = $1', [id]);
+    res.json({ mensaje: 'Nota eliminada correctamente.' });
+  } catch (err) {
+    console.error('Error al eliminar nota:', err);
+    res.status(500).json({ error: 'Error al eliminar nota.' });
+  }
+});
+
+// ============================================================
+// RUTAS GENÉRICAS CRUD (después de las específicas)
+// ============================================================
 
 // GET /api/usuarios (listar - solo admin)
 router.get('/', verificarToken, requiereRol('admin'), async (req, res) => {
@@ -145,12 +408,13 @@ router.put('/:id', verificarToken, requiereRol('admin'), async (req, res) => {
   }
 });
 
-// DELETE /api/usuarios/:id (desactivar - solo admin)
+// DELETE /api/usuarios/:id (eliminar completamente - solo admin)
 router.delete('/:id', verificarToken, requiereRol('admin'), async (req, res) => {
   try {
     await ensureUserSchema();
     const { id } = req.params;
 
+    // Verificar que no sea el último admin
     const adminCount = await pool.query(
       'SELECT COUNT(*) AS total FROM usuarios WHERE rol = $1 AND activo = TRUE',
       ['admin']
@@ -162,13 +426,22 @@ router.delete('/:id', verificarToken, requiereRol('admin'), async (req, res) => 
       return res.status(404).json({ error: 'Usuario no encontrado.' });
     }
     if (totalAdmins === 1 && usuarioRes.rows[0].rol === 'admin') {
-      return res.status(400).json({ error: 'No puede desactivar el único administrador del sistema.' });
+      return res.status(400).json({ error: 'No se puede eliminar el único administrador del sistema.' });
     }
 
-    await pool.query('UPDATE usuarios SET activo = FALSE WHERE id = $1', [id]);
-    res.json({ mensaje: 'Usuario desactivado correctamente.' });
+    // Eliminar registros relacionados (las cascadas las maneja la BD)
+    // pero podemos hacerlo explícitamente para mayor control
+    await pool.query('DELETE FROM password_reset_requests WHERE usuario_id = $1', [id]);
+    await pool.query('DELETE FROM notas WHERE usuario_id = $1', [id]);
+    await pool.query('DELETE FROM auditoria WHERE usuario_id = $1', [id]);
+    
+    // Finalmente, eliminar el usuario
+    await pool.query('DELETE FROM usuarios WHERE id = $1', [id]);
+    
+    res.json({ mensaje: 'Usuario eliminado correctamente.' });
   } catch (err) {
-    res.status(500).json({ error: 'Error al desactivar usuario.' });
+    console.error('Error al eliminar usuario:', err);
+    res.status(500).json({ error: 'Error al eliminar usuario.' });
   }
 });
 
@@ -228,7 +501,7 @@ router.get('/reset-solicitudes', verificarToken, requiereRol('admin'), async (re
   try {
     await ensureUserSchema();
     const result = await pool.query(
-      `SELECT id, usuario, nombre, estado, solicitado_en
+      `SELECT id, usuario_id, usuario, nombre, estado, solicitado_en
        FROM password_reset_requests
        WHERE estado = 'pendiente'
        ORDER BY solicitado_en DESC
@@ -238,6 +511,51 @@ router.get('/reset-solicitudes', verificarToken, requiereRol('admin'), async (re
   } catch (err) {
     console.error('Error al obtener solicitudes de recuperación:', err);
     res.status(500).json({ error: 'Error al obtener solicitudes de recuperación.' });
+  }
+});
+
+// POST /api/usuarios/reset-solicitudes/:id/aprobar (solo admin - aprobar solicitud)
+router.post('/reset-solicitudes/:id/aprobar', verificarToken, requiereRol('admin'), async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    
+    const solicitud = await pool.query(
+      'SELECT usuario_id, usuario FROM password_reset_requests WHERE id = $1',
+      [id]
+    );
+    if (solicitud.rows.length === 0) {
+      return res.status(404).json({ error: 'Solicitud no encontrada.' });
+    }
+    
+    const usuario_id = solicitud.rows[0].usuario_id;
+    const username = solicitud.rows[0].usuario;
+    
+    // Generar contraseña temporal
+    const caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!';
+    let nuevaPassword = '';
+    while (nuevaPassword.length < 10) {
+      nuevaPassword += caracteres[Math.floor(Math.random() * caracteres.length)];
+    }
+
+    // Actualizar contraseña del usuario
+    const hash = await bcrypt.hash(nuevaPassword, 10);
+    await pool.query('UPDATE usuarios SET password_hash = $1 WHERE id = $2', [hash, usuario_id]);
+    
+    // Marcar solicitud como procesada
+    await pool.query(
+      "UPDATE password_reset_requests SET estado = 'procesado' WHERE id = $1",
+      [id]
+    );
+    
+    res.json({ 
+      mensaje: 'Solicitud aprobada. Se generó una contraseña temporal.', 
+      usuario: username,
+      nueva_password: nuevaPassword
+    });
+  } catch (err) {
+    console.error('Error al aprobar solicitud:', err);
+    res.status(500).json({ error: 'Error al aprobar solicitud.' });
   }
 });
 
@@ -269,6 +587,111 @@ router.post('/cambiar-password', verificarToken, async (req, res) => {
   } catch (err) {
     console.error('Error al cambiar contraseña:', err);
     res.status(500).json({ error: 'Error al cambiar la contraseña.' });
+  }
+});
+
+
+// ============================================================
+// ENDPOINTS DE NOTAS (apuntes de usuario)
+// ============================================================
+
+// GET /api/usuarios/notas - obtener todas las notas del usuario
+router.get('/notas', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const result = await pool.query(
+      `SELECT id, titulo, contenido, creada_en, actualizada_en 
+       FROM notas 
+       WHERE usuario_id = $1 
+       ORDER BY actualizada_en DESC`,
+      [req.usuario.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener notas:', err);
+    res.status(500).json({ error: 'Error al obtener notas.' });
+  }
+});
+
+// POST /api/usuarios/notas - crear nueva nota
+router.post('/notas', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { titulo, contenido } = req.body;
+    if (!titulo) {
+      return res.status(400).json({ error: 'El título es requerido.' });
+    }
+    const result = await pool.query(
+      `INSERT INTO notas (usuario_id, titulo, contenido) 
+       VALUES ($1, $2, $3) 
+       RETURNING id, titulo, contenido, creada_en, actualizada_en`,
+      [req.usuario.id, titulo, contenido || '']
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al crear nota:', err);
+    res.status(500).json({ error: 'Error al crear nota.' });
+  }
+});
+
+// PUT /api/usuarios/notas/:id - actualizar nota
+router.put('/notas/:id', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    const { titulo, contenido } = req.body;
+    
+    // Verificar que la nota pertenece al usuario
+    const checkResult = await pool.query(
+      'SELECT usuario_id FROM notas WHERE id = $1',
+      [id]
+    );
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Nota no encontrada.' });
+    }
+    if (checkResult.rows[0].usuario_id !== req.usuario.id) {
+      return res.status(403).json({ error: 'No tienes permiso para editar esta nota.' });
+    }
+    
+    const result = await pool.query(
+      `UPDATE notas 
+       SET titulo = COALESCE($1, titulo), 
+           contenido = COALESCE($2, contenido),
+           actualizada_en = NOW()
+       WHERE id = $3 AND usuario_id = $4
+       RETURNING id, titulo, contenido, creada_en, actualizada_en`,
+      [titulo, contenido, id, req.usuario.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error al actualizar nota:', err);
+    res.status(500).json({ error: 'Error al actualizar nota.' });
+  }
+});
+
+// DELETE /api/usuarios/notas/:id - eliminar nota
+router.delete('/notas/:id', verificarToken, async (req, res) => {
+  try {
+    await ensureUserSchema();
+    const { id } = req.params;
+    
+    // Verificar que la nota pertenece al usuario
+    const checkResult = await pool.query(
+      'SELECT usuario_id FROM notas WHERE id = $1',
+      [id]
+    );
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Nota no encontrada.' });
+    }
+    if (checkResult.rows[0].usuario_id !== req.usuario.id) {
+      return res.status(403).json({ error: 'No tienes permiso para eliminar esta nota.' });
+    }
+    
+    await pool.query('DELETE FROM notas WHERE id = $1', [id]);
+    res.json({ mensaje: 'Nota eliminada correctamente.' });
+  } catch (err) {
+    console.error('Error al eliminar nota:', err);
+    res.status(500).json({ error: 'Error al eliminar nota.' });
   }
 });
 

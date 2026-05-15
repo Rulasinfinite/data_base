@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #f1f5f9; min-height: 100vh; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); min-height: 100vh; }
 
     :root {
       --primary:       #2563eb;
@@ -58,7 +58,7 @@
     }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-dark); }
-    .btn-outline { background: white; border: 1px solid var(--gray-300); color: var(--gray-700); }
+    .btn-outline { background: var(--surface); border: 1px solid var(--gray-300); color: var(--gray-700); }
     .btn-outline:hover { background: var(--gray-50); border-color: var(--gray-400); }
     .btn-ghost  { background: transparent; color: var(--gray-500); padding: 7px 10px; }
     .btn-ghost:hover { background: var(--gray-100); color: var(--gray-700); }
@@ -72,7 +72,7 @@
     /* ── Stats ── */
     .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
     .stat-card {
-      background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
       padding: 18px 20px; display: flex; align-items: center; gap: 14px;
       box-shadow: var(--shadow-sm);
     }
@@ -86,12 +86,13 @@
 
     /* ── Card principal ── */
     .main-card {
-      background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
       box-shadow: var(--shadow-sm); overflow: hidden;
     }
     .card-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 24px; border-bottom: 1px solid var(--gray-100); gap: 12px; flex-wrap: wrap;
+      padding: 18px 24px; border-bottom: 1px solid var(--gray-100);
+      gap: 12px; flex-wrap: wrap;
     }
     .card-title    { font-size: 15px; font-weight: 600; color: var(--gray-800); }
     .card-subtitle { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
@@ -148,7 +149,7 @@
     }
     .modal-overlay.open { display: flex; }
     .modal {
-      background: white; border-radius: var(--radius); width: 100%; max-width: 600px;
+      background: var(--surface); border-radius: var(--radius); width: 100%; max-width: 600px;
       max-height: 92vh; overflow-y: auto; box-shadow: var(--shadow-lg);
       animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
@@ -179,7 +180,7 @@
     .form-control {
       padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 8px;
       font-size: 13px; font-family: inherit; outline: none; color: var(--gray-800);
-      transition: border-color var(--transition), box-shadow var(--transition); background: white;
+      transition: border-color var(--transition), box-shadow var(--transition); background: var(--surface);
     }
     .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
     .form-hint  { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
@@ -202,7 +203,7 @@
     .perms-list { display: flex; flex-direction: column; gap: 8px; }
     .perm-checkbox {
       display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid var(--gray-200);
-      border-radius: 10px; background: white; color: var(--gray-700);
+      border-radius: 10px; background: var(--surface); color: var(--gray-700);
     }
     .perm-checkbox input {
       margin-top: 4px;
@@ -247,13 +248,13 @@
     .confirm-step2-box input {
       width: 100%; padding: 8px 10px; border: 1px solid #fca5a5; border-radius: 6px;
       font-size: 13px; font-family: monospace; outline: none; color: var(--gray-800);
-      background: white;
+      background: var(--surface);
     }
     .confirm-step2-box input:focus { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
 
     /* ── Panel de notificaciones ── */
     .notif-btn {
-      position: relative; background: white; border: 1px solid var(--gray-200);
+      position: relative; background: var(--surface); border: 1px solid var(--gray-200);
       border-radius: 9px; padding: 8px 12px; cursor: pointer; display: flex;
       align-items: center; gap: 6px; font-size: 13px; color: var(--gray-600);
       font-family: inherit; transition: all var(--transition);
@@ -264,11 +265,11 @@
       background: var(--danger); color: white; border-radius: 50%;
       width: 18px; height: 18px; font-size: 10px; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
-      border: 2px solid white;
+      border: 2px solid var(--surface);
     }
     .notif-panel {
       position: fixed; top: 70px; right: 24px; width: 380px; max-height: 480px;
-      background: white; border: 1px solid var(--gray-200); border-radius: var(--radius);
+      background: var(--surface); border: 1px solid var(--gray-200); border-radius: var(--radius);
       box-shadow: var(--shadow-lg); z-index: 900; display: none; flex-direction: column;
       overflow: hidden; animation: modalIn 0.18s ease;
     }
@@ -328,6 +329,96 @@
     @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
     @keyframes spin { to { transform: rotate(360deg); } }
     .fadeIn { animation: fadeIn 0.2s ease; }
+  
+    /* ── Modo oscuro específico de esta vista ── */
+    [data-theme="dark"] body { background: var(--bg); }
+    [data-theme="dark"] .page-header h1,
+    [data-theme="dark"] .stat-val,
+    [data-theme="dark"] .user-name,
+    [data-theme="dark"] .card-title,
+    [data-theme="dark"] .modal-header h2,
+    [data-theme="dark"] .confirm-title,
+    [data-theme="dark"] .success-title,
+    [data-theme="dark"] .temp-pass-box .pass-val {
+      color: var(--text);
+    }
+    [data-theme="dark"] .page-header p,
+    [data-theme="dark"] .page-header,
+    [data-theme="dark"] .card-subtitle,
+    [data-theme="dark"] .user-email,
+    [data-theme="dark"] .stat-lbl,
+    [data-theme="dark"] .modal-header p,
+    [data-theme="dark"] .form-hint,
+    [data-theme="dark"] .form-error,
+    [data-theme="dark"] .notif-time,
+    [data-theme="dark"] .confirm-text,
+    [data-theme="dark"] .success-text,
+    [data-theme="dark"] .temp-pass-box .note,
+    [data-theme="dark"] .user-info-bar span,
+    [data-theme="dark"] .notif-msg,
+    [data-theme="dark"] .perm-item,
+    [data-theme="dark"] .section-divider {
+      color: var(--text3);
+    }
+    [data-theme="dark"] .page-header h1,
+    [data-theme="dark"] .card-title,
+    [data-theme="dark"] .modal-header h2,
+    [data-theme="dark"] .confirm-title,
+    [data-theme="dark"] .success-title {
+      color: var(--text);
+    }
+    [data-theme="dark"] .main-card,
+    [data-theme="dark"] .stat-card,
+    [data-theme="dark"] .modal,
+    [data-theme="dark"] .notif-panel,
+    [data-theme="dark"] .form-control,
+    [data-theme="dark"] .search-wrap input,
+    [data-theme="dark"] .perm-checkbox,
+    [data-theme="dark"] .confirm-step2-box,
+    [data-theme="dark"] .temp-pass-box,
+    [data-theme="dark"] .user-info-bar,
+    [data-theme="dark"] .btn-outline,
+    [data-theme="dark"] .notif-btn {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    [data-theme="dark"] .card-header,
+    [data-theme="dark"] .modal-header,
+    [data-theme="dark"] .modal-footer,
+    [data-theme="dark"] .confirm-footer,
+    [data-theme="dark"] .notif-panel-header,
+    [data-theme="dark"] tbody td,
+    [data-theme="dark"] .section-divider,
+    [data-theme="dark"] .form-control,
+    [data-theme="dark"] .search-wrap input {
+      border-color: var(--border);
+    }
+    [data-theme="dark"] thead th {
+      background: var(--surface2);
+      color: var(--text3);
+      border-bottom-color: var(--border);
+    }
+    [data-theme="dark"] tbody tr:hover td {
+      background: rgba(255,255,255,0.03);
+    }
+    [data-theme="dark"] .btn-outline:hover,
+    [data-theme="dark"] .notif-btn:hover,
+    [data-theme="dark"] .btn-ghost:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+    [data-theme="dark"] .badge-inactive {
+      background: var(--surface2);
+      color: var(--text3);
+    }
+    [data-theme="dark"] .form-control:focus,
+    [data-theme="dark"] .search-wrap input:focus,
+    [data-theme="dark"] .confirm-step2-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(96,165,250,0.16);
+    }
+
   </style>
 </head>
 <body>
@@ -432,6 +523,10 @@
         <select id="filter-depto" class="form-control" style="width:180px;padding:8px 12px;font-size:13px;" onchange="filtrarUsuarios()">
           <option value="">Todos los departamentos</option>
         </select>
+        <label style="display:flex;align-items:center;gap:6px;margin-left:10px;">
+          <input type="checkbox" id="show-inactive" onchange="filtrarUsuarios()">
+          <span style="font-size:12px;">Mostrar inactivos</span>
+        </label>
       </div>
     </div>
     <div class="table-wrap">
@@ -456,9 +551,7 @@
 
 </div><!-- /page -->
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAL: Crear / Editar usuario
-═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: Crear / Editar usuario -->
 <div class="modal-overlay" id="modal-usuario" onclick="if(event.target===this)cerrarModal()">
   <div class="modal">
     <div class="modal-header">
@@ -512,7 +605,6 @@
             <option value="admin">Administrador</option>
           </select>
           <div class="form-error" id="err-rol">El rol es requerido</div>
-          <!-- Bloque de permisos dinámico -->
           <div id="perms-info-box" style="display:none;" class="perms-info">
             <div class="perms-info-title">Accesos otorgados con este rol</div>
             <div class="perms-list" id="perms-list"></div>
@@ -547,9 +639,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAL: Restablecer contraseña — resultado
-═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: Restablecer contraseña — resultado -->
 <div class="modal-overlay" id="modal-nueva-pass" onclick="if(event.target===this)cerrarModalNuevaPass()">
   <div class="modal" style="max-width:460px;">
     <div class="modal-header">
@@ -565,20 +655,17 @@
         <div class="pass-val" id="nueva-pass-val">—</div>
         <div class="note">
           Comparte esta contraseña con el usuario de forma segura.
-          Se mostrara una sola vez y el usuario debera cambiarla en su proximo acceso.
+          Se mostrará una sola vez y el usuario deberá cambiarla en su próximo acceso.
         </div>
       </div>
-      <button class="btn btn-primary" style="width:100%;"
-        onclick="copiarNuevaPass()">
+      <button class="btn btn-primary" style="width:100%;" onclick="copiarNuevaPass()">
         Copiar contraseña y cerrar
       </button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAL: Confirmar eliminación — Paso 1
-═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: Confirmar eliminación — Paso 1 -->
 <div class="modal-overlay" id="modal-confirmar-paso1" onclick="if(event.target===this)cerrarConfirmPaso1()">
   <div class="modal confirm-modal">
     <div class="modal-header">
@@ -600,14 +687,12 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     MODAL: Confirmar eliminación — Paso 2 (escribir usuario)
-═══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: Confirmar eliminación — Paso 2 (escribir usuario) -->
 <div class="modal-overlay" id="modal-confirmar-paso2">
   <div class="modal confirm-modal">
     <div class="modal-header">
       <div>
-        <h2>Confirmacion final requerida</h2>
+        <h2>Confirmación final requerida</h2>
         <p>Escriba el nombre de usuario para confirmar</p>
       </div>
       <button class="modal-close" onclick="cerrarConfirmPaso2()">✕</button>
@@ -615,7 +700,7 @@
     <div class="confirm-body">
       <div class="confirm-text">
         Para eliminar definitivamente esta cuenta, escriba el nombre de usuario exacto en el campo de abajo.
-        Esta operacion notificara al administrador del sistema.
+        Esta operación notificará al administrador del sistema.
       </div>
       <div class="confirm-step2-box">
         <p>Escriba el nombre de usuario: <strong id="confirm-usuario-hint"></strong></p>
@@ -642,7 +727,7 @@
 // ══════════════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════════════
-if (!Auth.requireLogin()) throw new Error('not logged');
+Auth.requireLogin();
 renderNavbar('admin');
 
 // ── Constantes ──
@@ -698,6 +783,7 @@ let usuarioEditandoId    = null;
 let usuarioEliminandoId  = null;
 let notificaciones       = [];
 let nuevaPassActual      = '';
+let solicitudesNotificadas = new Set();
 
 // ══════════════════════════════════════════════════════════════
 //  CARGA INICIAL
@@ -721,7 +807,10 @@ async function cargarSolicitudesReset() {
     const solicitudes = await api('/usuarios/reset-solicitudes');
     solicitudes.forEach(solicitud => {
       const key = `reset-${solicitud.id}`;
-      agregarNotificacion('pass', `Solicitud de nueva contraseña: ${solicitud.nombre || solicitud.usuario} (@${solicitud.usuario})`, key);
+      if (!solicitudesNotificadas.has(key)) {
+        solicitudesNotificadas.add(key);
+        agregarNotificacion('pass', `🔑 Solicitud de nueva contraseña: ${solicitud.nombre || solicitud.usuario} (@${solicitud.usuario})`);
+      }
     });
   } catch (e) {
     console.warn('No se pudo cargar solicitudes de recuperación:', e.message);
@@ -764,11 +853,13 @@ function filtrarUsuarios() {
   const q     = document.getElementById('search-input').value.toLowerCase().trim();
   const depto = document.getElementById('filter-depto').value;
   const rol   = document.getElementById('filter-rol').value;
+  const showInactive = document.getElementById('show-inactive').checked;
   const filtrados = usuarios.filter(u => {
     const matchQ = !q || (u.nombre||'').toLowerCase().includes(q) || (u.usuario||'').toLowerCase().includes(q);
     const matchD = !depto || u.departamento === depto;
     const matchR = !rol   || u.rol === rol;
-    return matchQ && matchD && matchR;
+    const matchEstado = showInactive ? true : (u.activo !== false);
+    return matchQ && matchD && matchR && matchEstado;
   });
   renderTabla(filtrados);
 }
@@ -832,7 +923,7 @@ function renderTabla(lista) {
           <button class="btn btn-sm btn-outline" onclick="abrirModalEditar(${u.id})" title="Editar usuario">
             Editar
           </button>
-          <button class="btn btn-sm btn-outline" onclick="restablecerPassword(${u.id}, '${escHtml(u.nombre)}', '${escHtml(u.usuario)}')" title="Restablecer contrasena">
+          <button class="btn btn-sm btn-outline" onclick="restablecerPassword(${u.id}, '${escHtml(u.nombre)}', '${escHtml(u.usuario)}')" title="Restablecer contraseña">
             Clave
           </button>
           <button class="btn btn-sm btn-outline" onclick="toggleActivo(${u.id})" title="${activo ? 'Desactivar cuenta' : 'Activar cuenta'}"
@@ -1004,19 +1095,16 @@ async function restablecerPassword(id, nombre, usuarioLogin) {
     const res = await api(`/usuarios/${id}/reset-password`, { method: 'POST' });
     const nuevaPass = res.nueva_password;
 
-    // Guardar globalmente para el botón de copiar
     nuevaPassActual = nuevaPass;
 
-    // Mostrar en modal
     document.getElementById('nueva-pass-subtitulo').textContent = `Para el usuario: ${nombre} (@${usuarioLogin})`;
     document.getElementById('nueva-pass-val').textContent = nuevaPass;
     document.getElementById('modal-nueva-pass').classList.add('open');
 
-    // Notificar al admin
-    agregarNotificacion('pass', `Contrasena restablecida para "${nombre}" (@${usuarioLogin})`);
+    agregarNotificacion('pass', `Contraseña restablecida para "${nombre}" (@${usuarioLogin})`);
 
   } catch (e) {
-    showToast('Error al restablecer contrasena: ' + e.message, 'error');
+    showToast('Error al restablecer contraseña: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'Clave';
@@ -1032,7 +1120,7 @@ function copiarNuevaPass() {
   if (!nuevaPassActual) return;
   navigator.clipboard.writeText(nuevaPassActual).catch(() => {});
   cerrarModalNuevaPass();
-  showToast('Contrasena copiada al portapapeles.', 'success');
+  showToast('Contraseña copiada al portapapeles.', 'success');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1098,20 +1186,36 @@ function cerrarConfirmPaso2() {
 
 async function confirmarEliminar() {
   if (!usuarioEliminandoId) return;
-  const u   = usuarios.find(x => x.id === usuarioEliminandoId);
+
+  const id = usuarioEliminandoId;
+  const u = usuarios.find(x => x.id === id);
+  const input = (document.getElementById('confirm-usuario-input').value || '').trim();
   const btn = document.getElementById('btn-confirmar-eliminar-final');
+  const txtOriginal = btn.textContent;
+
+  if (!u) {
+    showToast('No se encontró el usuario a eliminar.', 'error');
+    return;
+  }
+
+  if (input !== u.usuario) {
+    showToast('El nombre de usuario no coincide.', 'error');
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = 'Eliminando...';
+
   try {
-    await api(`/usuarios/${usuarioEliminandoId}`, { method: 'DELETE' });
-    agregarNotificacion('delete', `Cuenta de "${u ? u.nombre : 'usuario'}" fue eliminada permanentemente`);
+    await api(`/usuarios/${id}`, { method: 'DELETE' });
+    agregarNotificacion('delete', `Cuenta de "${u.nombre}" fue eliminada permanentemente`);
     showToast('Cuenta eliminada permanentemente.', 'success');
     cerrarConfirmPaso2();
     await cargarUsuarios();
   } catch (e) {
     showToast('Error al eliminar: ' + e.message, 'error');
     btn.disabled = false;
-    btn.textContent = 'Eliminar cuenta permanentemente';
+    btn.textContent = txtOriginal;
   }
 }
 
@@ -1221,6 +1325,8 @@ function hashStr(str) {
 //  ARRANQUE
 // ══════════════════════════════════════════════════════════════
 cargarUsuarios();
+cargarSolicitudesReset();
+setInterval(cargarSolicitudesReset, 30000);
 </script>
 </body>
 </html>

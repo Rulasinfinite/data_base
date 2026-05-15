@@ -274,6 +274,214 @@
     .too-many-row input:focus { border-color: var(--warning); }
 
     @media (max-width: 900px) { .app-layout { grid-template-columns: 1fr; } .results-grid { grid-template-columns: 1fr 1fr; } }
+
+    /* ── Dark mode ── */
+    /* Support both class-based (body.dark / html.dark / data-theme="dark") and prefers-color-scheme */
+    @media (prefers-color-scheme: dark) { :root { --dm: 1; } }
+    body.dark, body[data-theme="dark"], html.dark, html[data-theme="dark"],
+    .dark body, [data-theme="dark"] body { --dm: 1; }
+
+    body.dark .page, body[data-theme="dark"] .page,
+    html.dark .page, html[data-theme="dark"] .page,
+    .dark .page, [data-bs-theme="dark"] .page,
+    .dark-mode .page {
+      /* Las variables se sobreescriben via selector en el bloque siguiente */
+    }
+
+    /* Selector universal para dark mode: detectamos por clase en body o html */
+    .dark, [data-theme="dark"], [data-bs-theme="dark"], .dark-mode {
+      --gray-50:  #1a1f2e;
+      --gray-100: #1e2535;
+      --gray-200: #2a3347;
+      --gray-300: #374155;
+      --gray-400: #6b7a99;
+      --gray-500: #8892aa;
+      --gray-600: #a0aabf;
+      --gray-700: #c8d0e0;
+      --gray-800: #e2e8f0;
+      --gray-900: #f1f5f9;
+      --primary-light: #1e2d4a;
+      --success-light: #14291e;
+      --warning-light: #2a2010;
+      --danger-light:  #2a1414;
+    }
+
+    /* Step cards dark */
+    .dark .step-card, [data-theme="dark"] .step-card, [data-bs-theme="dark"] .step-card, .dark-mode .step-card {
+      background: #1e2535; border-color: #2a3347; color: #e2e8f0;
+    }
+    .dark .step-card.active, [data-theme="dark"] .step-card.active,
+    [data-bs-theme="dark"] .step-card.active, .dark-mode .step-card.active {
+      background: #1a2540; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+    }
+    .dark .step-card.completed, [data-theme="dark"] .step-card.completed,
+    [data-bs-theme="dark"] .step-card.completed, .dark-mode .step-card.completed {
+      background: #14291e; border-color: var(--success);
+    }
+    .dark .step-card .step-title, [data-theme="dark"] .step-card .step-title,
+    [data-bs-theme="dark"] .step-card .step-title, .dark-mode .step-card .step-title { color: #e2e8f0; }
+    .dark .step-card .step-icon, [data-theme="dark"] .step-card .step-icon,
+    [data-bs-theme="dark"] .step-card .step-icon, .dark-mode .step-card .step-icon { background: #2a3347; }
+    .dark .step-card.active .step-icon, [data-theme="dark"] .step-card.active .step-icon,
+    [data-bs-theme="dark"] .step-card.active .step-icon, .dark-mode .step-card.active .step-icon { background: #1e2d4a; }
+    .dark .step-connector, [data-theme="dark"] .step-connector,
+    [data-bs-theme="dark"] .step-connector, .dark-mode .step-connector { background: #2a3347; }
+
+    /* Main panel dark */
+    .dark .main-panel, [data-theme="dark"] .main-panel,
+    [data-bs-theme="dark"] .main-panel, .dark-mode .main-panel {
+      background: #1e2535; border-color: #2a3347;
+    }
+
+    /* Drop zone dark */
+    .dark .drop-zone, [data-theme="dark"] .drop-zone,
+    [data-bs-theme="dark"] .drop-zone, .dark-mode .drop-zone {
+      background: #1a1f2e; border-color: #374155;
+    }
+    .dark .drop-zone:hover, .dark .drop-zone.drag-over,
+    [data-theme="dark"] .drop-zone:hover, [data-theme="dark"] .drop-zone.drag-over,
+    [data-bs-theme="dark"] .drop-zone:hover, [data-bs-theme="dark"] .drop-zone.drag-over,
+    .dark-mode .drop-zone:hover, .dark-mode .drop-zone.drag-over {
+      border-color: var(--primary); background: #1e2d4a;
+    }
+    .dark .drop-text, [data-theme="dark"] .drop-text,
+    [data-bs-theme="dark"] .drop-text, .dark-mode .drop-text { color: #c8d0e0; }
+
+    /* Select buttons dark */
+    .dark .select-btn, [data-theme="dark"] .select-btn,
+    [data-bs-theme="dark"] .select-btn, .dark-mode .select-btn {
+      background: #1a1f2e; border-color: #2a3347;
+    }
+    .dark .select-btn:hover, [data-theme="dark"] .select-btn:hover,
+    [data-bs-theme="dark"] .select-btn:hover, .dark-mode .select-btn:hover {
+      border-color: var(--primary); background: #1e2d4a;
+    }
+    .dark .select-btn .sb-label, [data-theme="dark"] .select-btn .sb-label,
+    [data-bs-theme="dark"] .select-btn .sb-label, .dark-mode .select-btn .sb-label { color: #c8d0e0; }
+
+    /* Input dark */
+    .dark input[type="text"], [data-theme="dark"] input[type="text"],
+    [data-bs-theme="dark"] input[type="text"], .dark-mode input[type="text"] {
+      background: #1a1f2e; border-color: #374155; color: #e2e8f0;
+    }
+    .dark input[type="text"]:focus, [data-theme="dark"] input[type="text"]:focus,
+    [data-bs-theme="dark"] input[type="text"]:focus, .dark-mode input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+    .dark input[type="text"]::placeholder, [data-theme="dark"] input[type="text"]::placeholder,
+    [data-bs-theme="dark"] input[type="text"]::placeholder, .dark-mode input[type="text"]::placeholder {
+      color: #6b7a99;
+    }
+
+    /* Progress section dark */
+    .dark .progress-track, [data-theme="dark"] .progress-track,
+    [data-bs-theme="dark"] .progress-track, .dark-mode .progress-track { background: #2a3347; }
+    .dark .processing-file-list, [data-theme="dark"] .processing-file-list,
+    [data-bs-theme="dark"] .processing-file-list, .dark-mode .processing-file-list {
+      background: #1a1f2e !important; border-color: #2a3347 !important; color: #a0aabf;
+    }
+
+    /* Live counters dark */
+    .dark .live-counter, [data-theme="dark"] .live-counter,
+    [data-bs-theme="dark"] .live-counter, .dark-mode .live-counter { background: #1a1f2e; }
+    .dark .live-counter .val, [data-theme="dark"] .live-counter .val,
+    [data-bs-theme="dark"] .live-counter .val, .dark-mode .live-counter .val { color: #e2e8f0; }
+
+    /* Results grid dark */
+    .dark .result-card, [data-theme="dark"] .result-card,
+    [data-bs-theme="dark"] .result-card, .dark-mode .result-card { background: #1a1f2e; }
+    .dark .result-card.ok,   [data-theme="dark"] .result-card.ok,
+    [data-bs-theme="dark"] .result-card.ok,   .dark-mode .result-card.ok   { background: #14291e; }
+    .dark .result-card.warn, [data-theme="dark"] .result-card.warn,
+    [data-bs-theme="dark"] .result-card.warn, .dark-mode .result-card.warn { background: #2a2010; }
+    .dark .result-card.err,  [data-theme="dark"] .result-card.err,
+    [data-bs-theme="dark"] .result-card.err,  .dark-mode .result-card.err  { background: #2a1414; }
+    .dark .result-card.info, [data-theme="dark"] .result-card.info,
+    [data-bs-theme="dark"] .result-card.info, .dark-mode .result-card.info { background: #1e2d4a; }
+
+    /* Donut dark */
+    .dark .donut::after, [data-theme="dark"] .donut::after,
+    [data-bs-theme="dark"] .donut::after, .dark-mode .donut::after { background: #1e2535; }
+
+    /* Buttons dark */
+    .dark .btn-outline, [data-theme="dark"] .btn-outline,
+    [data-bs-theme="dark"] .btn-outline, .dark-mode .btn-outline {
+      background: #1e2535; border-color: #374155; color: #c8d0e0;
+    }
+    .dark .btn-outline:hover, [data-theme="dark"] .btn-outline:hover,
+    [data-bs-theme="dark"] .btn-outline:hover, .dark-mode .btn-outline:hover {
+      background: #2a3347;
+    }
+    .dark .btn-ghost, [data-theme="dark"] .btn-ghost,
+    [data-bs-theme="dark"] .btn-ghost, .dark-mode .btn-ghost { color: #a0aabf; }
+    .dark .btn-ghost:hover, [data-theme="dark"] .btn-ghost:hover,
+    [data-bs-theme="dark"] .btn-ghost:hover, .dark-mode .btn-ghost:hover { background: #2a3347; }
+
+    /* Review panel dark */
+    .dark .review-file-list, [data-theme="dark"] .review-file-list,
+    [data-bs-theme="dark"] .review-file-list, .dark-mode .review-file-list {
+      background: #1a1f2e; border-color: #2a3347;
+    }
+    .dark .review-file-item, [data-theme="dark"] .review-file-item,
+    [data-bs-theme="dark"] .review-file-item, .dark-mode .review-file-item { border-color: #2a3347; }
+    .dark .review-manual-box, [data-theme="dark"] .review-manual-box,
+    [data-bs-theme="dark"] .review-manual-box, .dark-mode .review-manual-box {
+      background: #1a1f2e; border-color: #2a3347;
+    }
+    .dark .too-many-box, [data-theme="dark"] .too-many-box,
+    [data-bs-theme="dark"] .too-many-box, .dark-mode .too-many-box {
+      background: #2a2010; border-color: #78450a;
+    }
+    .dark .too-many-row input, [data-theme="dark"] .too-many-row input,
+    [data-bs-theme="dark"] .too-many-row input, .dark-mode .too-many-row input {
+      background: #1a1f2e; border-color: #374155; color: #e2e8f0;
+    }
+    .dark .review-badge, [data-theme="dark"] .review-badge,
+    [data-bs-theme="dark"] .review-badge, .dark-mode .review-badge { background: #1e2d4a; }
+
+    /* Page header dark */
+    .dark .page-header h1, [data-theme="dark"] .page-header h1,
+    [data-bs-theme="dark"] .page-header h1, .dark-mode .page-header h1 { color: #e2e8f0; }
+
+    /* Modal dark */
+    .dark .modal-content, [data-theme="dark"] .modal-content,
+    [data-bs-theme="dark"] .modal-content, .dark-mode .modal-content {
+      background: #1e2535; color: #c8d0e0;
+    }
+    .dark .modal-body th, [data-theme="dark"] .modal-body th,
+    [data-bs-theme="dark"] .modal-body th, .dark-mode .modal-body th {
+      background: #1a1f2e; color: #8892aa; border-color: #2a3347;
+    }
+    .dark .modal-body td, [data-theme="dark"] .modal-body td,
+    [data-bs-theme="dark"] .modal-body td, .dark-mode .modal-body td { border-color: #2a3347; }
+    .dark .modal-body tr:hover td, [data-theme="dark"] .modal-body tr:hover td,
+    [data-bs-theme="dark"] .modal-body tr:hover td, .dark-mode .modal-body tr:hover td { background: #1a1f2e; }
+    .dark .modal-summary, [data-theme="dark"] .modal-summary,
+    [data-bs-theme="dark"] .modal-summary, .dark-mode .modal-summary { background: #1a1f2e; color: #a0aabf; }
+    .dark .modal-close, [data-theme="dark"] .modal-close,
+    [data-bs-theme="dark"] .modal-close, .dark-mode .modal-close {
+      background: #2a3347; border-color: #374155; color: #c8d0e0;
+    }
+    .dark .file-name, [data-theme="dark"] .file-name,
+    [data-bs-theme="dark"] .file-name, .dark-mode .file-name { color: #c8d0e0; }
+
+    /* Scan result dark */
+    .dark .scan-result .label, [data-theme="dark"] .scan-result .label,
+    [data-bs-theme="dark"] .scan-result .label, .dark-mode .scan-result .label { color: #8892aa; }
+
+    /* Summary row dark */
+    .dark .summary-row, [data-theme="dark"] .summary-row,
+    [data-bs-theme="dark"] .summary-row, .dark-mode .summary-row { color: #8892aa; }
+    .dark #sum-carpeta, [data-theme="dark"] #sum-carpeta,
+    [data-bs-theme="dark"] #sum-carpeta, .dark-mode #sum-carpeta { color: #e2e8f0 !important; }
+    .dark #sum-duracion, [data-theme="dark"] #sum-duracion,
+    [data-bs-theme="dark"] #sum-duracion, .dark-mode #sum-duracion { color: #e2e8f0 !important; }
+
+    /* Progress sub/label dark */
+    .dark #progress-sub, [data-theme="dark"] #progress-sub,
+    [data-bs-theme="dark"] #progress-sub, .dark-mode #progress-sub { color: #6b7a99; }
+    .dark #progress-label, [data-theme="dark"] #progress-label,
+    [data-bs-theme="dark"] #progress-label, .dark-mode #progress-label { color: #a0aabf; }
   </style>
 </head>
 <body>
@@ -283,12 +491,21 @@
 <div class="page">
   <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
     <div>
-      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;">📥 Importar certificados</h1>
+      <h1 style="font-size:22px;font-weight:700;color:var(--gray-800);margin:0;display:flex;align-items:center;gap:10px;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Importar certificados
+      </h1>
       <p style="font-size:13px;color:var(--gray-500);margin:4px 0 0;">Selecciona una carpeta y el sistema procesará los archivos automáticamente</p>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;">💻 Detalles técnicos</button>
-      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;">📋 Historial</button>
+      <button class="btn btn-ghost" onclick="toggleDrawer()" style="font-size:13px;display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Detalles técnicos
+      </button>
+      <button class="btn btn-ghost" onclick="cargarHistorial()" style="font-size:13px;display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Historial
+      </button>
     </div>
   </div>
 
@@ -296,28 +513,36 @@
     <!-- ── Pasos ── -->
     <div class="steps-panel">
       <div class="step-card active" id="step-select">
-        <div class="step-icon">📁</div>
+        <div class="step-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
         <div class="step-label">Paso 1</div>
         <div class="step-title">Seleccionar carpeta</div>
         <div class="step-subtitle">Elige la carpeta con los certificados</div>
       </div>
       <div class="step-connector"></div>
       <div class="step-card" id="step-review">
-        <div class="step-icon">🔍</div>
+        <div class="step-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
         <div class="step-label">Paso 2</div>
         <div class="step-title">Revisar</div>
         <div class="step-subtitle">Confirma los archivos encontrados</div>
       </div>
       <div class="step-connector"></div>
       <div class="step-card" id="step-import">
-        <div class="step-icon">⬆️</div>
+        <div class="step-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
         <div class="step-label">Paso 3</div>
         <div class="step-title">Importar</div>
         <div class="step-subtitle">Inicia la carga a la base de datos</div>
       </div>
       <div class="step-connector"></div>
       <div class="step-card" id="step-results">
-        <div class="step-icon">📊</div>
+        <div class="step-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
         <div class="step-label">Paso 4</div>
         <div class="step-title">Resultados</div>
         <div class="step-subtitle">Revisa el resumen final</div>
@@ -341,7 +566,9 @@
 
         <!-- Drop zone -->
         <div class="drop-zone" id="drop-zone">
-          <div class="drop-icon">📂</div>
+          <div class="drop-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-400)"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
           <p class="drop-text">Arrastra tu carpeta aquí</p>
           <p class="drop-hint">o usa los botones de abajo para seleccionar</p>
         </div>
@@ -349,12 +576,16 @@
         <!-- Botones de selección -->
         <div class="select-btns">
           <button class="select-btn" onclick="document.getElementById('folder-input').click()">
-            <span class="sb-icon">🗂️</span>
+            <span class="sb-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            </span>
             <span class="sb-label">Seleccionar carpeta</span>
             <span class="sb-hint">Hasta 1000 archivos</span>
           </button>
           <button class="select-btn" onclick="document.getElementById('files-input').click()">
-            <span class="sb-icon">📄</span>
+            <span class="sb-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </span>
             <span class="sb-label">Seleccionar archivos</span>
             <span class="sb-hint">Excel individuales</span>
           </button>
@@ -372,7 +603,10 @@
                  placeholder="O pega la ruta directamente: C:\Instrumentos\2024\..."
                  style="flex:1;padding:10px 14px;border:1px solid var(--gray-300);border-radius:10px;font-size:13px;"
                  onkeydown="if(event.key==='Enter') agregarYEscanear()">
-          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;">🔍 Escanear</button>
+          <button class="btn btn-primary" onclick="agregarYEscanear()" style="white-space:nowrap;display:inline-flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Escanear
+          </button>
         </div>
       </div>
 
@@ -381,7 +615,7 @@
         <div class="review-panel">
           <div class="review-header">
             <div style="display:flex;align-items:center;">
-              <div style="font-weight:600;font-size:15px;color:var(--gray-800);">📂 Archivos detectados</div>
+              <div style="font-weight:600;font-size:15px;color:var(--gray-800);display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Archivos detectados</div>
               <span class="review-badge" id="review-badge-count">0 archivos</span>
             </div>
             <button class="btn btn-ghost" onclick="resetear()" style="font-size:13px;">✕ Cancelar</button>
@@ -389,16 +623,19 @@
 
           <!-- Aviso: más de 50 archivos -->
           <div id="review-too-many" style="display:none;" class="too-many-box">
-            <div class="tm-title">⚠️ Carpeta grande detectada (+5000 archivos)</div>
+            <div class="tm-title">Carpeta grande detectada (+1000 archivos)</div>
             <p class="tm-desc">
-              Esta carpeta tiene demasiados archivos para seleccionarlos uno a uno.<br>
+              Esta carpeta tiene demasiados archivos para procesarlos en el navegador.<br>
               Para importaciones masivas, escribe o pega la ruta completa de la carpeta:
             </p>
             <div class="too-many-row">
               <input type="text" id="review-ruta-masiva"
                      placeholder="Ej: C:\Instrumentos\2024\DUREZA"
                      onkeydown="if(event.key==='Enter') usarRutaMasiva()">
-              <button class="btn btn-primary" onclick="usarRutaMasiva()">🔍 Escanear</button>
+              <button class="btn btn-primary" onclick="usarRutaMasiva()" style="display:inline-flex;align-items:center;gap:6px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Escanear
+              </button>
             </div>
           </div>
 
@@ -408,9 +645,12 @@
 
             <div class="review-scan-footer">
               <div class="review-scan-row">
-                <button class="btn btn-primary" style="flex:1;" onclick="escanearDesdeReview()">🔍 Escanear archivos</button>
+                <button class="btn btn-primary" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;" onclick="escanearDesdeReview()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  Escanear archivos
+                </button>
                 <button class="review-manual-toggle" onclick="toggleManualPath()" id="btn-manual-toggle">
-                  📁 Especificar ruta manualmente
+                  Especificar ruta manualmente
                 </button>
               </div>
               <!-- Ruta manual: solo visible si el usuario la pide -->
@@ -420,7 +660,10 @@
                   <input type="text" id="review-ruta-confirm"
                          placeholder="Ej: C:\Instrumentos\2024\DUREZA"
                          onkeydown="if(event.key==='Enter') escanearDesdeReview(true)">
-                  <button class="btn btn-primary" onclick="escanearDesdeReview(true)">🔍 Escanear</button>
+                  <button class="btn btn-primary" onclick="escanearDesdeReview(true)" style="display:inline-flex;align-items:center;gap:6px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Escanear
+                  </button>
                 </div>
               </div>
             </div>
@@ -436,7 +679,10 @@
         </div>
         <div style="display:flex;gap:8px;justify-content:center;margin-top:20px;">
           <button class="btn btn-outline" onclick="resetear()">Cancelar</button>
-          <button class="btn btn-primary" id="btn-iniciar-import" onclick="iniciarImportacion()">⬆️ Iniciar importación</button>
+          <button class="btn btn-primary" id="btn-iniciar-import" onclick="iniciarImportacion()" style="display:inline-flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Iniciar importación
+          </button>
         </div>
       </div>
 
@@ -463,7 +709,9 @@
       <div id="state-results" style="display:none;">
         <div style="padding:24px 28px 0;">
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-            <span style="font-size:20px;">✅</span>
+            <span style="width:36px;height:36px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
             <div>
               <div style="font-weight:600;">Importación completada</div>
               <div style="font-size:12px;color:var(--gray-500);" id="results-time">—</div>
@@ -472,10 +720,10 @@
         </div>
         <div class="instruction-text" id="results-instruction">Haz clic en las tarjetas para ver la lista de archivos</div>
         <div class="results-grid">
-          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint"> Toca para ver lista</div></div>
-          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint"> Toca para ver cuáles</div></div>
-          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint"> Toca para ver motivos</div></div>
-          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint"> Toca para ver detalles</div></div>
+          <div class="result-card info clickable" onclick="showFileList('total')"><div class="val" id="res-total">0</div><div class="lbl">Total archivos</div><div class="card-hint">Toca para ver lista</div></div>
+          <div class="result-card ok clickable" onclick="showFileList('ok')"><div class="val" id="res-ok">0</div><div class="lbl">Importados</div><div class="card-hint">Toca para ver cuáles</div></div>
+          <div class="result-card warn clickable" onclick="showFileList('warn')"><div class="val" id="res-warn">0</div><div class="lbl">Advertencias</div><div class="card-hint">Toca para ver motivos</div></div>
+          <div class="result-card err clickable" onclick="showFileList('err')"><div class="val" id="res-err">0</div><div class="lbl">Errores</div><div class="card-hint">Toca para ver detalles</div></div>
         </div>
         <div class="detail-list" id="detail-list" style="display:none;"></div>
         <div class="donut-wrap">
@@ -483,14 +731,14 @@
             <div class="donut-val" id="donut-val">0%</div>
           </div>
           <div class="donut-legend">
-            <div>🟢 Éxito: <b id="leg-ok">0</b></div>
-            <div>🟡 Advertencias: <b id="leg-warn">0</b></div>
-            <div>🔴 Errores: <b id="leg-err">0</b></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--success);display:inline-block;flex-shrink:0;"></span> Éxito: <b id="leg-ok">0</b></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--warning);display:inline-block;flex-shrink:0;"></span> Advertencias: <b id="leg-warn">0</b></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--danger);display:inline-block;flex-shrink:0;"></span> Errores: <b id="leg-err">0</b></div>
           </div>
         </div>
         <div class="summary-row">
-          <div style="flex:1;">📁 Carpeta: <span id="sum-carpeta" style="font-weight:600;color:var(--gray-800);font-size:13px;word-break:break-all;">—</span></div>
-          <div style="white-space:nowrap;">⏱ <span id="sum-duracion" style="font-weight:600;color:var(--gray-800);">—</span></div>
+          <div style="flex:1;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-400);flex-shrink:0;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Carpeta: <span id="sum-carpeta" style="font-weight:600;color:var(--gray-800);font-size:13px;word-break:break-all;">—</span></div>
+          <div style="white-space:nowrap;display:flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gray-400);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span id="sum-duracion" style="font-weight:600;color:var(--gray-800);">—</span></div>
         </div>
         <div style="padding:0 28px 24px;display:flex;gap:8px;">
           <button class="btn btn-primary" onclick="resetear()">Nueva importación</button>
@@ -506,7 +754,10 @@
 <div class="drawer-overlay" id="drawer-overlay" onclick="if(event.target===this) toggleDrawer()">
   <div class="drawer" id="drawer">
     <div class="drawer-header">
-      <h3>💻 Terminal de importación</h3>
+      <h3 style="display:flex;align-items:center;gap:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        Terminal de importación
+      </h3>
       <button class="drawer-close" onclick="toggleDrawer()">✕ Cerrar</button>
     </div>
     <div id="drawer-log">
@@ -631,7 +882,7 @@ function mostrarReviewArchivos(archivos, carpetaRaiz = '', rutaCompleta = '') {
 
   // Ocultar campo manual al entrar
   document.getElementById('review-manual-box').style.display = 'none';
-  document.getElementById('btn-manual-toggle').textContent = '📁 Especificar ruta manualmente';
+  document.getElementById('btn-manual-toggle').textContent = 'Especificar ruta manualmente';
 
   const excedeLimite = archivos.length > LIMITE_ARCHIVOS;
   const archivosValidos = archivos.slice(0, LIMITE_ARCHIVOS);
@@ -658,15 +909,13 @@ function mostrarReviewArchivos(archivos, carpetaRaiz = '', rutaCompleta = '') {
     const listEl = document.getElementById('review-file-list');
     if (archivosValidos.length === 0) {
       listEl.innerHTML = `<div style="padding:20px;text-align:center;color:var(--gray-400);font-size:13px;">
-        ⚠️ No se encontraron archivos Excel (.xlsx/.xls).
+        No se encontraron archivos Excel (.xlsx/.xls).
       </div>`;
     } else {
       listEl.innerHTML = archivosValidos.map((f, i) => {
-        const icon = f.tipo === 'pdf' ? '📄' : '📊';
         const badgeClass = f.tipo === 'pdf' ? 'badge-pdf' : 'badge-excel';
         return `<div class="review-file-item">
           <span style="color:var(--gray-400);font-size:11px;min-width:20px;">${i + 1}</span>
-          <span>${icon}</span>
           <span style="font-family:monospace;color:var(--gray-700);font-size:12px;">${f.nombre}</span>
           <span class="file-badge ${badgeClass}">${f.tipo === 'pdf' ? 'PDF' : 'EXCEL'}</span>
         </div>`;
@@ -685,9 +934,9 @@ function mostrarReviewArchivos(archivos, carpetaRaiz = '', rutaCompleta = '') {
     }
 
     if (rutaCompleta) {
-      logTerminal(`📁 Ruta detectada: ${rutaCompleta} — ${archivosValidos.length} archivos listos para escanear.`, 'ok');
+      logTerminal(`Ruta detectada: ${rutaCompleta} — ${archivosValidos.length} archivos listos para escanear.`, 'ok');
     } else {
-      logTerminal(`📂 ${archivosValidos.length} archivos detectados. Listo para escanear.`, 'info');
+      logTerminal(`${archivosValidos.length} archivos detectados. Listo para escanear.`, 'info');
     }
   }
 
@@ -701,7 +950,7 @@ function toggleManualPath(forceOpen = false) {
   const visible = box.style.display !== 'none';
   if (forceOpen || visible) {
     box.style.display = forceOpen ? '' : 'none';
-    btn.textContent = (forceOpen || !visible) ? '✕ Cerrar ruta manual' : '📁 Especificar ruta manualmente';
+    btn.textContent = (forceOpen || !visible) ? '✕ Cerrar ruta manual' : 'Especificar ruta manualmente';
   } else {
     box.style.display = '';
     btn.textContent = '✕ Cerrar ruta manual';
@@ -943,8 +1192,8 @@ async function subirEImportar() {
   errores = [];
   _archivosYaMostrados.clear();
 
-  const totalEnviar      = archivosSeleccionados.length;
-  const archivosACopiar  = [...archivosSeleccionados];
+  const totalEnviar     = archivosSeleccionados.length;
+  const archivosACopiar = [...archivosSeleccionados];
 
   // ── Obtener token ─────────────────────────────────────────
   let token = '';
@@ -954,78 +1203,152 @@ async function subirEImportar() {
       : (localStorage.getItem('token') || localStorage.getItem('sidec_token') || '');
   } catch { token = ''; }
 
-  const authHeader = token ? { 'Authorization': 'Bearer ' + token } : {};
-
-  // ── Verificar que el endpoint existe antes de cambiar estado ─
+  // ── Verificar sesión ─────────────────────────────────────
   try {
     const check = await fetch('/api/admin/verificar-python', {
-      method: 'GET', headers: authHeader
+      method: 'GET',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
     });
-    // Si llegamos aquí, el servidor responde → OK para continuar
     if (check.status === 401 || check.status === 403) {
       throw new Error('No autorizado (sesión caducada). Recarga la página.');
     }
   } catch (checkErr) {
     if (checkErr.message.includes('autorizado') || checkErr.message.includes('sesión')) {
-      mostrarErrorScan('❌ ' + checkErr.message);
+      mostrarErrorScan(checkErr.message);
       importando = false; return;
     }
-    // No bloquear si el check falla por otro motivo (red, etc.)
   }
 
+  // ── Inicializar UI de progreso ────────────────────────────
   setState('processing');
-  document.getElementById('progress-fill').style.width = '0%';
-  document.getElementById('progress-pct').textContent  = '0%';
-  document.getElementById('progress-label').textContent = 'Subiendo archivos...';
-  document.getElementById('progress-sub').textContent   =
-    `Enviando ${totalEnviar} archivo(s) al servidor...`;
-  document.getElementById('live-total').textContent = '0';
-  document.getElementById('live-ok').textContent    = '0';
-  document.getElementById('live-err').textContent   = '0';
-  document.getElementById('processing-file-list').innerHTML =
-    '<div style="color:#9ca3af;font-style:italic;padding:4px 0;">⏳ Enviando archivos al servidor...</div>';
+  const fillEl  = document.getElementById('progress-fill');
+  const pctEl   = document.getElementById('progress-pct');
+  const labelEl = document.getElementById('progress-label');
+  const subEl   = document.getElementById('progress-sub');
+  const listEl  = document.getElementById('processing-file-list');
 
-  logTerminal(`▶ Subiendo ${totalEnviar} archivo(s) individual(es)...`, 'info');
+  function setProgress(pct, label, sub) {
+    fillEl.style.width   = pct + '%';
+    pctEl.textContent    = Math.round(pct) + '%';
+    if (label) labelEl.textContent = label;
+    if (sub)   subEl.textContent   = sub;
+  }
+
+  setProgress(0, 'Preparando archivos...', `${totalEnviar} archivo(s) listos para enviar`);
+  listEl.innerHTML = '<div style="color:var(--gray-400);font-style:italic;padding:6px 0;">Iniciando transferencia...</div>';
+  logTerminal(`▶ Subiendo ${totalEnviar} archivo(s) al servidor...`, 'info');
   logSepTerminal();
+
+  // ── Mostrar lista de archivos que se van a subir ──────────
+  listEl.innerHTML = archivosACopiar.slice(0, 100).map(f => `
+    <div style="padding:4px 0;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:8px;">
+      <span style="color:var(--gray-300);font-size:10px;">●</span>
+      <span style="font-family:monospace;font-size:12px;color:var(--gray-500);">${f.name}</span>
+    </div>`).join('') + (archivosACopiar.length > 100
+      ? `<div style="padding:6px 0;color:var(--gray-400);font-size:11px;">... y ${archivosACopiar.length - 100} más</div>` : '');
 
   try {
     const formData = new FormData();
     for (const f of archivosACopiar) formData.append('archivos', f);
 
-    document.getElementById('progress-label').textContent = 'Procesando archivos...';
-    document.getElementById('progress-sub').textContent   = 'Python está procesando los archivos...';
+    // ── XHR para progreso de upload real ──────────────────────
+    const data = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
 
-    const resp = await fetch('/api/admin/importar/upload', {
-      method: 'POST',
-      headers: authHeader,      // sin Content-Type → el browser lo pone con boundary automático
-      body: formData,
+      // Fase 1: Upload 0% → 45%
+      xhr.upload.onprogress = (e) => {
+        if (!e.lengthComputable) return;
+        const uploadPct = (e.loaded / e.total) * 45;
+        setProgress(uploadPct,
+          'Enviando archivos...',
+          `${Math.round((e.loaded / e.total) * 100)}% transferido (${(e.loaded / 1048576).toFixed(1)} MB de ${(e.total / 1048576).toFixed(1)} MB)`
+        );
+      };
+
+      // Fase 1 terminada: empieza el procesamiento en Python (45% → 95%)
+      xhr.upload.onloadend = () => {
+        setProgress(45, 'Procesando archivos...', 'Python está procesando los archivos...');
+        listEl.innerHTML = '<div style="color:var(--gray-400);font-style:italic;padding:6px 0;display:flex;align-items:center;gap:8px;"><span class="spinner" style="border-color:rgba(37,99,235,0.2);border-top-color:var(--primary);"></span> Procesando en el servidor...</div>';
+        logTerminal('▶ Archivos recibidos. Python procesando...', 'info');
+
+        // Animación suave mientras Python trabaja (45% → 93%)
+        let fakePct = 45;
+        const fakeInterval = setInterval(() => {
+          if (fakePct >= 93) { clearInterval(fakeInterval); return; }
+          // Acelera al inicio, desacelera al final
+          const step = fakePct < 70 ? 0.8 : fakePct < 85 ? 0.3 : 0.1;
+          fakePct = Math.min(93, fakePct + step);
+          setProgress(fakePct, 'Procesando archivos...', 'Python está analizando los datos...');
+        }, 300);
+
+        // Guardar referencia para limpiarla si hay error
+        xhr._fakeInterval = fakeInterval;
+      };
+
+      xhr.onload = () => {
+        if (xhr._fakeInterval) clearInterval(xhr._fakeInterval);
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.responseText));
+          } catch {
+            reject(new Error('Respuesta del servidor inválida (no es JSON).'));
+          }
+        } else {
+          let msg = `Error HTTP ${xhr.status}`;
+          try { const j = JSON.parse(xhr.responseText); msg = j.error || j.message || msg; } catch {}
+          reject(new Error(msg));
+        }
+      };
+
+      xhr.onerror = () => {
+        if (xhr._fakeInterval) clearInterval(xhr._fakeInterval);
+        reject(new Error('Error de red. Verifica tu conexión al servidor.'));
+      };
+      xhr.ontimeout = () => {
+        if (xhr._fakeInterval) clearInterval(xhr._fakeInterval);
+        reject(new Error('Tiempo de espera agotado. El servidor tardó demasiado.'));
+      };
+
+      xhr.open('POST', '/api/admin/importar/upload');
+      if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.timeout = 600000; // 10 minutos máximo
+      xhr.send(formData);
     });
 
-    if (!resp.ok) {
-      let msg = `Error HTTP ${resp.status}`;
-      try { const j = await resp.json(); msg = j.error || j.message || msg; } catch {}
-      throw new Error(msg);
+    // ── Éxito: actualizar UI con resultados reales ────────────
+    setProgress(100, 'Completado', `${totalEnviar} archivo(s) procesados`);
+
+    // Actualizar lista con resultado real
+    const allFiles = [
+      ...(data.archivos_exitosos   || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'ok' })),
+      ...(data.archivos_omitidos   || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
+      ...(data.archivos_no_validos || []).map(f => ({ name: typeof f === 'string' ? f.split(/[\\/]/).pop() : f, type: 'warn' })),
+      ...(data.errores             || []).map(e => ({ name: (e.archivo || '').split(/[\\/]/).pop(), type: 'err' })),
+    ];
+    if (allFiles.length > 0) {
+      listEl.innerHTML = allFiles.map(f => {
+        const col = f.type === 'ok' ? 'var(--success)' : f.type === 'warn' ? 'var(--warning)' : 'var(--danger)';
+        return `<div style="padding:4px 0;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:8px;">
+          <span style="color:${col};font-size:10px;">●</span>
+          <span style="font-family:monospace;font-size:12px;">${f.name}</span>
+        </div>`;
+      }).join('');
     }
 
-    const data = await resp.json();
     lastImportData = data;
-    rutaActual = `[${totalEnviar} archivo(s) individual(es)]`;
+    rutaActual = `[${totalEnviar} archivo(s) seleccionado(s)]`;
     archivosSeleccionados = null;
     mostrarResultados(data);
 
   } catch (e) {
     console.error('[subirEImportar] Error:', e);
-    logTerminal(`❌ Error al importar: ${e.message}`, 'err');
-    // Abrir sección de terminal para que el usuario vea el detalle
-    const termSection = document.getElementById('terminal-section');
-    if (termSection) termSection.style.display = '';
-    // Volver a scan con mensaje de error visible en el panel
+    logTerminal(`Error al importar: ${e.message}`, 'err');
     archivosEncontrados = totalEnviar;
     setState('scan');
     document.getElementById('scan-count').textContent = totalEnviar;
     document.getElementById('scan-label').textContent =
       totalEnviar === 1 ? 'archivo seleccionado' : 'archivos seleccionados';
-    mostrarErrorScan('❌ ' + e.message + ' — revisa "Detalles técnicos" ↗');
+    mostrarErrorScan(e.message + ' — revisa "Detalles técnicos" para más información.');
   } finally {
     importando = false;
   }
@@ -1074,7 +1397,7 @@ async function iniciarImportacion() {
   document.getElementById('live-ok').textContent = '0';
   document.getElementById('live-err').textContent = '0';
   const fileListEl = document.getElementById('processing-file-list');
-  fileListEl.innerHTML = '<div class="placeholder-waiting" style="color:#9ca3af;font-style:italic;padding:4px 0;">⏳ Iniciando proceso...</div>';
+  fileListEl.innerHTML = '<div class="placeholder-waiting" style="color:#9ca3af;font-style:italic;padding:4px 0;">Iniciando proceso...</div>';
 
   logTerminal('▶ Iniciando importación...', 'info');
   logSepTerminal();
@@ -1149,7 +1472,7 @@ async function pollProgreso() {
     } else if (prog && prog.actual > 0 && _archivosYaMostrados.size === 0) {
       const fileList = document.getElementById('processing-file-list');
       const placeholder = fileList.querySelector('.placeholder-waiting');
-      if (placeholder) placeholder.textContent = `⏳ Procesando archivos... (${prog.actual}/${prog.total})`;
+      if (placeholder) placeholder.textContent = `Procesando archivos... (${prog.actual}/${prog.total})`;
     }
   } catch (e) {}
 }
@@ -1187,16 +1510,16 @@ function mostrarResultados(data) {
 
   const detailDiv = document.getElementById('detail-list');
   let detalles = [];
-  if (omitidos > 0)  detalles.push(`🟡 ${omitidos} archivo(s) ya estaban en la base de datos (omitidos por duplicados).`);
-  if (noCerts > 0)   detalles.push(`🟠 ${noCerts} archivo(s) no son certificados válidos (falta número de informe o datos insuficientes).`);
+  if (omitidos > 0)  detalles.push(`<span style="color:var(--warning);">●</span> ${omitidos} archivo(s) ya estaban en la base de datos (omitidos por duplicados).`);
+  if (noCerts > 0)   detalles.push(`<span style="color:var(--warning);">●</span> ${noCerts} archivo(s) no son certificados válidos (falta número de informe o datos insuficientes).`);
   if (err > 0 && data.errores) {
-    detalles.push(`🔴 ${err} archivo(s) con errores:`);
+    detalles.push(`<span style="color:var(--danger);">●</span> ${err} archivo(s) con errores:`);
     data.errores.forEach(e => {
       const nombre = e.archivo?.split(/[\\/]/).pop() || e.archivo;
-      detalles.push(`   • ${nombre}: ${e.error}`);
+      detalles.push(`&nbsp;&nbsp;&nbsp;• ${nombre}: ${e.error}`);
     });
   }
-  if (detalles.length === 0) detalles.push('✅ Todos los archivos se procesaron correctamente.');
+  if (detalles.length === 0) detalles.push('<span style="color:var(--success);">●</span> Todos los archivos se procesaron correctamente.');
   detailDiv.innerHTML = detalles.map(d => `<div class="detail-item">${d}</div>`).join('');
 
   const donut = document.getElementById('donut');
@@ -1229,7 +1552,7 @@ function mostrarResultados(data) {
   }
 
   setState('results');
-  logTerminal('✅ Importación completada.', 'ok');
+  logTerminal('Importación completada.', 'ok');
   logTerminal(`   Total: ${total} | Éxitos: ${ok} | Advertencias: ${advertencias} | Errores: ${err}`, 'info');
 }
 
@@ -1268,7 +1591,7 @@ function showFileList(type) {
   const badgeColors = { ok: 'badge-ok', warn: 'badge-warn', err: 'badge-err' };
 
   if (files.length === 0) {
-    body.innerHTML = `<div class="modal-empty">✅ No hay archivos en esta categoría.</div>`;
+    body.innerHTML = `<div class="modal-empty">No hay archivos en esta categoría.</div>`;
   } else {
     const summaryText = type === 'warn'
       ? `${files.filter(f => f.badgeLabel === 'Duplicado').length} duplicado(s), ${files.filter(f => f.badgeLabel !== 'Duplicado').length} con datos insuficientes`
@@ -1319,10 +1642,10 @@ async function cargarHistorial() {
     const data = await api('/admin/importaciones');
     if (data && data.length > 0) {
       logSepTerminal();
-      logTerminal('📋   Últimas importaciones:', 'info');
+      logTerminal('Últimas importaciones:', 'info');
       data.slice(0, 5).forEach(imp => {
         logTerminal(
-          `${new Date(imp.iniciado_en).toLocaleDateString()} — ${imp.carpeta_origen || '?'} — ✅${imp.exitosos} ❌${imp.fallidos}`,
+          `${new Date(imp.iniciado_en).toLocaleDateString()} — ${imp.carpeta_origen || '?'} — OK:${imp.exitosos} ERR:${imp.fallidos}`,
           'dim'
         );
       });

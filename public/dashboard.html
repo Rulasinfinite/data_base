@@ -6,44 +6,55 @@
   <title>SIDEC — Certificados</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .navbar-brand svg { display:block; }
-
-    /* ══ Stats (3 columnas) ══ */
+    /* ══ Base de colores (usa variables CSS para modo claro/oscuro) ══ */
     .stats-grid { grid-template-columns: repeat(3, 1fr) !important; }
 
-    /* ══ Badge magnitud ══ */
-    .mag-DIMENSIONAL    { background:#eff4ff; color:#1a56db; }
-    .mag-ELÉCTRICA      { background:#fef3c7; color:#92400e; }
-    .mag-TEMPERATURA    { background:#fce7f3; color:#9d174d; }
-    .mag-HUMEDAD        { background:#e0f2fe; color:#0369a1; }
-    .mag-PRESIÓN        { background:#f0fdf4; color:#166534; }
-    .mag-MASA           { background:#f5f3ff; color:#5b21b6; }
-    .mag-VOLUMEN        { background:#fff7ed; color:#9a3412; }
-    .mag-FUERZA         { background:#fef2f2; color:#991b1b; }
-    .mag-PAR-TORSIONAL  { background:#f0f9ff; color:#0c4a6e; }
-    .mag-TIEMPO         { background:#f7fee7; color:#3f6212; }
-    .mag-FLUJO          { background:#fdf4ff; color:#6b21a8; }
-    .mag-ACELERACIÓN    { background:#fff1f2; color:#881337; }
-    .mag-DENSIDAD       { background:#f0fdfa; color:#134e4a; }
-    .mag-QUÍMICA        { background:#fefce8; color:#713f12; }
+    /* Badges de magnitud con variables */
+    .mag-DIMENSIONAL    { background: var(--primary-light); color: var(--primary); }
+    .mag-ELÉCTRICA      { background: var(--warning-bg);    color: var(--warning); }
+    .mag-TEMPERATURA    { background: #fdf4ff;              color: #7e22ce; }
+    .mag-HUMEDAD        { background: #e0f2fe;              color: #0369a1; }
+    .mag-PRESIÓN        { background: var(--success-bg);    color: var(--success); }
+    .mag-MASA           { background: #f5f3ff;              color: #5b21b6; }
+    .mag-VOLUMEN        { background: #fff7ed;              color: #9a3412; }
+    .mag-FUERZA         { background: var(--danger-bg);     color: var(--danger); }
+    .mag-PAR-TORSIONAL  { background: #f0f9ff;              color: #0c4a6e; }
+    .mag-TIEMPO         { background: #f7fee7;              color: #3f6212; }
+    .mag-FLUJO          { background: #fdf4ff;              color: #6b21a8; }
+    .mag-ACELERACIÓN    { background: #fff1f2;              color: #881337; }
+    .mag-DENSIDAD       { background: #f0fdfa;              color: #134e4a; }
+    .mag-QUÍMICA        { background: #fefce8;              color: #713f12; }
 
-    /* ══ Panel de búsqueda ══ */
+    [data-theme="dark"] .mag-TEMPERATURA   { background: #3b0764; color: #d8b4fe; }
+    [data-theme="dark"] .mag-HUMEDAD       { background: #0c4a6e; color: #7dd3fc; }
+    [data-theme="dark"] .mag-PRESIÓN       { background: #064e3b; color: #6ee7b7; }
+    [data-theme="dark"] .mag-MASA          { background: #2e1065; color: #c4b5fd; }
+    [data-theme="dark"] .mag-VOLUMEN       { background: #431407; color: #fdba74; }
+    [data-theme="dark"] .mag-FUERZA        { background: #450a0a; color: #fca5a5; }
+    [data-theme="dark"] .mag-PAR-TORSIONAL { background: #082f49; color: #7dd3fc; }
+    [data-theme="dark"] .mag-TIEMPO        { background: #1a2e05; color: #bef264; }
+    [data-theme="dark"] .mag-FLUJO         { background: #3b0764; color: #d8b4fe; }
+    [data-theme="dark"] .mag-ACELERACIÓN   { background: #4c0519; color: #fda4af; }
+    [data-theme="dark"] .mag-DENSIDAD      { background: #042f2e; color: #5eead4; }
+    [data-theme="dark"] .mag-QUÍMICA       { background: #422006; color: #fde68a; }
+
+    /* ══ Panel de búsqueda mejorado ══ */
     .search-panel {
-      background: white;
-      border: 1px solid var(--gray-200);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-sm);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       overflow: hidden;
     }
 
     /* Barra principal */
     .search-main-row {
-      padding: 16px 20px;
+      padding: 20px 24px;
       display: flex;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
-      border-bottom: 1px solid var(--gray-100);
+      border-bottom: 1px solid var(--border);
     }
     .search-main-wrap {
       flex: 1;
@@ -56,30 +67,31 @@
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--gray-400);
+      color: var(--text4);
       pointer-events: none;
       display: flex;
     }
     .search-main-input {
       width: 100%;
-      padding: 11px 16px 11px 42px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 10px;
+      padding: 12px 16px 12px 44px;
+      border: 1.5px solid var(--border2);
+      border-radius: 12px;
       font-size: 14px;
       font-family: inherit;
-      color: var(--gray-800);
-      background: var(--gray-50);
-      transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+      color: var(--text);
+      background: var(--surface);
+      transition: all 0.2s ease;
       outline: none;
     }
     .search-main-input:focus {
       border-color: var(--primary);
-      background: white;
-      box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.12);
+      background: var(--surface);
     }
-    .search-main-input::placeholder { color: var(--gray-400); }
+    .search-main-input::placeholder { color: var(--text4); }
+
     .btn-buscar-main {
-      padding: 11px 24px;
+      padding: 12px 28px;
       background: var(--primary);
       color: white;
       border: none;
@@ -87,100 +99,112 @@
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      font-family: inherit;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.2s, transform 0.1s;
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-    .btn-buscar-main:hover  { background: #1d4ed8; }
+    .btn-buscar-main:hover  { background: var(--primary-dark); transform: translateY(-1px); }
     .btn-buscar-main:active { transform: scale(0.98); }
     .btn-buscar-main:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     /* Filtros rápidos */
     .quick-filters-row {
-      padding: 14px 20px;
+      padding: 16px 24px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
-      border-bottom: 1px solid var(--gray-100);
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
     }
     .quick-filters-row .form-label {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: var(--gray-500);
-      margin-bottom: 5px;
+      color: var(--text3);
+      margin-bottom: 6px;
       display: block;
     }
 
-    /* Toggle filtros avanzados */
+    /* Toggle filtros avanzados (más prominente) */
     .advanced-toggle-row {
-      padding: 10px 20px;
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
     }
     .btn-toggle-advanced {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: none;
-      border: none;
-      font-size: 13px;
+      gap: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px;
       font-weight: 500;
-      color: var(--primary);
+      color: var(--text2);
       cursor: pointer;
       font-family: inherit;
-      padding: 4px 0;
-      transition: color 0.15s;
+      padding: 6px 14px;
+      transition: all 0.2s;
     }
-    .btn-toggle-advanced:hover { color: #1d4ed8; }
+    .btn-toggle-advanced:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
     .btn-toggle-advanced svg {
       transition: transform 0.2s;
     }
-    .btn-toggle-advanced.open svg { transform: rotate(180deg); }
+    .btn-toggle-advanced.open svg:last-child { transform: rotate(180deg); }
 
     .btn-limpiar-link {
-      background: none;
-      border: none;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
       font-size: 12px;
-      color: var(--gray-400);
+      font-weight: 500;
+      color: var(--text3);
       cursor: pointer;
-      font-family: inherit;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
+      padding: 6px 14px;
+      transition: all 0.2s;
     }
-    .btn-limpiar-link:hover { color: var(--gray-700); background: var(--gray-100); }
+    .btn-limpiar-link:hover {
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
 
-    /* Filtros avanzados (colapsable) */
+    /* Filtros avanzados */
     .advanced-filters {
       display: none;
-      padding: 0 20px 16px;
-      border-top: 1px dashed var(--gray-200);
+      padding: 0 24px 20px;
+      border-top: 1px dashed var(--border);
       animation: slideDown 0.2s ease;
     }
     .advanced-filters.open { display: block; }
     @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-6px); }
+      from { opacity: 0; transform: translateY(-8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
     .advanced-filters-grid {
-      padding-top: 14px;
+      padding-top: 16px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
     }
     .advanced-filters-grid .form-label {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: var(--gray-500);
-      margin-bottom: 5px;
+      color: var(--text3);
+      margin-bottom: 6px;
       display: block;
     }
 
@@ -188,49 +212,112 @@
     .filter-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      padding: 0 20px 12px;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
     }
     .filter-chips:empty { display: none; }
     .chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      background: var(--primary-light, #eff6ff);
-      color: var(--primary);
-      border: 1px solid rgba(37,99,235,0.2);
-      border-radius: 20px;
-      padding: 3px 10px 3px 10px;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 24px;
+      padding: 4px 12px;
       font-size: 12px;
       font-weight: 500;
+      color: var(--text2);
       animation: chipIn 0.15s ease;
     }
-    @keyframes chipIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
     .chip-remove {
       background: none;
       border: none;
       cursor: pointer;
-      color: var(--primary);
+      color: var(--text4);
       padding: 0;
       display: flex;
       align-items: center;
       font-size: 14px;
-      opacity: 0.7;
-      transition: opacity 0.1s;
-      font-family: inherit;
+      transition: color 0.1s;
     }
-    .chip-remove:hover { opacity: 1; }
+    .chip-remove:hover { color: var(--danger); }
 
-    /* Barra de resultados */
+    /* Barra de resultados con hint sutil */
     .result-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 20px;
-      background: var(--gray-50);
-      border-bottom: 1px solid var(--gray-100);
+      padding: 12px 20px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
       font-size: 13px;
-      color: var(--gray-500);
+      color: var(--text3);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hint-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text4);
+      background: var(--surface);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .hint-icon svg {
+      opacity: 0.7;
+    }
+
+    /* Tabla mejorada para modo oscuro */
+    .table-wrap {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text3);
+      text-transform: uppercase;
+      background: var(--surface2);
+      border-bottom: 2px solid var(--border);
+    }
+    tbody td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text2);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    tbody tr:hover td {
+      background: var(--primary-light);
+    }
+    [data-theme="dark"] tbody tr:hover td {
+      background: rgba(59,130,246,0.15);
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Ajustes responsive */
+    @media (max-width: 768px) {
+      .search-main-row { flex-wrap: wrap; }
+      .btn-buscar-main { width: 100%; justify-content: center; }
+      .quick-filters-row, .advanced-filters-grid { grid-template-columns: 1fr; }
+      .result-bar { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -240,7 +327,7 @@
 
 <div class="page">
 
-  <!-- Stats (sin "Última emisión") -->
+  <!-- Stats (sin cambios) -->
   <div class="stats-grid" id="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Total certificados</div>
@@ -266,23 +353,23 @@
     <div class="search-main-row">
       <div class="search-main-wrap">
         <span class="search-main-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
         </span>
         <input class="search-main-input" type="text" id="q"
-               placeholder="Buscar por No. informe, cliente, No. serie, identificación, modelo, marca…"
+               placeholder="Buscar por número de informe, cliente, número de serie, identificación, modelo, marca…"
                autocomplete="off">
       </div>
       <button class="btn-buscar-main" id="btn-buscar" onclick="buscar(1)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
         Buscar
       </button>
     </div>
 
-    <!-- ② Filtros rápidos (siempre visibles) -->
+    <!-- ② Filtros rápidos -->
     <div class="quick-filters-row">
       <div>
         <label class="form-label" for="filtro-cliente">Cliente</label>
@@ -311,7 +398,9 @@
             <option value="QUÍMICA">Química</option>
             <option value="FLUJO">Flujo</option>
             <option value="ACELERACIÓN">Aceleración</option>
-            <option value="DENSIDAD">Densidad</option>
+            <option value="OPTICA">Optica</option>
+            <option value="DUREAZA">Dureza</option>
+            <option value="ACUSTICA">Acústica</option>
           </optgroup>
         </select>
       </div>
@@ -326,14 +415,14 @@
     <!-- ③ Chips de filtros activos -->
     <div class="filter-chips" id="filter-chips"></div>
 
-    <!-- ④ Toggle de filtros avanzados -->
+    <!-- ④ Toggle de filtros avanzados (más llamativo) -->
     <div class="advanced-toggle-row">
       <button class="btn-toggle-advanced" id="btn-toggle-adv" onclick="toggleAdvanced()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
         </svg>
         Más filtros
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </button>
@@ -385,14 +474,21 @@
   <div class="card">
     <div class="result-bar" id="result-bar" style="display:none">
       <span id="resultado-info"></span>
-      <span id="resultado-tiempo" style="font-size:12px;color:var(--gray-400)"></span>
+      <span class="hint-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 16v-4M12 8h.01"/>
+        </svg>
+        Haz clic en cualquier fila para ver el certificado completo (y editarlo si tienes permisos)
+      </span>
+      <span id="resultado-tiempo" style="font-size:12px;color:var(--text4)"></span>
     </div>
 
     <div id="tabla-container">
       <div class="empty-state" style="padding:60px 24px">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
-        <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Puedes buscar por informe, cliente, serie o dejar todo vacío para ver todos.</p>
+        <p style="font-size:14px;color:var(--text4)">Usa los filtros de arriba para buscar certificados.</p>
+        <p style="font-size:12px;color:var(--text4);margin-top:6px">Puedes buscar por informe, cliente, serie o dejar todo vacío para ver todos.</p>
       </div>
     </div>
 
@@ -420,10 +516,12 @@
     const btn   = document.getElementById('btn-toggle-adv');
     const isOpen = panel.classList.toggle('open');
     btn.classList.toggle('open', isOpen);
-    btn.querySelector('svg:last-child').style.transform = isOpen ? 'rotate(180deg)' : '';
-    // Actualizar texto del botón
-    const label = btn.querySelector('svg:last-child').previousSibling;
-    btn.childNodes[2].textContent = isOpen ? ' Menos filtros ' : ' Más filtros ';
+    // Cambiar el texto del botón opcionalmente
+    if (isOpen) {
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> Menos filtros <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 15 12 9 18 15"/></svg>`;
+    } else {
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> Más filtros <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+    }
   }
 
   // ── Chips de filtros activos ────────────────────────────
@@ -448,14 +546,13 @@
       if (!el) return;
       const val = el.value?.trim();
       if (!val) return;
-      // Obtener texto legible para selects
       let display = val;
       if (el.tagName === 'SELECT') {
         display = el.options[el.selectedIndex]?.text || val;
       }
       const chip = document.createElement('span');
       chip.className = 'chip';
-      chip.innerHTML = `<span style="color:var(--gray-500);font-size:11px;">${label}:</span> ${display}
+      chip.innerHTML = `<span style="color:var(--text4);font-size:11px;">${label}:</span> ${display}
         <button class="chip-remove" title="Quitar filtro" onclick="quitarChip('${id}')">×</button>`;
       container.appendChild(chip);
     });
@@ -488,8 +585,8 @@
           `${Math.min(...years)} – ${Math.max(...years)}`;
       }
 
-      // Llenar select de años
       const sel = document.getElementById('filtro-anio');
+      sel.innerHTML = '<option value="">Todos los años</option>';
       data.por_anio.forEach(r => {
         const opt = document.createElement('option');
         opt.value = r.anio_emision;
@@ -537,7 +634,7 @@
         `<div class="alert alert-error" style="margin:20px">${e.message}</div>`;
     } finally {
       btn.disabled = false;
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Buscar`;
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Buscar`;
     }
   }
 
@@ -552,9 +649,9 @@
     if (data.datos.length === 0) {
       document.getElementById('tabla-container').innerHTML = `
         <div class="empty-state" style="padding:48px">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           <p>No se encontraron certificados con esos criterios.</p>
-          <p style="font-size:12px;color:var(--gray-300);margin-top:6px">Intenta con términos más generales.</p>
+          <p style="font-size:12px;color:var(--text4);margin-top:6px">Intenta con términos más generales.</p>
         </div>`;
       document.getElementById('paginacion').style.display = 'none';
       return;
@@ -568,13 +665,13 @@
 
     const filas = data.datos.map(c => `
       <tr onclick="verDetalle(${c.id})" title="Ver certificado ${c.numero_informe || ''}">
-        <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--primary);font-weight:500">${c.numero_informe || '—'}</span></td>
-        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.nombre_cliente || ''}">${c.nombre_cliente || '—'}</td>
-        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.descripcion_instrumento || ''}">${c.descripcion_instrumento || '—'}</td>
-        <td>${c.marca || '—'}</td>
-        <td><span style="font-family:var(--font-mono);font-size:12px">${c.numero_serie || '—'}</span></td>
-        <td><span style="font-family:var(--font-mono);font-size:12px">${c.identificacion || '—'}</span></td>
-        <td><span class="badge ${magClass(c.magnitud_evaluada)}">${c.magnitud_evaluada || '—'}</span></td>
+        <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--primary);font-weight:500">${escapeHtml(c.numero_informe) || '—'}</span></td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(c.nombre_cliente) || ''}">${escapeHtml(c.nombre_cliente) || '—'}</td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(c.descripcion_instrumento) || ''}">${escapeHtml(c.descripcion_instrumento) || '—'}</td>
+        <td>${escapeHtml(c.marca) || '—'}</td>
+        <td><span style="font-family:var(--font-mono);font-size:12px">${escapeHtml(c.numero_serie) || '—'}</span></td>
+        <td><span style="font-family:var(--font-mono);font-size:12px">${escapeHtml(c.identificacion) || '—'}</span></td>
+        <td><span class="badge ${magClass(c.magnitud_evaluada)}">${escapeHtml(c.magnitud_evaluada) || '—'}</span></td>
         <td>${formatFecha(c.fecha_emision)}</td>
         <td><span class="badge badge-gray">${c.anio_emision}</span></td>
       </tr>
@@ -601,6 +698,16 @@
       </div>`;
 
     renderPaginacion(data);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
   }
 
   function renderPaginacion(data) {
@@ -641,8 +748,8 @@
     document.getElementById('filter-chips').innerHTML = '';
     document.getElementById('tabla-container').innerHTML = `
       <div class="empty-state" style="padding:60px 24px">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:14px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <p style="font-size:14px;color:var(--gray-400)">Usa los filtros de arriba para buscar certificados.</p>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <p style="font-size:14px;color:var(--text4)">Usa los filtros de arriba para buscar certificados.</p>
       </div>`;
     document.getElementById('result-bar').style.display  = 'none';
     document.getElementById('paginacion').style.display  = 'none';

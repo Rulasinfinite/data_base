@@ -165,6 +165,20 @@ CREATE TABLE IF NOT EXISTS importaciones (
 );
 
 -- ============================================================
+-- TABLA: notas (apuntes de usuarios)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS notas (
+    id          SERIAL PRIMARY KEY,
+    usuario_id  INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+    titulo      VARCHAR(255) NOT NULL,
+    contenido   TEXT,
+    creada_en   TIMESTAMPTZ DEFAULT NOW(),
+    actualizada_en TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notas_usuario ON notas (usuario_id);
+
+-- ============================================================
 -- USUARIOS ADMIN
 -- ============================================================
 INSERT INTO usuarios (nombre, usuario, password_hash, rol, departamento)
